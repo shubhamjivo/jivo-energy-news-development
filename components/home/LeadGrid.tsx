@@ -2,7 +2,7 @@ import Link from "next/link";
 import { LEAD_STORY, LATEST_STORIES, RELATED_NEWS } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
-import { HScroll } from "@/components/ui/HScroll";
+import { Carousel } from "@/components/ui/Carousel";
 import { Kicker } from "@/components/ui/Kicker";
 
 export function LeadGrid() {
@@ -53,12 +53,12 @@ export function LeadGrid() {
               ))}
             </div>
             <div className="desk:hidden">
-              <HScroll className="gap-4 pt-3">
+              <Carousel className="pt-3" spaceBetween={16}>
                 {RELATED_NEWS.map((item, i) => (
                   <Link
                     key={`${item.title}-m-${i}`}
                     href="/news"
-                    className="w-[220px] shrink-0 snap-start"
+                    className="block w-[220px]"
                   >
                     <CoverImage
                       src={item.image}
@@ -72,7 +72,7 @@ export function LeadGrid() {
                     </p>
                   </Link>
                 ))}
-              </HScroll>
+              </Carousel>
             </div>
           </aside>
         </div>

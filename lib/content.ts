@@ -239,12 +239,42 @@ export const NEWS_CARDS = [
 ] as const;
 
 export const REELS = [
-  { title: "What is a solar panel?", duration: "02:14", image: "/images/reel-1.png" },
-  { title: "How solar power is transforming Africa", duration: "03:48", image: "/images/reel-2.png" },
-  { title: "How batteries give solar power extra mileage", duration: "01:52", image: "/images/reel-3.png" },
-  { title: "How solar mini-grids power communities", duration: "02:31", image: "/images/reel-4.png" },
-  { title: "From sunlight to electricity: how solar power works", duration: "01:45", image: "/images/reel-5.png" },
-  { title: "Why solar energy matters for Africa", duration: "02:10", image: "/images/reel-6.png" },
+  {
+    title: "How South Africa is curbing energy poverty with solar",
+    duration: "02:42",
+    youtubeId: "_OOuBxky5f8",
+    source: "DW News",
+  },
+  {
+    title: "Solar charging stations electrifying Kenya",
+    duration: "01:54",
+    youtubeId: "2YdSDPI-Vkw",
+    source: "The Earthshot Prize",
+  },
+  {
+    title: "Africa's untapped renewable potential",
+    duration: "00:45",
+    youtubeId: "B6YHe4ZAo6o",
+    source: "Modo Energy",
+  },
+  {
+    title: "Solar ambulance brings hope to remote Kenya",
+    duration: "03:00",
+    youtubeId: "Nld1mQSRVQ8",
+    source: "News Central TV",
+  },
+  {
+    title: "Can Nigeria become Africa's renewable energy hub?",
+    duration: "02:27",
+    youtubeId: "Xu2KQncWr7c",
+    source: "NTA Network",
+  },
+  {
+    title: "Inside Solar & Storage Live Africa in Johannesburg",
+    duration: "00:31",
+    youtubeId: "RFlspIcvfGc",
+    source: "JA Solar Africa",
+  },
 ] as const;
 
 export const PROJECT_FILTERS = [

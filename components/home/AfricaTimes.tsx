@@ -3,7 +3,7 @@ import { AFRICA_TIMES } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 import { Chevron } from "@/components/ui/Chevron";
 import { CoverImage } from "@/components/ui/CoverImage";
-import { HScroll } from "@/components/ui/HScroll";
+import { Carousel } from "@/components/ui/Carousel";
 
 export function AfricaTimes() {
   return (
@@ -28,13 +28,13 @@ export function AfricaTimes() {
       </div>
 
       <div className="mt-4 desk:hidden">
-        <HScroll className="gap-4">
+        <Carousel spaceBetween={16}>
           {AFRICA_TIMES.map((col) => (
-            <div key={col.title} className="w-[304px] shrink-0 snap-start">
+            <div key={col.title} className="w-[304px]">
               <TimesColumn col={col} />
             </div>
           ))}
-        </HScroll>
+        </Carousel>
       </div>
       </Container>
     </section>

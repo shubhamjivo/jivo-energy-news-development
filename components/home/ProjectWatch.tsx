@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { PROJECT_FILTERS, PROJECTS } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
-import { HScroll } from "@/components/ui/HScroll";
+import { Carousel } from "@/components/ui/Carousel";
 import { Kicker } from "@/components/ui/Kicker";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
@@ -49,12 +49,12 @@ export function ProjectWatch() {
         })}
       </div>
 
-      <HScroll className="mt-3.5 gap-5" controls step={300}>
+      <Carousel key={filter} className="mt-3.5" spaceBetween={20} controls>
         {items.map((project) => (
           <Link
             key={project.title}
             href="/projects"
-            className="w-[260px] shrink-0 snap-start desk:w-[280px]"
+            className="block w-[260px] desk:w-[280px]"
           >
             <CoverImage
               src={project.image}
@@ -69,7 +69,7 @@ export function ProjectWatch() {
             </p>
           </Link>
         ))}
-      </HScroll>
+      </Carousel>
       </Container>
     </section>
   );

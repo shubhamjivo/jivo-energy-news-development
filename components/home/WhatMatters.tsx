@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { WHAT_MATTERS } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
+import { Carousel } from "@/components/ui/Carousel";
 import { CoverImage } from "@/components/ui/CoverImage";
-import { Dots } from "@/components/ui/Dots";
-import { HScroll } from "@/components/ui/HScroll";
 import { Kicker } from "@/components/ui/Kicker";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
@@ -19,12 +18,12 @@ export function WhatMatters() {
           reserveControls
         />
         <div className="mt-3.5 h-px bg-ink" />
-        <HScroll className="gap-5 pt-3.5" controls step={300}>
+        <Carousel className="pt-3.5" spaceBetween={20} controls pagination>
           {WHAT_MATTERS.map((item) => (
             <Link
               key={item.title}
               href="/news"
-              className="w-[260px] shrink-0 snap-start desk:w-[280px]"
+              className="block w-[260px] desk:w-[280px]"
             >
               <CoverImage
                 src={item.image}
@@ -43,10 +42,7 @@ export function WhatMatters() {
               </p>
             </Link>
           ))}
-        </HScroll>
-        <div className="mt-3 flex justify-center desk:justify-start">
-          <Dots count={2} />
-        </div>
+        </Carousel>
       </Container>
     </section>
   );

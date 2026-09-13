@@ -2,7 +2,7 @@ import Link from "next/link";
 import { NEWS_CARDS } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
-import { HScroll } from "@/components/ui/HScroll";
+import { Carousel } from "@/components/ui/Carousel";
 import { Kicker } from "@/components/ui/Kicker";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
@@ -25,13 +25,13 @@ export function NewsAnalysis() {
       </div>
 
       <div className="mt-5 desk:hidden">
-        <HScroll className="gap-4" controls>
+        <Carousel spaceBetween={16} controls>
           {NEWS_CARDS.map((card) => (
-            <div key={card.title} className="w-[280px] shrink-0 snap-start">
+            <div key={card.title} className="w-[280px]">
               <NewsCard card={card} />
             </div>
           ))}
-        </HScroll>
+        </Carousel>
       </div>
       </Container>
     </section>

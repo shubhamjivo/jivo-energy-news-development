@@ -2,7 +2,7 @@ import Link from "next/link";
 import { REPORTS } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
-import { HScroll } from "@/components/ui/HScroll";
+import { Carousel } from "@/components/ui/Carousel";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
 export function LatestReports() {
@@ -24,13 +24,13 @@ export function LatestReports() {
       </div>
 
       <div className="mt-4 desk:hidden">
-        <HScroll className="gap-4">
+        <Carousel spaceBetween={16}>
           {REPORTS.map((report) => (
-            <div key={report.title} className="w-[220px] shrink-0 snap-start">
+            <div key={report.title} className="w-[220px]">
               <ReportCard report={report} />
             </div>
           ))}
-        </HScroll>
+        </Carousel>
       </div>
       </Container>
     </section>

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { VIDEOS } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
-import { HScroll } from "@/components/ui/HScroll";
+import { Carousel } from "@/components/ui/Carousel";
 import { Kicker } from "@/components/ui/Kicker";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
@@ -25,13 +25,13 @@ export function WatchListen() {
       </div>
 
       <div className="mt-4 desk:hidden">
-        <HScroll className="gap-4">
+        <Carousel spaceBetween={16}>
           {VIDEOS.map((video) => (
-            <div key={video.title} className="w-[280px] shrink-0 snap-start">
+            <div key={video.title} className="w-[280px]">
               <VideoCard video={video} />
             </div>
           ))}
-        </HScroll>
+        </Carousel>
       </div>
       </Container>
     </section>
