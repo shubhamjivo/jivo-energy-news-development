@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { FOOTER_COLUMNS } from "@/lib/content";
+import { Container } from "@/components/ui/Container";
 
 export function Footer() {
   return (
-    <footer className="bg-black px-5 pb-8 pt-10 desk:px-24 desk:pt-10">
-      <div className="flex flex-col gap-8 desk:flex-row desk:items-start desk:justify-between">
+    <footer className="bg-black pb-8 pt-10">
+      <Container className="flex flex-col gap-8 desk:flex-row desk:items-start desk:justify-between">
         <div className="flex flex-col gap-1.5">
           <Link href="/" className="text-xl font-bold text-white">
             AFRICA ENERGY
@@ -31,11 +32,13 @@ export function Footer() {
             </div>
           ))}
         </div>
-      </div>
-      <div className="mt-6 h-px bg-accent" />
-      <p className="mt-4 text-[11px] text-accent">
-        © 2026 Africa Energy. All rights reserved.
-      </p>
+      </Container>
+      <Container>
+        <div className="mt-6 h-px bg-accent" />
+        <p className="mt-4 text-[11px] text-accent">
+          © 2026 Africa Energy. All rights reserved.
+        </p>
+      </Container>
     </footer>
   );
 }

@@ -1,11 +1,10 @@
 import { ENERGY_BRIEF } from "@/lib/content";
+import { Container } from "@/components/ui/Container";
 
 export function EnergyBrief() {
   return (
-    <section
-      id="brief"
-      className="hidden items-center gap-5 bg-ink px-24 desk:flex"
-    >
+    <section id="brief" className="hidden bg-ink desk:block">
+      <Container className="flex items-center gap-5 overflow-x-auto no-scrollbar">
       <div className="flex h-[52px] w-[170px] shrink-0 items-center justify-center bg-forest">
         <p className="text-[11px] font-bold tracking-[0.44px] text-white">
           Africa Energy Brief
@@ -20,6 +19,7 @@ export function EnergyBrief() {
           </p>
         </div>
       ))}
+      </Container>
     </section>
   );
 }

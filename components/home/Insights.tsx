@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { INSIGHT_CARDS, INSIGHT_FEATURED, INSIGHT_SIDEBAR } from "@/lib/content";
+import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { Kicker } from "@/components/ui/Kicker";
 
 export function Insights() {
   return (
-    <section className="px-5 py-10 desk:px-24 desk:py-16">
+    <section className="py-10 desk:py-16">
+      <Container>
       <div className="flex items-center justify-between">
         <p className="text-xs font-bold tracking-[1.2px] text-accent">INSIGHTS</p>
         <Link href="/insights" className="text-sm font-semibold text-ink">
@@ -20,7 +22,7 @@ export function Insights() {
             href="/insights"
             className="flex flex-col overflow-hidden shadow-[0px_12px_24px_-8px_rgba(0,0,0,0.05)] desk:h-[328px] desk:flex-row"
           >
-            <div className="flex flex-col gap-2.5 p-6 desk:w-[508px] desk:p-8">
+            <div className="flex min-w-0 flex-col gap-2.5 p-6 desk:flex-1 desk:p-8">
               <h3 className="text-[32px] font-bold leading-[1.1] text-ink desk:text-[40px]">
                 {INSIGHT_FEATURED.title}
               </h3>
@@ -36,7 +38,7 @@ export function Insights() {
             <CoverImage
               src={INSIGHT_FEATURED.image}
               alt={INSIGHT_FEATURED.title}
-              className="h-[220px] w-full desk:h-[328px] desk:w-[360px] desk:shrink-0"
+              className="h-[220px] w-full desk:h-[328px] desk:w-[280px] desk:shrink-0"
               sizes="(max-width: 1439px) 100vw, 360px"
             />
           </Link>
@@ -58,7 +60,7 @@ export function Insights() {
           </div>
         </div>
 
-        <aside className="flex w-full flex-col justify-center gap-10 desk:w-[420px] desk:shrink-0 desk:gap-12">
+        <aside className="flex w-full min-w-0 flex-col justify-center gap-10 desk:w-[320px] desk:shrink-0 desk:gap-12">
           {INSIGHT_SIDEBAR.map((item) => (
             <Link key={item.title} href="/insights" className="flex flex-col gap-2.5">
               <p className="text-xl font-bold leading-[1.2] text-ink desk:text-2xl">
@@ -70,6 +72,7 @@ export function Insights() {
           ))}
         </aside>
       </div>
+      </Container>
     </section>
   );
 }

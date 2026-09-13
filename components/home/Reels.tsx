@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { REELS } from "@/lib/content";
+import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { Dots } from "@/components/ui/Dots";
 import { HScroll } from "@/components/ui/HScroll";
 
 export function Reels() {
   return (
-    <section className="px-5 py-8 desk:px-24 desk:py-10">
+    <section className="py-8 desk:py-10">
+      <Container>
       <div className="flex items-center justify-between">
         <h2 className="text-[26px] font-bold text-ink desk:text-[28px]">Reels</h2>
         <Link href="/news" className="text-sm font-semibold text-forest">
@@ -43,6 +45,7 @@ export function Reels() {
       <div className="mt-4 flex justify-center">
         <Dots count={2} />
       </div>
+      </Container>
     </section>
   );
 }

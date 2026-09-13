@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { AFRICA_TIMES } from "@/lib/content";
+import { Container } from "@/components/ui/Container";
 import { Chevron } from "@/components/ui/Chevron";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { HScroll } from "@/components/ui/HScroll";
 
 export function AfricaTimes() {
   return (
-    <section id="africa-times" className="px-5 py-8 desk:px-24 desk:py-10">
+    <section id="africa-times" className="py-8 desk:py-10">
+      <Container>
       <div className="flex flex-col gap-2 desk:flex-row desk:items-center desk:gap-2.5">
         <div className="flex items-center gap-2.5">
           <h2 className="text-[26px] font-bold leading-none text-ink desk:text-[28px]">
@@ -34,13 +36,14 @@ export function AfricaTimes() {
           ))}
         </HScroll>
       </div>
+      </Container>
     </section>
   );
 }
 
 function TimesColumn({ col }: { col: (typeof AFRICA_TIMES)[number] }) {
   return (
-    <div className="flex w-full flex-col border border-muted/40 px-3.5 pb-2.5 pt-4 desk:w-[318px]">
+    <div className="flex w-full min-w-0 flex-col border border-muted/40 px-3.5 pb-2.5 pt-4 desk:flex-1">
       <div className="flex items-center gap-2">
         <h3 className="text-base font-bold text-ink">{col.title}</h3>
         <Chevron />

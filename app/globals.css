@@ -14,14 +14,82 @@
   --breakpoint-desk: 90rem;
 }
 
-html {
-  scroll-behavior: smooth;
+/* Reset adapted from https://github.com/Shub1970/blog_web */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+  }
+
+  ul[role="list"],
+  ol[role="list"] {
+    list-style: none;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  html:focus-within {
+    scroll-behavior: smooth;
+  }
+
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    text-rendering: optimizeSpeed;
+    line-height: 1.5;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  }
+
+  a:not([class]) {
+    text-decoration-skip-ink: auto;
+  }
+
+  img,
+  picture,
+  svg {
+    max-width: 100%;
+    display: block;
+  }
+
+  button {
+    color: inherit;
+    cursor: pointer;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html:focus-within {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
 
-body {
-  background: var(--color-paper);
-  color: var(--color-ink);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+.container {
+  --max-width: 1200px;
+  --gutter: 1.25rem;
+  width: min(var(--max-width), calc(100% - 2 * var(--gutter)));
+  margin-inline: auto;
 }
 
 .no-scrollbar::-webkit-scrollbar {

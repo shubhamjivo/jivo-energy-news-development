@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { WHAT_MATTERS } from "@/lib/content";
+import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { Dots } from "@/components/ui/Dots";
 import { HScroll } from "@/components/ui/HScroll";
@@ -8,8 +9,8 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 
 export function WhatMatters() {
   return (
-    <section className="px-5 pb-3 pt-8 desk:px-24 desk:pt-10">
-      <div className="relative">
+    <section className="pb-3 pt-8 desk:pt-10">
+      <Container className="relative">
         <SectionHeading
           kicker="TODAY"
           title="What Matters Today"
@@ -46,7 +47,7 @@ export function WhatMatters() {
         <div className="mt-3 flex justify-center desk:justify-start">
           <Dots count={2} />
         </div>
-      </div>
+      </Container>
     </section>
   );
 }

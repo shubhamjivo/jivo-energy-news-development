@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { INVESTMENTS } from "@/lib/content";
+import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
 export function InvestmentWatch() {
   return (
-    <section className="px-5 pb-2 pt-8 desk:px-24 desk:pt-10">
+    <section className="pb-2 pt-8 desk:pt-10">
+      <Container>
       <SectionHeading
         kicker="DEALS & CAPITAL"
         title="Energy Investment Watch"
@@ -29,6 +31,7 @@ export function InvestmentWatch() {
           <p className="text-[22px] font-bold text-ink desk:shrink-0">{item.value}</p>
         </Link>
       ))}
+      </Container>
     </section>
   );
 }

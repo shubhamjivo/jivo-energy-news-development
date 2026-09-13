@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { REPORTS } from "@/lib/content";
+import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { HScroll } from "@/components/ui/HScroll";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
 export function LatestReports() {
   return (
-    <section className="px-5 pb-8 pt-8 desk:px-24 desk:pt-10">
+    <section className="pb-8 pt-8 desk:pt-10">
+      <Container>
       <SectionHeading
         kicker="FROM THE DESK"
         title="Latest Reports"
@@ -30,6 +32,7 @@ export function LatestReports() {
           ))}
         </HScroll>
       </div>
+      </Container>
     </section>
   );
 }

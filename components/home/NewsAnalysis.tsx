@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { NEWS_CARDS } from "@/lib/content";
+import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { HScroll } from "@/components/ui/HScroll";
 import { Kicker } from "@/components/ui/Kicker";
@@ -7,7 +8,8 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 
 export function NewsAnalysis() {
   return (
-    <section className="px-5 pb-3 pt-8 desk:px-24 desk:pt-10">
+    <section className="pb-3 pt-8 desk:pt-10">
+      <Container>
       <SectionHeading
         kicker="THE NEWSROOM"
         title="News & Analysis"
@@ -31,6 +33,7 @@ export function NewsAnalysis() {
           ))}
         </HScroll>
       </div>
+      </Container>
     </section>
   );
 }

@@ -10,6 +10,7 @@ import {
   NAV_LINKS,
   UTILITY_LINKS,
 } from "@/lib/content";
+import { Container } from "@/components/ui/Container";
 
 function isActive(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
@@ -41,43 +42,47 @@ export function Header() {
     <>
       <header>
         <div ref={mastheadRef}>
-          <div className="flex h-7 items-center justify-between bg-navy px-5 text-[11px] tracking-[0.22px] text-white desk:h-[34px] desk:px-24">
-            <p className="hidden desk:block">{DATE_LINE}</p>
-            <p className="desk:hidden">{MOBILE_DATE}</p>
-            <p className="desk:hidden">{MOBILE_TIME}</p>
-            <nav className="hidden items-center gap-[22px] tracking-[0.44px] desk:flex">
-              {UTILITY_LINKS.map((link) => (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  className="hover:text-accent"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
+          <div className="bg-navy text-[11px] tracking-[0.22px] text-white">
+            <Container className="flex h-7 items-center justify-between desk:h-[34px]">
+              <p className="hidden desk:block">{DATE_LINE}</p>
+              <p className="desk:hidden">{MOBILE_DATE}</p>
+              <p className="desk:hidden">{MOBILE_TIME}</p>
+              <nav className="hidden items-center gap-[22px] tracking-[0.44px] desk:flex">
+                {UTILITY_LINKS.map((link) => (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className="hover:text-accent"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+            </Container>
           </div>
 
-          <div className="flex flex-col items-center gap-2 bg-paper px-5 py-4 desk:h-[150px] desk:justify-center desk:px-24 desk:py-6">
-            <Link
-              href="/"
-              className="text-center text-[32px] font-bold leading-none tracking-[-1.28px] desk:text-[64px]"
-            >
-              <span className="text-navy">AFRICA</span>{" "}
-              <span className="text-black">ENERGY</span>{" "}
-              <span className="text-black">NEWS</span>
-            </Link>
-            <div className="flex w-full max-w-[1320px] items-center justify-between">
-              <p className="text-center text-[12px] leading-[18px] text-muted desk:text-left desk:text-sm desk:leading-[21px]">
-                Energy intelligence, Africa-first
-              </p>
+          <div className="bg-paper py-4 desk:h-[150px] desk:py-6">
+            <Container className="flex h-full flex-col items-center justify-center gap-2">
               <Link
-                href="/#newsletter"
-                className="hidden h-8 w-[108px] items-center justify-center bg-accent text-[15px] font-semibold leading-[18px] text-white desk:flex"
+                href="/"
+                className="text-center text-[32px] font-bold leading-none tracking-[-1.28px] desk:text-[64px]"
               >
-                Subscribe
+                <span className="text-navy">AFRICA</span>{" "}
+                <span className="text-black">ENERGY</span>{" "}
+                <span className="text-black">NEWS</span>
               </Link>
-            </div>
+              <div className="flex w-full items-center justify-between">
+                <p className="text-center text-[12px] leading-[18px] text-muted desk:text-left desk:text-sm desk:leading-[21px]">
+                  Energy intelligence, Africa-first
+                </p>
+                <Link
+                  href="/#newsletter"
+                  className="hidden h-8 w-[108px] items-center justify-center bg-accent text-[15px] font-semibold leading-[18px] text-white desk:flex"
+                >
+                  Subscribe
+                </Link>
+              </div>
+            </Container>
           </div>
         </div>
       </header>
@@ -87,7 +92,7 @@ export function Header() {
           }`}
       >
         <div className="h-px bg-accent" />
-        <div className="flex h-10 items-center justify-between gap-4 px-5 desk:h-11 desk:px-24">
+        <Container className="flex h-10 items-center justify-between gap-4 desk:h-11">
           {compact ? (
             <Link
               href="/"
@@ -169,15 +174,16 @@ export function Header() {
               <span className="h-0.5 w-4 bg-ink" />
             </button>
           </div>
-        </div>
+        </Container>
         <div className="h-px bg-hairline" />
 
         {searchOpen ? (
           <form
-            className="hidden border-b border-hairline px-24 py-3 desk:block"
+            className="hidden border-b border-hairline py-3 desk:block"
             action="/news"
             method="get"
           >
+            <Container>
             <label className="sr-only" htmlFor="site-search">
               Search Africa Energy News
             </label>
@@ -189,14 +195,16 @@ export function Header() {
               placeholder="Search Africa Energy News"
               className="w-full border border-hairline px-3 py-2 text-sm outline-none focus:border-navy"
             />
+            </Container>
           </form>
         ) : null}
 
         {open ? (
           <nav
             aria-label="Mobile"
-            className="flex flex-col gap-3 border-b border-hairline bg-paper px-5 py-4 desk:hidden"
+            className="border-b border-hairline bg-paper py-4 desk:hidden"
           >
+            <Container className="flex flex-col gap-3">
             {NAV_LINKS.map((link) => {
               const active = isActive(pathname, link.href);
               return (
@@ -220,6 +228,7 @@ export function Header() {
             >
               Subscribe
             </Link>
+            </Container>
           </nav>
         ) : null}
       </div>

@@ -1,11 +1,10 @@
 import Link from "next/link";
+import { Container } from "@/components/ui/Container";
 
 export function NewsletterCta() {
   return (
-    <section
-      id="newsletter"
-      className="flex flex-col items-start justify-between gap-6 bg-forest px-5 py-10 text-white desk:flex-row desk:items-center desk:px-24 desk:py-0 desk:h-[180px]"
-    >
+    <section id="newsletter" className="bg-forest py-10 text-white desk:h-[180px] desk:py-0">
+      <Container className="flex h-full flex-col items-start justify-between gap-6 desk:flex-row desk:items-center">
       <div className="flex max-w-[640px] flex-col gap-2">
         <h2 className="text-[24px] font-bold leading-[30px] desk:text-[28px] desk:leading-[34px]">
           The 5 energy stories you need to know today.
@@ -20,6 +19,7 @@ export function NewsletterCta() {
       >
         Subscribe to the Brief
       </Link>
+      </Container>
     </section>
   );
 }
