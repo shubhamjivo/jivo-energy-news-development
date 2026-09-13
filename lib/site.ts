@@ -1,0 +1,88 @@
+export const SITE_NAME = "Africa Energy News";
+export const SITE_TAGLINE = "Energy intelligence, Africa-first";
+export const SITE_DESCRIPTION =
+  "Africa-first energy intelligence covering solar, wind, storage, hydrogen, grid investment, policy, and capital across African markets.";
+
+export const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.africaenergynews.com"
+).replace(/\/$/, "");
+
+export const ROUTES = [
+  {
+    href: "/",
+    label: "Home",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    changeFrequency: "hourly" as const,
+    priority: 1,
+  },
+  {
+    href: "/news",
+    label: "News",
+    title: "News",
+    description:
+      "Latest Africa energy news and analysis across solar, wind, storage, hydrogen, grids, and policy.",
+    changeFrequency: "hourly" as const,
+    priority: 0.9,
+  },
+  {
+    href: "/projects",
+    label: "Projects",
+    title: "Projects",
+    description:
+      "Track renewable energy projects across Africa, from solar and wind to storage and green hydrogen.",
+    changeFrequency: "daily" as const,
+    priority: 0.8,
+  },
+  {
+    href: "/companies",
+    label: "Companies",
+    title: "Companies",
+    description:
+      "Company coverage of IPPs, developers, offtakers, and financiers shaping Africa's energy transition.",
+    changeFrequency: "daily" as const,
+    priority: 0.8,
+  },
+  {
+    href: "/countries",
+    label: "Countries",
+    title: "Countries",
+    description:
+      "Country-by-country energy intelligence for African markets, including capacity, pipeline, and policy.",
+    changeFrequency: "daily" as const,
+    priority: 0.8,
+  },
+  {
+    href: "/insights",
+    label: "Insights",
+    title: "Insights",
+    description:
+      "Explainers and analysis on renewable energy, storage, grids, and the economics of Africa's power sector.",
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  },
+  {
+    href: "/events",
+    label: "Events",
+    title: "Events",
+    description:
+      "Upcoming Africa energy forums, briefings, and industry events.",
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+  },
+  // {
+  //   href: "/about",
+  //   label: "About",
+  //   title: "About",
+  //   description:
+  //     "About Africa Energy News — energy intelligence from Johannesburg, Lagos, and Nairobi.",
+  //   changeFrequency: "monthly" as const,
+  //   priority: 0.5,
+  // },
+] as const;
+
+export const NAV_LINKS = ROUTES.map(({ href, label }) => ({ href, label }));
+
+export function routeByHref(href: string) {
+  return ROUTES.find((route) => route.href === href);
+}
