@@ -70,19 +70,23 @@ export const ROUTES = [
     changeFrequency: "weekly" as const,
     priority: 0.6,
   },
-  // {
-  //   href: "/about",
-  //   label: "About",
-  //   title: "About",
-  //   description:
-  //     "About Africa Energy News — energy intelligence from Johannesburg, Lagos, and Nairobi.",
-  //   changeFrequency: "monthly" as const,
-  //   priority: 0.5,
-  // },
+  {
+    href: "/about",
+    label: "About",
+    title: "About",
+    description:
+      "About Africa Energy News — energy intelligence from Johannesburg, Lagos, and Nairobi.",
+    changeFrequency: "monthly" as const,
+    priority: 0.5,
+  },
 ] as const;
 
 export const NAV_LINKS = ROUTES.map(({ href, label }) => ({ href, label }));
 
 export function routeByHref(href: string) {
-  return ROUTES.find((route) => route.href === href);
+  const route = ROUTES.find((item) => item.href === href);
+  if (!route) {
+    throw new Error(`Unknown route: ${href}`);
+  }
+  return route;
 }
