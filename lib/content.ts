@@ -1,4 +1,4 @@
-export { NAV_LINKS } from "@/lib/site";
+export { FEATURED_INSIGHT, INSIGHTS_LINKS, NAV_LINKS } from "@/lib/site";
 
 export const UTILITY_LINKS = [
   { href: "/#latest", label: "Latest" },

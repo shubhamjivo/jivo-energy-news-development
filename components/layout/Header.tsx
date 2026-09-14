@@ -10,6 +10,7 @@ import {
   NAV_LINKS,
   UTILITY_LINKS,
 } from "@/lib/content";
+import { InsightsMenu } from "@/components/layout/InsightsMenu";
 import { Container } from "@/components/ui/Container";
 
 function isActive(pathname: string, href: string) {
@@ -23,6 +24,7 @@ export function Header() {
   const [compact, setCompact] = useState(false);
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [insightsOpen, setInsightsOpen] = useState(false);
 
   useEffect(() => {
     const node = mastheadRef.current;
@@ -110,6 +112,41 @@ export function Header() {
           >
             {NAV_LINKS.map((link) => {
               const active = isActive(pathname, link.href);
+              if (link.href === "/insights") {
+                return (
+                  <div
+                    key={link.href}
+                    className="relative"
+                    onMouseEnter={() => setInsightsOpen(true)}
+                    onMouseLeave={() => setInsightsOpen(false)}
+                  >
+                    <Link
+                      href={link.href}
+                      aria-current={active ? "page" : undefined}
+                      aria-expanded={insightsOpen}
+                      aria-haspopup="true"
+                      className={`inline-flex items-center gap-1 ${
+                        active
+                          ? "font-semibold leading-[18px] text-ink"
+                          : "leading-[21px] text-muted hover:text-ink"
+                      }`}
+                    >
+                      {link.label}
+                      <span aria-hidden className="text-[10px]">
+                        ▾
+                      </span>
+                    </Link>
+                    {insightsOpen ? (
+                      <div className="absolute top-full left-0 z-50 pt-3">
+                        <InsightsMenu
+                          pathname={pathname}
+                          onNavigate={() => setInsightsOpen(false)}
+                        />
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              }
               return (
                 <Link
                   key={link.href}
@@ -207,6 +244,27 @@ export function Header() {
             <Container className="flex flex-col gap-3">
             {NAV_LINKS.map((link) => {
               const active = isActive(pathname, link.href);
+              if (link.href === "/insights") {
+                return (
+                  <div key={link.href} className="flex flex-col gap-2">
+                    <Link
+                      href={link.href}
+                      aria-current={active ? "page" : undefined}
+                      className={
+                        active ? "text-sm font-semibold text-ink" : "text-sm text-ink"
+                      }
+                      onClick={() => setOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                    <InsightsMenu
+                      pathname={pathname}
+                      onNavigate={() => setOpen(false)}
+                      variant="inline"
+                    />
+                  </div>
+                );
+              }
               return (
                 <Link
                   key={link.href}

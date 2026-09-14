@@ -62,6 +62,51 @@ export const ROUTES = [
     priority: 0.7,
   },
   {
+    href: "/insights/learning-center",
+    label: "Learning Center",
+    title: "Learning Center",
+    description:
+      "Guides and explainers on solar, wind, storage, grids, and how Africa's power systems work.",
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+  },
+  {
+    href: "/insights/technology",
+    label: "Technology",
+    title: "Technology",
+    description:
+      "Technology coverage of solar, batteries, hydrogen, and grid innovation across African markets.",
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+  },
+  {
+    href: "/insights/reports",
+    label: "Reports",
+    title: "Reports",
+    description:
+      "Research reports on Africa energy investment, storage, solar markets, and hydrogen.",
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+  },
+  {
+    href: "/insights/opinion",
+    label: "Opinion",
+    title: "Opinion",
+    description:
+      "Commentary and analysis on Africa's energy transition, policy, and capital.",
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+  },
+  {
+    href: "/insights/interviews",
+    label: "Interviews",
+    title: "Interviews",
+    description:
+      "Conversations with developers, financiers, and policymakers shaping Africa's energy sector.",
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+  },
+  {
     href: "/events",
     label: "Events",
     title: "Events",
@@ -81,7 +126,21 @@ export const ROUTES = [
   },
 ] as const;
 
-export const NAV_LINKS = ROUTES.map(({ href, label }) => ({ href, label }));
+export const NAV_LINKS = ROUTES.filter(
+  (route) => route.href.split("/").filter(Boolean).length <= 1,
+).map(({ href, label }) => ({ href, label }));
+
+export const INSIGHTS_LINKS = ROUTES.filter((route) =>
+  route.href.startsWith("/insights/"),
+);
+
+export const FEATURED_INSIGHT = {
+  href: "/insights/reports",
+  kicker: "Featured Report",
+  title: "Africa Battery Storage Outlook 2026",
+  dek: "Deployment pipelines, procurement models and financing structures across ten priority markets.",
+  image: "/images/report-2.png",
+} as const;
 
 export function routeByHref(href: string) {
   const route = ROUTES.find((item) => item.href === href);
