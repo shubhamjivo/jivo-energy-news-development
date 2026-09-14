@@ -135,7 +135,7 @@ function ReelCard({
       >
         <span className="ml-0.5 border-y-[5px] border-l-[8px] border-y-transparent border-l-ink" />
       </a>
-      <span className="absolute right-3 top-3 rounded-full bg-black px-2 py-1 text-[10px] font-semibold text-white">
+      <span className="absolute right-3 top-3 rounded-full bg-neutral-900 px-2 py-1 text-[10px] font-semibold text-white">
         {reel.duration}
       </span>
       <div className="absolute inset-x-3 bottom-4">

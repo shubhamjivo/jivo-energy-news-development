@@ -42,7 +42,7 @@ export function InsightsMenu({
   }
 
   return (
-    <div className="flex w-[min(560px,calc(100vw-2rem))] border border-hairline bg-paper shadow-[0_12px_32px_-12px_rgba(3,14,80,0.28)]">
+    <div className="flex w-[min(560px,calc(100vw-2rem))] border border-hairline bg-paper shadow-[0_12px_32px_-12px_color-mix(in_srgb,var(--clr-primary-900)_28%,transparent)]">
       <ul className="flex min-w-[200px] flex-1 flex-col justify-center gap-4 px-6 py-6">
         {INSIGHTS_LINKS.map((link) => {
           const active = pathname === link.href;

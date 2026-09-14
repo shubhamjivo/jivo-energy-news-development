@@ -1,15 +1,42 @@
 @import "tailwindcss";
 
+:root {
+  --ff-primary: var(--font-roboto), Arial, Helvetica, sans-serif;
+  --ff-body: var(--ff-primary);
+  --ff-heading: var(--ff-primary);
+
+  --clr-primary-100: #c8e07b;
+  --clr-primary-200: #add139;
+  --clr-primary-400: #05146c;
+  --clr-primary-900: #030e50;
+
+  --clr-neutral-100: #ffffff;
+  --clr-neutral-200: #d6d9ea;
+  --clr-neutral-400: #05146c;
+  --clr-neutral-900: #000000;
+}
+
 @theme inline {
-  --color-navy: #030e50;
-  --color-ink: #030e50;
-  --color-muted: #05146c;
-  --color-accent: #add139;
-  --color-forest: #030e50;
-  --color-footer: #030e50;
-  --color-paper: #ffffff;
-  --color-hairline: #d6d9ea;
-  --font-sans: var(--font-roboto);
+  --color-primary-100: var(--clr-primary-100);
+  --color-primary-200: var(--clr-primary-200);
+  --color-primary-400: var(--clr-primary-400);
+  --color-primary-900: var(--clr-primary-900);
+  --color-neutral-100: var(--clr-neutral-100);
+  --color-neutral-200: var(--clr-neutral-200);
+  --color-neutral-400: var(--clr-neutral-400);
+  --color-neutral-900: var(--clr-neutral-900);
+
+  --color-navy: var(--clr-primary-900);
+  --color-ink: var(--clr-primary-900);
+  --color-muted: var(--clr-primary-400);
+  --color-accent: var(--clr-primary-200);
+  --color-forest: var(--clr-primary-900);
+  --color-footer: var(--clr-neutral-900);
+  --color-paper: var(--clr-neutral-100);
+  --color-hairline: var(--clr-neutral-200);
+
+  --font-sans: var(--ff-body);
+  --font-heading: var(--ff-heading);
   --font-weight-semibold: 500;
   --breakpoint-desk: 90rem;
 }
@@ -48,9 +75,18 @@
   body {
     text-rendering: optimizeSpeed;
     line-height: 1.5;
-    background: var(--color-paper);
-    color: var(--color-ink);
-    font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+    background: var(--clr-neutral-100);
+    color: var(--clr-primary-900);
+    font-family: var(--ff-body);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--ff-heading);
   }
 
   a:not([class]) {
@@ -123,12 +159,20 @@
   width: 6px;
   height: 6px;
   margin: 0 3px !important;
-  background: color-mix(in srgb, var(--color-muted) 50%, transparent);
+  background: color-mix(in srgb, var(--clr-primary-400) 50%, transparent);
   opacity: 1;
 }
 
 .carousel .swiper-pagination-bullet-active {
   width: 8px;
   height: 8px;
-  background: var(--color-ink);
+  background: var(--clr-primary-900);
+}
+
+.brief-ticker .swiper-wrapper {
+  transition-timing-function: linear !important;
+}
+
+.brief-ticker .swiper-slide {
+  width: auto;
 }

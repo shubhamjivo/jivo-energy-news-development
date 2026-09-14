@@ -4,7 +4,7 @@ import { Container } from "@/components/ui/Container";
 
 export function Footer() {
   return (
-    <footer className="bg-black pb-8 pt-10">
+    <footer className="bg-neutral-900 pb-8 pt-10">
       <Container className="flex flex-col gap-8 desk:flex-row desk:items-start desk:justify-between">
         <div className="flex flex-col gap-1.5">
           <Link href="/" className="text-xl font-bold text-white">

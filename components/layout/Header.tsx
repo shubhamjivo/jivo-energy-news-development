@@ -70,8 +70,8 @@ export function Header() {
                 className="text-center text-[32px] font-bold leading-none tracking-[-1.28px] desk:text-[64px]"
               >
                 <span className="text-navy">AFRICA</span>{" "}
-                <span className="text-black">ENERGY</span>{" "}
-                <span className="text-black">NEWS</span>
+                <span className="text-neutral-900">ENERGY</span>{" "}
+                <span className="text-neutral-900">NEWS</span>
               </Link>
               <div className="flex w-full items-center justify-between">
                 <p className="text-center text-[12px] leading-[18px] text-muted desk:text-left desk:text-sm desk:leading-[21px]">
@@ -90,7 +90,7 @@ export function Header() {
       </header>
 
       <div
-        className={`sticky top-0 z-40 bg-paper ${compact ? "shadow-[0_1px_0_0_var(--color-hairline),0_8px_16px_-12px_rgb(3_14_80_/_0.25)]" : ""
+        className={`sticky top-0 z-40 bg-paper ${compact ? "shadow-[0_1px_0_0_var(--clr-neutral-200),0_8px_16px_-12px_color-mix(in_srgb,var(--clr-primary-900)_25%,transparent)]" : ""
           }`}
       >
         <div className="h-px bg-accent" />
@@ -101,8 +101,8 @@ export function Header() {
               className="shrink-0 text-[13px] font-bold tracking-[-0.3px] desk:text-base"
             >
               <span className="text-navy">AFRICA</span>{" "}
-              <span className="text-black">ENERGY</span>{" "}
-              <span className="hidden text-black sm:inline">NEWS</span>
+              <span className="text-neutral-900">ENERGY</span>{" "}
+              <span className="hidden text-neutral-900 sm:inline">NEWS</span>
             </Link>
           ) : null}
 

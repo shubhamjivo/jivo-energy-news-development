@@ -54,6 +54,8 @@ export const LATEST_STORIES = [
 ] as const;
 
 export const LEAD_STORY = {
+  slug: "africas-renewable-energy-investment-pipeline-enters-a-new-phase",
+  href: "/news/africas-renewable-energy-investment-pipeline-enters-a-new-phase",
   image: "/images/lead-featured.png",
   caption: "1 / 4 · Utility-scale solar array at sunrise — West Africa",
   kicker: "SOLAR · INVESTMENT",
@@ -61,7 +63,67 @@ export const LEAD_STORY = {
   title: "Africa's Renewable Energy Investment Pipeline Enters a New Phase",
   dek: "A wave of financial closes across West Africa signals growing confidence from development finance institutions and private capital in utility-scale solar and storage.",
   byline: "By Amara Chukwu · 18 min ago · 6 min read",
+  author: "Amara Chukwu",
+  publishedAt: "2026-08-27T10:28:00.000Z",
 } as const;
+
+export const ARTICLE_BODY: { type: "p" | "h2"; text: string }[] = [
+  {
+    type: "p",
+    text: "LAGOS — A cluster of financial closes across Nigeria, Ghana and Senegal has shifted West Africa's utility-scale solar pipeline from announcement to execution. Developers, development finance institutions and commercial lenders say the deals are the first clear sign that hybrid solar-plus-storage projects can be banked at scale in the region — not only as demonstration assets, but as the core of new generation programmes.",
+  },
+  {
+    type: "p",
+    text: "The latest close, a $340 million regional vehicle pooling DFI capital with independent power producers, is the largest of four transactions completed since June. Together they cover more than 1.1 GW of solar and roughly 400 MWh of four-hour battery storage. Sponsors say the storage tranche was the condition that unlocked evening-peak offtake, rather than an optional extra.",
+  },
+  {
+    type: "p",
+    text: "\"For years the pipeline was a slide deck,\" said a Lagos-based project-finance banker who worked on two of the closes. \"What changed is that offtakers will now pay for firm power in the evening window, and lenders will underwrite that as a contracted product. That is a different market from selling midday megawatts into a congested grid.\"",
+  },
+  {
+    type: "h2",
+    text: "Storage is now part of the deal",
+  },
+  {
+    type: "p",
+    text: "Battery costs have fallen far enough that four-hour systems are being written into power-purchase agreements rather than parked in later phases. In Ghana, a sovereign-backed co-investment structure pairs desert and coastal PV with storage sized to the evening ramp. In Senegal, a first-of-kind bid window requires storage as a condition of dispatch, not a later upgrade.",
+  },
+  {
+    type: "p",
+    text: "That shift is also changing how risk is allocated. Lenders are asking for grid-code compliance, curtailment protection and offtaker payment security before they will fund the battery. Where those pieces are in place — typically a blend of DFI guarantees, liquidity facilities and take-or-pay offtake — closes are moving in months rather than years.",
+  },
+  {
+    type: "p",
+    text: "Nigeria remains the largest of the three markets by pipeline, but also the most sensitive to grid constraints. Sponsors there are clustering projects around new substations and industrial offtakers rather than relying solely on the bulk supplier. Corporate PPAs, still a small share of the book, are being used to firm revenue where sovereign offtake is slow to credit-enhance.",
+  },
+  {
+    type: "h2",
+    text: "What the pipeline still needs",
+  },
+  {
+    type: "p",
+    text: "Transmission, not turbines or panels, is the binding constraint. Several shovel-ready plants in Nigeria and Ghana are waiting on line upgrades that sit outside the generation close. Mission 300 concessional facilities are being stacked against those gaps, but developers say the sequencing is still wrong: generation reaches financial close while evacuation remains a public-works timetable.",
+  },
+  {
+    type: "p",
+    text: "Currency and convertibility remain the other unfinished piece. The recent closes used a mix of hard-currency offtake, local-currency tranches with DFI hedges, and escrowed dollar receivables from industrial buyers. That structure works for a handful of well-advised sponsors. It does not yet work as a template for the next 5 GW sitting in West African permitting queues.",
+  },
+  {
+    type: "p",
+    text: "Even so, the signal to private capital is clearer than it was a year ago. Funds that sat out earlier bid rounds are returning with term sheets that assume storage, not just solar. If the next two quarters deliver the same pace of closes — and if grid investment keeps up — West Africa's pipeline will look less like a list of memorandums and more like a construction programme.",
+  },
+];
+
+export function getArticleBySlug(slug: string) {
+  if (slug !== LEAD_STORY.slug) return undefined;
+  return { ...LEAD_STORY, body: ARTICLE_BODY };
+}
+
+export function getArticleSlugs() {
+  return [LEAD_STORY.slug];
+}
+
+export type Article = NonNullable<ReturnType<typeof getArticleBySlug>>;
 
 export const RELATED_NEWS = [
   {
@@ -184,6 +246,9 @@ export const ENERGY_BRIEF = [
   { kicker: "Solar", text: "New utility-scale projects announced across four markets" },
   { kicker: "Storage", text: "Battery deployments accelerate as tender pipelines grow" },
   { kicker: "Policy", text: "New renewable-energy frameworks emerge in West Africa" },
+  { kicker: "Grid", text: "Kenya accelerates solar and wind as grid investment grows" },
+  { kicker: "Deals", text: "West African solar consortium reaches $340M financial close" },
+  { kicker: "Hydrogen", text: "Namibia and Mauritania advance offtake talks as hubs near FID" },
 ] as const;
 
 export const NEWS_CARDS = [
