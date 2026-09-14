@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { LEAD_STORY } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
-import { CoverImage } from "@/components/ui/CoverImage";
+import { ArticleHero } from "@/components/news/ArticleHero";
 import { LatestNews } from "@/components/news/LatestNews";
 import { RelatedNews } from "@/components/news/RelatedNews";
 
@@ -15,21 +15,11 @@ export function LeadGrid() {
           </aside>
 
           <article className="order-1 min-w-0 flex-1 desk:order-2">
-            <Link href={LEAD_STORY.href} className="block">
-              <div className="relative h-[232px] w-full desk:h-[420px]">
-                <CoverImage
-                  src={LEAD_STORY.image}
-                  alt={LEAD_STORY.caption}
-                  className="h-full w-full"
-                  sizes="(max-width: 1439px) 100vw, 680px"
-                  priority
-                />
-              </div>
-            </Link>
+            <ArticleHero
+              slides={LEAD_STORY.gallery}
+              sizes="(max-width: 1439px) 100vw, 680px"
+            />
             <div className="mt-3.5 flex flex-col gap-2">
-              <p className="text-[11px] tracking-[0.22px] text-muted">
-                {LEAD_STORY.caption}
-              </p>
               <div className="flex flex-wrap items-center gap-3 text-[11px]">
                 <span className="font-semibold tracking-[0.88px] text-accent">
                   {LEAD_STORY.kicker}

@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/Header";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
+import { NewsletterCta } from "@/components/layout/NewsletterCta";
 
 const roboto = Roboto({
   subsets: ["latin"],

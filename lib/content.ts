@@ -65,6 +65,28 @@ export const LEAD_STORY = {
   byline: "By Amara Chukwu · 18 min ago · 6 min read",
   author: "Amara Chukwu",
   publishedAt: "2026-08-27T10:28:00.000Z",
+  gallery: [
+    {
+      src: "/images/lead-featured.png",
+      alt: "Utility-scale solar array at sunrise — West Africa",
+      caption: "Utility-scale solar array at sunrise — West Africa",
+    },
+    {
+      src: "/images/news-image/rooftop.png",
+      alt: "Rooftop solar module on a hybrid mounting frame",
+      caption: "Rooftop solar module on a hybrid mounting frame",
+    },
+    {
+      src: "/images/news-image/module.png",
+      alt: "Utility-scale module on a tracker mount",
+      caption: "Utility-scale module on a tracker mount",
+    },
+    {
+      src: "/images/news-image/junction.png",
+      alt: "Junction box and DC cabling on a 400W module",
+      caption: "Junction box and DC cabling on a 400W module",
+    },
+  ],
 } as const;
 
 export const ARTICLE_BODY: { type: "p" | "h2"; text: string }[] = [
@@ -249,6 +271,105 @@ export const ENERGY_BRIEF = [
   { kicker: "Grid", text: "Kenya accelerates solar and wind as grid investment grows" },
   { kicker: "Deals", text: "West African solar consortium reaches $340M financial close" },
   { kicker: "Hydrogen", text: "Namibia and Mauritania advance offtake talks as hubs near FID" },
+] as const;
+
+export const NEWS_FILTERS = [
+  "All",
+  "Solar",
+  "Wind",
+  "Battery",
+  "Hydrogen",
+  "Grid",
+  "Policy",
+  "Offtake",
+  "Companies",
+  "Investment",
+] as const;
+
+export const NEWS_RELATED = [
+  {
+    kicker: "GRID",
+    title: "Kenya accelerates solar and wind development as grid investment grows",
+    meta: "2 hr ago · Kenya",
+    image: "/images/latest-grid.png",
+  },
+  {
+    kicker: "POLICY",
+    title: "Mission 300 financing framework reaches new milestone",
+    meta: "8 hr ago · Continent",
+    image: "/images/related-policy.png",
+  },
+  {
+    kicker: "STORAGE",
+    title: "Malawi advances utility-scale battery storage deployment",
+    meta: "11 hr ago · Malawi",
+    image: "/images/related-storage.png",
+  },
+  {
+    kicker: "HYDROGEN",
+    title: "Green hydrogen projects move from announcements toward execution",
+    meta: "5 hr ago · Namibia · Mauritania",
+    image: "/images/related-hydrogen.png",
+  },
+] as const;
+
+export const NEWS_LATEST = [
+  {
+    kicker: "SOLAR",
+    title: "West African solar consortium reaches $340M financial close",
+    dek: "A regional vehicle pools DFI capital with independent power producers across four markets.",
+    byline: "By Naledi Mokoena · 6 hr ago · Nigeria · Ghana · Senegal",
+    image: "/images/news-1.png",
+  },
+  {
+    kicker: "GRID",
+    title: "Climate fund approves concessional facility for Ethiopian transmission",
+    dek: "New lines are designed to unlock a backlog of highland wind and solar.",
+    byline: "By Daniel Bekele · 9 hr ago · Ethiopia",
+    image: "/images/news-2.png",
+  },
+  {
+    kicker: "COMPANIES",
+    title: "Pan-African IPP acquires majority stake in Southern African storage developer",
+    dek: "The deal consolidates a pipeline of utility-scale batteries in South Africa and Zambia.",
+    byline: "By Amara Chukwu · 12 hr ago · South Africa · Zambia",
+    image: "/images/news-3.png",
+  },
+  {
+    kicker: "OFFTAKE",
+    title: "Corporate offtaker signs 15-year solar PPA for East African manufacturing hub",
+    dek: "Industrial demand is becoming a bankable counterpart to sovereign tenders.",
+    byline: "By Wanjiku Kariuki · Yesterday · Kenya",
+    image: "/images/news-4.png",
+  },
+  {
+    kicker: "WIND",
+    title: "New wind development pipeline expands in East Africa",
+    dek: "Developers are stacking hybrid configurations as grid codes tighten around variability.",
+    byline: "By Daniel Bekele · Yesterday · Kenya · Ethiopia",
+    image: "/images/news-7.png",
+  },
+  {
+    kicker: "BATTERY STORAGE",
+    title: "Utility-scale battery deployment accelerates across Southern Africa",
+    dek: "Tender pipelines in South Africa and Zambia point to a multi-gigawatt storage decade.",
+    byline: "By Naledi Mokoena · Yesterday · South Africa · Zambia",
+    image: "/images/latest-battery.png",
+  },
+  {
+    kicker: "SOLAR",
+    title: "Egypt advances new solar-plus-storage investment programme",
+    dek: "Cairo is pairing desert PV with four-hour batteries to firm evening peak.",
+    byline: "By Layla Hassan · 2 days ago · Egypt",
+    image: "/images/news-5.png",
+  },
+  {
+    kicker: "INVESTMENT",
+    title: "Transmission investment becomes the sector's top priority",
+    dek: "Without wires, a decade of generation auctions will stall at the substation gate.",
+    byline: "By Editorial · 2 days ago · Continent",
+    image: "/images/matters-grid.png",
+  },
 ] as const;
 
 export const NEWS_CARDS = [

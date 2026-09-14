@@ -1,9 +1,13 @@
 import Link from "next/link";
 import type { Article } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
-import { CoverImage } from "@/components/ui/CoverImage";
+import { ArticleHero } from "@/components/news/ArticleHero";
 import { LatestNews } from "@/components/news/LatestNews";
 import { RelatedNews } from "@/components/news/RelatedNews";
+import {
+  TableOfContents,
+  articleHeadingId,
+} from "@/components/news/TableOfContents";
 
 export function ArticleView({ article }: { article: Article }) {
   return (
@@ -19,20 +23,9 @@ export function ArticleView({ article }: { article: Article }) {
               {article.kicker}
             </p>
 
-            <div className="relative mt-3 h-[220px] w-full desk:h-[420px]">
-              <CoverImage
-                src={article.image}
-                alt={article.caption}
-                className="h-full w-full"
-                sizes="(max-width: 1439px) 100vw, 840px"
-                priority
-              />
-            </div>
+            <ArticleHero slides={article.gallery} className="mt-3" />
 
             <div className="mt-3.5 flex flex-col gap-2">
-              <p className="text-[11px] tracking-[0.22px] text-muted">
-                {article.caption}
-              </p>
               <div className="flex flex-wrap items-center gap-3 text-[11px]">
                 <span className="font-semibold tracking-[0.88px] text-accent">
                   {article.kicker}
@@ -52,12 +45,19 @@ export function ArticleView({ article }: { article: Article }) {
 
             <div className="mt-6 h-px bg-hairline" />
 
-            <div className="mt-6 flex  flex-col gap-5">
+            <TableOfContents
+              headings={article.body
+                .filter((block) => block.type === "h2")
+                .map((block) => block.text)}
+            />
+
+            <div id="overview" className="mt-6 flex scroll-mt-16 flex-col gap-5">
               {article.body.map((block, i) =>
                 block.type === "h2" ? (
                   <h2
                     key={i}
-                    className="pt-2 text-[22px] font-bold leading-[28px] text-ink"
+                    id={articleHeadingId(block.text)}
+                    className="scroll-mt-16 pt-2 text-[22px] font-bold leading-[28px] text-ink"
                   >
                     {block.text}
                   </h2>

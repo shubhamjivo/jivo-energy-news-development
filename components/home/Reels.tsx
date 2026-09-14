@@ -70,7 +70,7 @@ export function Reels() {
             aria-label="Next"
             disabled={!canNext}
             onClick={() => emblaApi?.scrollNext()}
-            className="flex size-9 items-center justify-center bg-forest text-lg text-white disabled:opacity-30"
+            className="flex size-9 rounded-full items-center justify-center bg-forest text-lg text-white disabled:opacity-30"
           >
             ›
           </button>

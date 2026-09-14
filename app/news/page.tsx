@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { EmptyMain } from "@/components/layout/EmptyMain";
+import { NewsletterCta } from "@/components/layout/NewsletterCta";
+import { NewsIndex } from "@/components/news/NewsIndex";
 import { routeByHref } from "@/lib/site";
 
 const route = routeByHref("/news")!;
@@ -16,5 +17,10 @@ export const metadata: Metadata = {
 };
 
 export default function NewsPage() {
-  return <EmptyMain title={route.title} />;
+  return (
+    <>
+      <NewsIndex />
+      <NewsletterCta />
+    </>
+  );
 }

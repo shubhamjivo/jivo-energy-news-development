@@ -12,12 +12,12 @@ export function LatestNews() {
         <Link
           key={story.title}
           href="/news"
-          className="flex gap-3 border-b border-hairline py-2"
+          className="flex gap-3 border-b last:border-b-0 border-hairline py-2"
         >
           <CoverImage
             src={story.image}
             alt={story.title}
-            className="size-[72px] shrink-0 rounded-sm"
+            className="size-[72px] shrink-0"
             sizes="72px"
           />
           <div className="flex min-w-0 flex-col gap-1.5">

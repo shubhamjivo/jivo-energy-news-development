@@ -42,9 +42,8 @@ function Controls({
         ref={nextRef}
         type="button"
         aria-label="Next"
-        className={`flex size-9 items-center justify-center text-lg text-white ${
-          nextTone === "navy" ? "bg-navy" : "bg-forest"
-        }`}
+        className={`flex size-9 items-center rounded-full justify-center text-lg text-white ${nextTone === "navy" ? "bg-navy" : "bg-forest"
+          }`}
       >
         ›
       </button>
@@ -96,8 +95,8 @@ export function Carousel({
         pagination={
           pagination
             ? {
-                clickable: true,
-              }
+              clickable: true,
+            }
             : false
         }
         onBeforeInit={bindNav}

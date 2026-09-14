@@ -115,15 +115,15 @@ export const ROUTES = [
     changeFrequency: "weekly" as const,
     priority: 0.6,
   },
-  {
-    href: "/about",
-    label: "About",
-    title: "About",
-    description:
-      "About Africa Energy News — energy intelligence from Johannesburg, Lagos, and Nairobi.",
-    changeFrequency: "monthly" as const,
-    priority: 0.5,
-  },
+  // {
+  //   href: "/about",
+  //   label: "About",
+  //   title: "About",
+  //   description:
+  //     "About Africa Energy News — energy intelligence from Johannesburg, Lagos, and Nairobi.",
+  //   changeFrequency: "monthly" as const,
+  //   priority: 0.5,
+  // },
 ] as const;
 
 export const NAV_LINKS = ROUTES.filter(

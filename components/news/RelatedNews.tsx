@@ -68,7 +68,7 @@ function RelatedRow({
       <CoverImage
         src={item.image}
         alt={item.title}
-        className="h-[72px] w-[88px] shrink-0 rounded-sm"
+        className="h-[72px] w-[88px] shrink-0"
         sizes="88px"
       />
     </Link>
