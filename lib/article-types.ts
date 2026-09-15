@@ -1,0 +1,31 @@
+export type CmsArticle = {
+  id: number;
+  title: string;
+  slug: string;
+  href: string;
+  kicker: string;
+  markets: string;
+  dek: string;
+  byline: string;
+  author: string;
+  coAuthors: string;
+  source: string;
+  readTime: number | null;
+  publishedAt: string;
+  updatedAt: string | null;
+  seoTitle: string;
+  seoDescription: string;
+  ogTitle: string;
+  ogDescription: string;
+  ogImage: string;
+  image: string;
+  caption: string;
+  gallery: {
+    src: string;
+    alt: string;
+    caption: string;
+  }[];
+  contentHtml: string;
+  headings: string[];
+  relatedNewsIds: number[];
+};

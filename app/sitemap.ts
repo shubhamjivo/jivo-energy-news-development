@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next";
-import { LEAD_STORY } from "@/lib/content";
+import { getArticleSitemapEntries } from "@/lib/articles";
 import { ROUTES, SITE_URL } from "@/lib/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const pages = ROUTES.map((route) => ({
     url: `${SITE_URL}${route.href === "/" ? "" : route.href}`,
     lastModified: new Date(),
@@ -10,13 +10,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: route.priority,
   }));
 
-  return [
-    ...pages,
-    {
-      url: `${SITE_URL}${LEAD_STORY.href}`,
-      lastModified: new Date(LEAD_STORY.publishedAt),
-      changeFrequency: "daily",
+  let articles: MetadataRoute.Sitemap = [];
+  try {
+    const entries = await getArticleSitemapEntries();
+    articles = entries.map((entry) => ({
+      url: `${SITE_URL}/news/${entry.slug}`,
+      lastModified: new Date(entry.lastModified),
+      changeFrequency: "daily" as const,
       priority: 0.85,
-    },
-  ];
+    }));
+  } catch {
+    articles = [];
+  }
+
+  return [...pages, ...articles];
 }

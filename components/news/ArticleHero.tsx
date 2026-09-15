@@ -16,14 +16,18 @@ export function ArticleHero({
   slides,
   className = "",
   sizes = "(max-width: 1439px) 100vw, 840px",
+  unoptimized = false,
+  priority = true,
 }: {
   slides: readonly Slide[];
   className?: string;
   sizes?: string;
+  unoptimized?: boolean;
+  priority?: boolean;
 }) {
   const [index, setIndex] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
-  const current = slides[index];
+  const current = slides[index] ?? slides[0];
 
   return (
     <div className={className}>
@@ -44,7 +48,8 @@ export function ArticleHero({
                 alt={slide.alt}
                 className="h-[232px] w-full desk:h-[420px]"
                 sizes={sizes}
-                priority={i === 0}
+                priority={priority && i === 0}
+                unoptimized={unoptimized}
               />
             </SwiperSlide>
           ))}
@@ -80,9 +85,11 @@ export function ArticleHero({
           ))}
         </div>
       </div>
-      <p className="mt-3.5 text-[11px] tracking-[0.22px] text-muted">
-        {index + 1} / {slides.length} · {current.caption}
-      </p>
+      {current ? (
+        <p className="mt-3.5 text-[11px] tracking-[0.22px] text-muted">
+          {index + 1} / {slides.length} · {current.caption}
+        </p>
+      ) : null}
     </div>
   );
 }

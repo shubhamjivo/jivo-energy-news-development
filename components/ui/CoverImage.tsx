@@ -6,6 +6,7 @@ type CoverImageProps = {
   className?: string;
   sizes?: string;
   priority?: boolean;
+  unoptimized?: boolean;
 };
 
 export function CoverImage({
@@ -14,6 +15,7 @@ export function CoverImage({
   className = "",
   sizes = "(max-width: 768px) 100vw, 33vw",
   priority = false,
+  unoptimized = false,
 }: CoverImageProps) {
   return (
     <div className={`relative overflow-hidden bg-ink/10 ${className}`}>
@@ -23,6 +25,7 @@ export function CoverImage({
         fill
         sizes={sizes}
         priority={priority}
+        unoptimized={unoptimized}
         className="object-cover"
       />
     </div>

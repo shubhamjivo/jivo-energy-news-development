@@ -1,22 +1,20 @@
-function headingId(text: string) {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
+import { articleHeadingId } from "@/lib/article-html";
 
-export function articleHeadingId(text: string) {
-  return headingId(text);
-}
+export { articleHeadingId };
 
 export function TableOfContents({
   headings,
+  idPrefix,
 }: {
   headings: readonly string[];
+  idPrefix: string;
 }) {
   const items = [
-    { id: "overview", label: "Overview" },
-    ...headings.map((text) => ({ id: headingId(text), label: text })),
+    { id: `${idPrefix}-overview`, label: "Overview" },
+    ...headings.map((text) => ({
+      id: `${idPrefix}-${articleHeadingId(text)}`,
+      label: text,
+    })),
   ];
 
   return (
