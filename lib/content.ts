@@ -537,7 +537,7 @@ export const INSIGHT_FEATURED = {
   dek: "A practical guide to power from sunlight, wind, water and heat—and why these sources naturally replenish.",
   read: "7 min read",
   byline: "By Editorial Team",
-  image: "/images/insight-featured.png",
+  image: "/images/insight-cover.jpeg"
 } as const;
 
 export const INSIGHT_CARDS = [
@@ -582,6 +582,11 @@ export const INSIGHT_SIDEBAR = [
     dek: "A reliable renewable grid combines diverse locations, storage, transmission and flexible demand.",
     read: "7 min read",
   },
+  // {
+  //   title: "how does wind and power a grid around the clock?",
+  //   dek: "A reliable renewable grid combines diverse locations, storage, transmission and flexible demand.",
+  //   read: "7 min read",
+  // },
 ] as const;
 
 export const INVESTMENTS = [

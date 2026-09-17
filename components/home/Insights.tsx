@@ -20,9 +20,9 @@ export function Insights() {
           <div className="min-w-0 flex-1">
             <Link
               href="/insights"
-              className="flex flex-col overflow-hidden desk:h-[328px] desk:flex-row"
+              className="flex gap-6 flex-col overflow-hidden desk:h-[250px] desk:flex-row"
             >
-              <div className="flex min-w-0 flex-col gap-2.5 p-6 desk:flex-1 desk:p-8">
+              <div className="flex min-w-0 flex-col gap-2.5 desk:flex-1">
                 <h3 className="text-[32px] font-bold leading-[1.1] text-ink desk:text-[40px]">
                   {INSIGHT_FEATURED.title}
                 </h3>
@@ -38,12 +38,12 @@ export function Insights() {
               <CoverImage
                 src={INSIGHT_FEATURED.image}
                 alt={INSIGHT_FEATURED.title}
-                className="h-[220px] w-full desk:h-[328px] desk:w-[280px] desk:shrink-0"
-                sizes="(max-width: 1439px) 100vw, 360px"
+                className="h-[220px] w-full desk:h-[250px] desk:w-[380px] desk:shrink-0"
+                sizes="(max-width: 1439px) 100vw, 460px"
               />
             </Link>
 
-            <div className="mt-8 grid gap-6 sm:grid-cols-3">
+            <div className="mt-4 grid gap-6 sm:grid-cols-3">
               {INSIGHT_CARDS.map((card) => (
                 <Link key={card.title} href="/insights" className="flex flex-col gap-2.5">
                   <CoverImage
@@ -60,14 +60,18 @@ export function Insights() {
             </div>
           </div>
 
-          <aside className="flex w-full min-w-0 flex-col justify-center gap-10 desk:w-[320px] desk:shrink-0 desk:gap-12">
+          <aside className="flex w-full min-w-0 flex-col divide-y divide-hairline desk:w-[320px] desk:shrink-0">
             {INSIGHT_SIDEBAR.map((item) => (
-              <Link key={item.title} href="/insights" className="flex flex-col gap-2.5">
-                <p className="text-xl font-bold leading-[1.2] text-ink desk:text-2xl">
+              <Link
+                key={item.title}
+                href="/insights"
+                className="flex flex-col gap-1.5 py-4 first:pt-0 last:pb-0 desk:gap-2 desk:py-4"
+              >
+                <h4 className="text-sm font-semibold leading-snug text-ink desk:text-base">
                   {item.title}
-                </p>
-                <p className="text-[13px] leading-[19px] text-ink/70">{item.dek}</p>
-                <p className="text-xs text-accent">{item.read}</p>
+                </h4>
+                <p className="text-[12px] leading-[17px] text-ink/70">{item.dek}</p>
+                <p className="text-[11px] text-accent">{item.read}</p>
               </Link>
             ))}
           </aside>
