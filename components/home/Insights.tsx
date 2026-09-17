@@ -43,7 +43,7 @@ export function Insights() {
               />
             </Link>
 
-            <div className="mt-4 grid gap-6 sm:grid-cols-3">
+            <div className="mt-4 grid gap-6 border-t border-hairline pt-2 sm:grid-cols-3">
               {INSIGHT_CARDS.map((card) => (
                 <Link key={card.title} href="/insights" className="flex flex-col gap-2.5">
                   <CoverImage
