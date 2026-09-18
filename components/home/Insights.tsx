@@ -23,7 +23,7 @@ export function Insights() {
               className="flex gap-6 flex-col overflow-hidden desk:h-[250px] desk:flex-row"
             >
               <div className="flex min-w-0 flex-col gap-2.5 desk:flex-1">
-                <h3 className="text-[32px] font-bold leading-[1.1] text-ink desk:text-[40px]">
+                <h3 className="text-[32px] font-bold leading-[1.1] text-ink desk:text-[30px]">
                   {INSIGHT_FEATURED.title}
                 </h3>
                 <p className="text-[13px] leading-[19px] text-ink/70">
