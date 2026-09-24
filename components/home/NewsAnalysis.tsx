@@ -10,29 +10,29 @@ export function NewsAnalysis() {
   return (
     <section className="pb-3 pt-8 desk:pt-10">
       <Container>
-      <SectionHeading
-        kicker="THE NEWSROOM"
-        title="News & Analysis"
-        href="/news"
-        action="Latest Africa Energy →"
-      />
-      <div className="mt-3.5 h-px bg-ink" />
+        <SectionHeading
+          kicker="THE NEWSROOM"
+          title="News"
+          href="/news"
+          action="Latest Africa Energy →"
+        />
+        <div className="mt-3.5 h-px bg-ink" />
 
-      <div className="mt-5 hidden grid-cols-4 gap-x-5 gap-y-6 desk:grid">
-        {NEWS_CARDS.map((card) => (
-          <NewsCard key={card.title} card={card} />
-        ))}
-      </div>
-
-      <div className="mt-5 desk:hidden">
-        <Carousel spaceBetween={16} controls>
+        <div className="mt-5 hidden grid-cols-4 gap-x-5 gap-y-6 desk:grid">
           {NEWS_CARDS.map((card) => (
-            <div key={card.title} className="w-[280px]">
-              <NewsCard card={card} />
-            </div>
+            <NewsCard key={card.title} card={card} />
           ))}
-        </Carousel>
-      </div>
+        </div>
+
+        <div className="mt-5 desk:hidden">
+          <Carousel spaceBetween={16} controls>
+            {NEWS_CARDS.map((card) => (
+              <div key={card.title} className="w-[280px]">
+                <NewsCard card={card} />
+              </div>
+            ))}
+          </Carousel>
+        </div>
       </Container>
     </section>
   );
