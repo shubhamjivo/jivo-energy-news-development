@@ -1,9 +1,26 @@
 "use client";
 
 import { useState } from "react";
+import {
+  AFRICA_HEIGHT,
+  AFRICA_LAND,
+  AFRICA_MARKETS,
+  AFRICA_WIDTH,
+} from "@/components/countries/africa-map";
 import { PageIntro } from "@/components/layout/PageIntro";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
+
+const LABEL_PLACE = {
+  morocco: "top-full left-1/2 mt-1 -translate-x-1/2",
+  egypt: "top-1/2 right-full mr-1.5 -translate-y-1/2",
+  ghana: "top-1/2 right-full mr-1.5 -translate-y-1/2",
+  nigeria: "top-1/2 left-full ml-1.5 -translate-y-1/2",
+  ethiopia: "top-1/2 left-full ml-1.5 -translate-y-1/2",
+  kenya: "top-full left-1/2 mt-1 -translate-x-1/2",
+  namibia: "top-1/2 right-full mr-1.5 -translate-y-1/2",
+  "south-africa": "top-full left-1/2 mt-1 -translate-x-1/2",
+} as const;
 
 const MARKETS = [
   {
@@ -26,7 +43,6 @@ const MARKETS = [
     news: "Battery Energy Storage bid window 3 results announced, adding 615 MW.",
     investment: "REIPPPP round attracts record independent power producer bids.",
     policy: "Grid code amendment accelerates private wheeling approvals.",
-    dot: { top: "74%", left: "54%" },
   },
   {
     id: "kenya",
@@ -48,7 +64,6 @@ const MARKETS = [
     news: "New transmission capacity is unlocking a backlog of shovel-ready wind and solar.",
     investment: "KenGen lines up the next Rift Valley geothermal increment.",
     policy: "Grid-code changes are pulling hybrid projects into the evening peak.",
-    dot: { top: "46%", left: "62%" },
   },
   {
     id: "nigeria",
@@ -70,7 +85,6 @@ const MARKETS = [
     news: "Industrial offtakers are clustering projects around new substations.",
     investment: "A regional solar vehicle closed with storage written into the PPA.",
     policy: "Corporate PPAs are filling the gap where sovereign offtake is slow.",
-    dot: { top: "40%", left: "46%" },
   },
   {
     id: "egypt",
@@ -92,7 +106,6 @@ const MARKETS = [
     news: "A sovereign-backed vehicle is targeting hybrid solar and storage on the Red Sea coast.",
     investment: "Hydrogen offtake talks are moving hubs toward front-end engineering.",
     policy: "Land and grid allocation is the constraint, not the auction price.",
-    dot: { top: "24%", left: "58%" },
   },
   {
     id: "namibia",
@@ -113,7 +126,6 @@ const MARKETS = [
     news: "Tsau Khaeb offtake negotiations are the test of whether the hub can reach FID.",
     investment: "Export-linked hydrogen is being paired with dedicated renewables.",
     policy: "Port and water rights now sit on the same timetable as generation.",
-    dot: { top: "68%", left: "42%" },
   },
   {
     id: "ethiopia",
@@ -134,7 +146,6 @@ const MARKETS = [
     news: "The Aysha wind corridor is in permitting as new lines are sequenced.",
     investment: "A concessional facility is aimed at transmission, not another plant.",
     policy: "Currency convertibility remains the open question for private sponsors.",
-    dot: { top: "42%", left: "68%" },
   },
   {
     id: "morocco",
@@ -155,7 +166,6 @@ const MARKETS = [
     news: "Hybrid solar-wind sites are being sized for evening export windows.",
     investment: "European offtake is back in term sheets for the next bid round.",
     policy: "Interconnector timing is now written into project schedules.",
-    dot: { top: "16%", left: "36%" },
   },
   {
     id: "ghana",
@@ -176,7 +186,6 @@ const MARKETS = [
     news: "A first bid window requires storage as a condition of dispatch.",
     investment: "Sovereign-backed co-investment is pairing coastal PV with four-hour batteries.",
     policy: "Evening-peak offtake is what unlocked lender appetite.",
-    dot: { top: "44%", left: "38%" },
   },
 ] as const;
 
@@ -211,23 +220,71 @@ export function CountriesIndex() {
               <p className="text-[10px] font-semibold tracking-[0.8px] text-muted">
                 REGIONAL OVERVIEW
               </p>
-              <div className="relative mt-3 h-[340px] bg-[color-mix(in_srgb,var(--clr-neutral-200)_45%,white)]">
+              <div
+                className="relative mt-3 w-full bg-[color-mix(in_srgb,var(--clr-neutral-200)_35%,white)]"
+                style={{ aspectRatio: `${AFRICA_WIDTH} / ${AFRICA_HEIGHT}` }}
+              >
+                <svg
+                  viewBox={`0 0 ${AFRICA_WIDTH} ${AFRICA_HEIGHT}`}
+                  className="absolute inset-0 h-full w-full"
+                  role="img"
+                  aria-label="Map of Africa"
+                >
+                  <path
+                    d={AFRICA_LAND}
+                    fill="color-mix(in srgb, var(--clr-primary-900) 10%, white)"
+                  />
+                  {Object.entries(AFRICA_MARKETS).map(([id, market]) => (
+                    <path
+                      key={id}
+                      d={market.d}
+                      fill={
+                        id === selected.id
+                          ? "color-mix(in srgb, var(--clr-primary-200) 55%, white)"
+                          : "color-mix(in srgb, var(--clr-primary-900) 10%, white)"
+                      }
+                      fillRule="evenodd"
+                    />
+                  ))}
+                  <path
+                    d={AFRICA_LAND}
+                    fill="none"
+                    stroke="var(--clr-primary-900)"
+                    strokeWidth="0.8"
+                    fillRule="evenodd"
+                  />
+                  {Object.entries(AFRICA_MARKETS).map(([id, market]) => (
+                    <path
+                      key={`${id}-border`}
+                      d={market.d}
+                      fill="none"
+                      stroke="var(--clr-primary-900)"
+                      strokeWidth="0.8"
+                      fillRule="evenodd"
+                    />
+                  ))}
+                </svg>
                 {MARKETS.map((market) => {
+                  const point = AFRICA_MARKETS[market.id];
                   const active = market.id === selected.id;
                   return (
                     <button
                       key={market.id}
                       type="button"
                       onClick={() => setSelectedId(market.id)}
-                      className="absolute -translate-x-1/2 -translate-y-1/2 text-left"
-                      style={{ top: market.dot.top, left: market.dot.left }}
+                      aria-pressed={active}
+                      aria-label={market.name}
+                      className="absolute -translate-x-1/2 -translate-y-1/2"
+                      style={{ top: `${point.top}%`, left: `${point.left}%` }}
                     >
                       <span
-                        className={`mx-auto block size-2.5 rounded-full ${
+                        className={`block size-2.5 rounded-full ${
                           active ? "bg-navy ring-4 ring-accent" : "bg-navy"
                         }`}
                       />
-                      <span className="mt-1 block text-[11px] whitespace-nowrap text-ink">
+                      <span
+                        className={`absolute text-[11px] whitespace-nowrap text-ink ${LABEL_PLACE[market.id]}`}
+                      >
                         {market.name}
                       </span>
                     </button>
@@ -235,7 +292,7 @@ export function CountriesIndex() {
                 })}
               </div>
               <p className="mt-3 text-[11px] text-muted">
-                Illustrative node map — not to scale. Data shown is representative.
+                Select a country. Figures are representative.
               </p>
             </div>
 
