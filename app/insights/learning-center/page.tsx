@@ -1,11 +1,23 @@
-import { EmptyMain } from "@/components/layout/EmptyMain";
+import { InsightsIndex } from "@/components/insights/InsightsIndex";
+import { NewsletterCta } from "@/components/layout/NewsletterCta";
 import { pageMetadata } from "@/lib/page-meta";
 import { routeByHref } from "@/lib/site";
 
 const href = "/insights/learning-center";
+const route = routeByHref(href);
 
 export const metadata = pageMetadata(href);
 
 export default function LearningCenterPage() {
-  return <EmptyMain title={routeByHref(href).title} />;
+  return (
+    <>
+      <InsightsIndex
+        kicker="ANALYSIS"
+        title={route.title}
+        dek={route.description}
+        variant="notes"
+      />
+      <NewsletterCta />
+    </>
+  );
 }

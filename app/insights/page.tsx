@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { EmptyMain } from "@/components/layout/EmptyMain";
+import { InsightsIndex } from "@/components/insights/InsightsIndex";
+import { NewsletterCta } from "@/components/layout/NewsletterCta";
 import { routeByHref } from "@/lib/site";
 
 const route = routeByHref("/insights")!;
@@ -16,5 +17,10 @@ export const metadata: Metadata = {
 };
 
 export default function InsightsPage() {
-  return <EmptyMain title={route.title} />;
+  return (
+    <>
+      <InsightsIndex />
+      <NewsletterCta />
+    </>
+  );
 }
