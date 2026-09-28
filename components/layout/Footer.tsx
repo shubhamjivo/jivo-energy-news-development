@@ -1,14 +1,15 @@
 import Link from "next/link";
 import { FOOTER_COLUMNS } from "@/lib/content";
+import { Logo } from "@/components/layout/Logo";
 import { Container } from "@/components/ui/Container";
 
 export function Footer() {
   return (
     <footer className="bg-neutral-900 pb-8 pt-10">
       <Container className="flex flex-col gap-8 desk:flex-row desk:items-start desk:justify-between">
-        <div className="flex flex-col gap-1.5">
-          <Link href="/" className="text-xl font-bold text-white">
-            AFRICA ENERGY
+        <div className="flex flex-col items-start gap-3">
+          <Link href="/" className="block w-[180px] max-w-full desk:w-[200px]">
+            <Logo sizes="200px" className="h-auto w-full" />
           </Link>
           <p className="text-[11px] tracking-[0.22px] text-accent">
             Energy intelligence, Africa-first

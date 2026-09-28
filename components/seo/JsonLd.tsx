@@ -11,6 +11,12 @@ export function JsonLd() {
         url: SITE_URL,
         description: SITE_DESCRIPTION,
         slogan: SITE_TAGLINE,
+        logo: {
+          "@type": "ImageObject",
+          url: `${SITE_URL}/logo/${encodeURIComponent("Africa Energy News Logo with background.jpg")}`,
+          width: 2981,
+          height: 2000,
+        },
         publishingPrinciples: `${SITE_URL}/about`,
       },
       {
