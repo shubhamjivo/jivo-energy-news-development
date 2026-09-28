@@ -315,9 +315,7 @@ export function Header() {
                   </Link>
                 );
               })}
-              {UTILITY_LINKS.filter(
-                (link) => !NAV_LINKS.some((item) => item.href === link.href),
-              ).map((link) => (
+              {UTILITY_LINKS.map((link) => (
                 <Link
                   key={link.label}
                   href={link.href}
