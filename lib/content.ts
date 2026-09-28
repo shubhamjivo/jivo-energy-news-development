@@ -2,14 +2,13 @@ export { FEATURED_INSIGHT, INSIGHTS_LINKS, NAV_LINKS } from "@/lib/site";
 
 export const UTILITY_LINKS = [
   { href: "/#latest", label: "Latest" },
-  { href: "/#africa-times", label: "Trending" },
+  { href: "/#africa-times", label: "Africa Times" },
   { href: "/#brief", label: "Africa Energy Brief" },
-  { href: "/events", label: "Events" },
+  { href: "/#project-watch", label: "Project Watch" },
   { href: "/#newsletter", label: "Newsletter" },
 ] as const;
 
-export const DATE_LINE =
-  "Thursday, August 27, 2026 · Johannesburg · Lagos · Nairobi · 10:46 UTC";
+export const DATE_LINE = "Thu, Aug 27, 2026 · 10:46 UTC";
 
 export const MOBILE_DATE = "Thu, Aug 27, 2026";
 export const MOBILE_TIME = "10:46 UTC";

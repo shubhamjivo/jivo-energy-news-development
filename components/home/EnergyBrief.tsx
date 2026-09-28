@@ -10,7 +10,7 @@ const TICKER_ITEMS = [...ENERGY_BRIEF, ...ENERGY_BRIEF];
 
 export function EnergyBrief() {
   return (
-    <section id="brief" className="bg-ink" aria-label="Africa Energy Brief">
+    <section id="brief" className="scroll-mt-36 bg-ink" aria-label="Africa Energy Brief">
       <Container className="flex items-center gap-4">
         <div className="flex h-[52px] shrink-0 items-center border-r border-white/20 px-4">
           <p className="text-[11px] font-bold tracking-[0.44px] whitespace-nowrap text-white">

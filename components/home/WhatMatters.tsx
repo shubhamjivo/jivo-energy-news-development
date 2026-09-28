@@ -8,7 +8,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 
 export function WhatMatters() {
   return (
-    <section className="pb-3 pt-8 desk:pt-10">
+    <section id="what-matters" className="scroll-mt-36 pb-3 pt-8 desk:pt-10">
       <Container className="relative">
         <SectionHeading
           kicker="TODAY"

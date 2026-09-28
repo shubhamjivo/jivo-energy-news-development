@@ -7,10 +7,10 @@ import { RelatedNews } from "@/components/news/RelatedNews";
 
 export function LeadGrid() {
   return (
-    <section className="py-6 desk:py-8">
+    <section id="latest" className="scroll-mt-36 py-6 desk:py-8">
       <Container>
         <div className="flex flex-col gap-8 desk:flex-row desk:items-start desk:gap-6">
-          <aside className="order-3 hidden w-[300px] shrink-0 desk:order-1 desk:block" id="latest">
+          <aside className="order-3 hidden w-[300px] shrink-0 desk:order-1 desk:block">
             <LatestNews />
           </aside>
 
@@ -43,7 +43,7 @@ export function LeadGrid() {
           </div>
         </div>
 
-        <div className="mt-8 desk:hidden" id="latest">
+        <div className="mt-8 desk:hidden">
           <LatestNews />
         </div>
       </Container>

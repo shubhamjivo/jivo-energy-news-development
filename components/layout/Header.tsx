@@ -165,7 +165,9 @@ export function Header() {
             <div className="flex min-w-0 flex-1 flex-col justify-center">
               <div
                 className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${
-                  compact ? "grid-rows-[0fr] opacity-0" : "grid-rows-[1fr] opacity-100"
+                  compact
+                    ? "pointer-events-none grid-rows-[0fr] opacity-0"
+                    : "grid-rows-[1fr] opacity-100"
                 }`}
               >
                 <div className="overflow-hidden">

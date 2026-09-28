@@ -18,7 +18,7 @@ export function ProjectWatch() {
   );
 
   return (
-    <section className="pb-2 pt-8 desk:pt-10">
+    <section id="project-watch" className="scroll-mt-36 pb-2 pt-8 desk:pt-10">
       <Container>
       <SectionHeading
         kicker="THE PROJECT FILE"

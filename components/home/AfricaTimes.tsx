@@ -7,7 +7,7 @@ import { Carousel } from "@/components/ui/Carousel";
 
 export function AfricaTimes() {
   return (
-    <section id="africa-times" className="py-8 desk:py-10">
+    <section id="africa-times" className="scroll-mt-36 py-8 desk:py-10">
       <Container>
       <div className="flex flex-col gap-2 desk:flex-row desk:items-center desk:gap-2.5">
         <div className="flex items-center gap-2.5">
