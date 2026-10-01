@@ -1,22 +1,24 @@
+import type { Metadata } from "next";
 import { InsightsIndex } from "@/components/insights/InsightsIndex";
 import { NewsletterCta } from "@/components/layout/NewsletterCta";
-import { pageMetadata } from "@/lib/page-meta";
-import { routeByHref } from "@/lib/site";
+import { getInsights } from "@/lib/cms";
+import { pageContent, pageMetadata } from "@/lib/page-meta";
 
 const href = "/insights/learning-center";
-const route = routeByHref(href);
 
-export const metadata = pageMetadata(href);
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata(href);
+}
 
-export default function LearningCenterPage() {
+export default async function LearningCenterPage() {
+  const [intro, items] = await Promise.all([
+    pageContent(href),
+    getInsights({ types: ["Learning Center"] }),
+  ]);
+
   return (
     <>
-      <InsightsIndex
-        kicker="ANALYSIS"
-        title={route.title}
-        dek={route.description}
-        variant="notes"
-      />
+      <InsightsIndex intro={intro} notes={items} />
       <NewsletterCta />
     </>
   );

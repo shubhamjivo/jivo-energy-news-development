@@ -58,13 +58,13 @@ function RelatedRow({ item }: { item: ArticleCard }) {
       href={item.href}
       className="flex gap-3 border-b border-hairline py-3 last:border-b-0"
     >
-      <div className="flex min-w-0 flex-1 flex-col gap-1">
+      <div className="flex min-w-0 flex-col gap-1">
         {item.kicker ? <Kicker>{item.kicker}</Kicker> : null}
         <p className="text-[15px] font-semibold leading-[18px] text-ink">
           {item.title}
         </p>
         {item.dek ? (
-          <p className="line-clamp-2 text-xs leading-4 text-muted">{item.dek}</p>
+          <p className="text-xs leading-4 text-muted">{item.dek}</p>
         ) : null}
       </div>
       {item.thumbnail ? (

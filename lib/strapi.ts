@@ -33,7 +33,6 @@ export type StrapiArticleSummary = {
   read_time?: number | null;
   short_content?: string | null;
   markets?: string | null;
-  is_featured?: boolean | null;
   publishedAt: string;
   createdAt: string;
   updatedAt: string | null;
@@ -44,6 +43,7 @@ export type StrapiArticleSummary = {
 
 export type StrapiArticle = StrapiArticleSummary & {
   content?: string | null;
+  gallery?: StrapiMedia[] | null;
   seo?: StrapiSeo | null;
   related_articles?: StrapiArticleSummary[] | null;
 };
@@ -65,11 +65,11 @@ type StrapiListResponse<T> = {
 export const STRAPI_CACHE_TAG = "strapi";
 
 type QueryValue = string | number | boolean | QueryValue[] | Query;
-type Query = { [key: string]: QueryValue };
+export type Query = { [key: string]: QueryValue };
 
-const MEDIA_FIELDS = ["url", "alternativeText", "caption", "width", "height"];
+export const MEDIA_FIELDS = ["url", "alternativeText", "caption", "width", "height"];
 
-const SUMMARY_FIELDS = [
+export const SUMMARY_FIELDS = [
   "title",
   "slug",
   "author",
@@ -78,13 +78,12 @@ const SUMMARY_FIELDS = [
   "read_time",
   "short_content",
   "markets",
-  "is_featured",
   "publishedAt",
   "createdAt",
   "updatedAt",
 ];
 
-const SUMMARY_POPULATE: Query = {
+export const SUMMARY_POPULATE: Query = {
   banner: { fields: MEDIA_FIELDS },
   thumbnail: { fields: MEDIA_FIELDS },
   category: { fields: ["title", "slug"] },
@@ -92,6 +91,7 @@ const SUMMARY_POPULATE: Query = {
 
 const FULL_POPULATE: Query = {
   ...SUMMARY_POPULATE,
+  gallery: { fields: MEDIA_FIELDS },
   seo: { populate: { metaImage: { fields: MEDIA_FIELDS } } },
   related_articles: { fields: SUMMARY_FIELDS, populate: SUMMARY_POPULATE },
 };
@@ -125,9 +125,13 @@ function encodeQuery(
   return out;
 }
 
+// A stalled CMS should fail fast so pages render their fallbacks.
+const TIMEOUT_MS = 10_000;
+
 async function strapiFetch(path: string, init?: RequestInit) {
   const { url, token } = getStrapiConfig();
   const response = await fetch(`${url}${path}`, {
+    signal: AbortSignal.timeout(TIMEOUT_MS),
     ...init,
     headers: {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -141,14 +145,35 @@ async function strapiFetch(path: string, init?: RequestInit) {
   return response;
 }
 
-async function strapiList<T>(
+const CACHED: RequestInit = { next: { revalidate: 300, tags: [STRAPI_CACHE_TAG] } };
+
+export async function strapiList<T>(
   collection: string,
   query: Query,
-  init: RequestInit = { next: { revalidate: 300, tags: [STRAPI_CACHE_TAG] } },
+  init: RequestInit = CACHED,
 ) {
   const search = encodeQuery(query).toString();
   const response = await strapiFetch(`/api/${collection}?${search}`, init);
   return (await response.json()) as StrapiListResponse<T>;
+}
+
+// Single types answer 404 until an editor first saves them.
+export async function strapiSingle<T>(name: string, query: Query) {
+  const { url, token } = getStrapiConfig();
+  const search = encodeQuery(query).toString();
+  const response = await fetch(`${url}/api/${name}?${search}`, {
+    signal: AbortSignal.timeout(TIMEOUT_MS),
+    ...CACHED,
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      Accept: "application/json",
+    },
+  });
+  if (response.status === 404) return null;
+  if (!response.ok) {
+    throw new Error(`Strapi request failed (${response.status})`);
+  }
+  return ((await response.json()) as { data: T | null }).data;
 }
 
 export async function strapiMedia(path: string) {
@@ -201,12 +226,10 @@ export async function fetchArticleSummaries(options: {
   page?: number;
   pageSize?: number;
   category?: string;
-  featured?: boolean;
   excludeIds?: number[];
 }) {
   const filters: Query = {};
   if (options.category) filters.category = { slug: { $eq: options.category } };
-  if (options.featured) filters.is_featured = { $eq: true };
   if (options.excludeIds && options.excludeIds.length > 0) {
     filters.id = { $notIn: options.excludeIds };
   }

@@ -16,29 +16,6 @@ function sanitizeArticleHtml(html: string) {
     .replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "");
 }
 
-// Content pasted from Docs/Gemini carries inline typography that overrides the
-// site's article styles. Keep layout declarations (width, text-align, ...).
-const PASTED_STYLE_PROPS =
-  /^(font(-[a-z]+)?|line-height|letter-spacing|color|background(-color)?)$/i;
-
-function stripPastedStyles(html: string) {
-  return html.replace(
-    /\sstyle\s*=\s*("([^"]*)"|'([^']*)')/gi,
-    (_match, _quoted, double: string | undefined, single: string | undefined) => {
-      const kept = (double ?? single ?? "")
-        .replace(/&quot;/g, '"')
-        .split(";")
-        .map((decl) => decl.trim())
-        .filter((decl) => {
-          const prop = decl.split(":")[0]?.trim() ?? "";
-          return decl.includes(":") && !PASTED_STYLE_PROPS.test(prop);
-        })
-        .join("; ");
-      return kept ? ` style="${kept.replace(/"/g, "&quot;")}"` : "";
-    },
-  );
-}
-
 function rewriteMediaUrls(html: string, cmsUrl: string) {
   const origin = cmsUrl.replace(/\/$/, "");
   return html
@@ -52,10 +29,7 @@ export function prepareArticleHtml(
   articleId: number,
   cmsUrl: string,
 ) {
-  let out = rewriteMediaUrls(
-    stripPastedStyles(sanitizeArticleHtml(html)),
-    cmsUrl,
-  );
+  let out = rewriteMediaUrls(sanitizeArticleHtml(html), cmsUrl);
   const headings: string[] = [];
 
   out = out.replace(

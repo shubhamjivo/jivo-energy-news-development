@@ -1,33 +1,35 @@
-import Link from "next/link";
-import { VIDEOS } from "@/lib/content";
+import type { VideoEntry } from "@/lib/cms";
+import type { SectionHeading as Heading } from "@/lib/home-sections";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { Carousel } from "@/components/ui/Carousel";
 import { Kicker } from "@/components/ui/Kicker";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
-export function WatchListen() {
+export function WatchListen({ videos, heading }: { videos: VideoEntry[]; heading: Heading }) {
+  if (videos.length === 0) return null;
+
   return (
     <section className="pb-2 pt-8 desk:pt-10">
       <Container>
       <SectionHeading
-        kicker="VIDEO"
-        title="Watch & Listen"
-        href="/news"
-        action="All videos →"
+        kicker={heading.kicker}
+        title={heading.title}
+        href={heading.linkUrl}
+        action={heading.linkLabel}
       />
       <div className="mt-3.5 h-px bg-ink" />
 
       <div className="mt-4 hidden grid-cols-3 gap-6 desk:grid">
-        {VIDEOS.map((video) => (
-          <VideoCard key={video.title} video={video} />
+        {videos.map((video) => (
+          <VideoCard key={video.id} video={video} />
         ))}
       </div>
 
       <div className="mt-4 desk:hidden">
         <Carousel spaceBetween={16}>
-          {VIDEOS.map((video) => (
-            <div key={video.title} className="w-[280px]">
+          {videos.map((video) => (
+            <div key={video.id} className="w-[280px]">
               <VideoCard video={video} />
             </div>
           ))}
@@ -38,9 +40,9 @@ export function WatchListen() {
   );
 }
 
-function VideoCard({ video }: { video: (typeof VIDEOS)[number] }) {
-  return (
-    <Link href="/news" className="flex flex-col gap-2">
+function VideoCard({ video }: { video: VideoEntry }) {
+  const body = (
+    <>
       <div className="relative">
         <CoverImage
           src={video.image}
@@ -54,6 +56,19 @@ function VideoCard({ video }: { video: (typeof VIDEOS)[number] }) {
       </div>
       <Kicker>VIDEO</Kicker>
       <p className="text-[15px] font-semibold leading-5 text-ink">{video.title}</p>
-    </Link>
+    </>
+  );
+
+  return video.href ? (
+    <a
+      href={video.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex flex-col gap-2"
+    >
+      {body}
+    </a>
+  ) : (
+    <div className="flex flex-col gap-2">{body}</div>
   );
 }

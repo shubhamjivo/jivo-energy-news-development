@@ -1,25 +1,23 @@
 import type { Metadata } from "next";
 import { CompaniesIndex } from "@/components/companies/CompaniesIndex";
 import { NewsletterCta } from "@/components/layout/NewsletterCta";
-import { routeByHref } from "@/lib/site";
+import { getCompanies, getDeals } from "@/lib/cms";
+import { pageContent, pageMetadata } from "@/lib/page-meta";
 
-const route = routeByHref("/companies")!;
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata("/companies");
+}
 
-export const metadata: Metadata = {
-  title: route.title,
-  description: route.description,
-  alternates: { canonical: route.href },
-  openGraph: {
-    title: route.title,
-    description: route.description,
-    url: route.href,
-  },
-};
+export default async function CompaniesPage() {
+  const [intro, companies, deals] = await Promise.all([
+    pageContent("/companies"),
+    getCompanies(),
+    getDeals(6),
+  ]);
 
-export default function CompaniesPage() {
   return (
     <>
-      <CompaniesIndex />
+      <CompaniesIndex intro={intro} companies={companies} deals={deals} />
       <NewsletterCta />
     </>
   );

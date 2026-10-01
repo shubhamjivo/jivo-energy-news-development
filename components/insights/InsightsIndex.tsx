@@ -1,82 +1,68 @@
 import Link from "next/link";
-import { REPORTS } from "@/lib/content";
 import { PageIntro } from "@/components/layout/PageIntro";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
-
-const NOTES = [
-  {
-    kicker: "POLICY NOTE",
-    title: "Mission 300 is a capital stack, not a slogan",
-    dek: "Concessional money is being layered against private offtake in four markets. The test is whether utilities can still sign bankable PPAs.",
-    image: "/images/latest-grid.png",
-  },
-  {
-    kicker: "DATA",
-    title: "Why transmission, not generation, is the 2026 bottleneck",
-    dek: "Our project file shows 41 GW of shovel-ready renewables waiting on a line. The bid windows will not clear without it.",
-    image: "/images/video-3.png",
-  },
-  {
-    kicker: "MARKETS",
-    title: "West Africa’s solar close is a template, not an outlier",
-    dek: "Pooling DFI capital with regional IPPs solved a currency and offtake problem that single-country auctions could not.",
-    image: "/images/latest-solar.png",
-  },
-] as const;
+import type { InsightCard, PageContent } from "@/lib/cms";
 
 export function InsightsIndex({
-  kicker = "ANALYSIS",
-  title = "Insights",
-  dek = "Long-form reporting, data notes and the outlooks our newsroom publishes.",
-  variant = "all",
+  intro,
+  featured = null,
+  reports,
+  notes,
 }: {
-  kicker?: string;
-  title?: string;
-  dek?: string;
-  variant?: "all" | "reports" | "notes";
+  intro: PageContent;
+  featured?: InsightCard | null;
+  /** Omit to hide the reports section. */
+  reports?: InsightCard[];
+  /** Omit to hide the notes section. */
+  notes?: InsightCard[];
 }) {
-  const showFeature = variant === "all";
-  const showReports = variant === "all" || variant === "reports";
-  const showNotes = variant === "all" || variant === "notes";
+  const empty = !featured && !reports?.length && !notes?.length;
 
   return (
     <main>
-      <PageIntro kicker={kicker} title={title} dek={dek} />
+      <PageIntro kicker={intro.kicker} title={intro.title} dek={intro.intro} />
 
-      {showFeature ? (
+      {featured ? (
         <section className="py-6">
           <Container>
-            <div className="grid items-center gap-6 desk:grid-cols-[minmax(0,280px)_minmax(0,1fr)] desk:gap-10">
-              <CoverImage
-                src="/images/insight-featured.png"
-                alt=""
-                className="h-[220px] w-full desk:h-[240px]"
-                sizes="280px"
-              />
+            <Link
+              href={featured.href}
+              className="grid items-center gap-6 desk:grid-cols-[minmax(0,280px)_minmax(0,1fr)] desk:gap-10"
+            >
+              {featured.image ? (
+                <CoverImage
+                  src={featured.image}
+                  alt=""
+                  className="h-[220px] w-full desk:h-[240px]"
+                  sizes="280px"
+                />
+              ) : null}
               <div>
                 <p className="text-[10px] font-semibold tracking-[1px] text-accent">
                   THE GREAT READ
                 </p>
-                <p className="mt-3 text-[22px] font-semibold leading-7 text-ink desk:text-[26px] desk:leading-8">
-                  “Storage will become central to Africa’s renewable-energy growth over the next five years.”
-                </p>
+                {featured.pullQuote ? (
+                  <p className="mt-3 text-[22px] font-semibold leading-7 text-ink desk:text-[26px] desk:leading-8">
+                    “{featured.pullQuote}”
+                  </p>
+                ) : null}
                 <h2 className="mt-4 text-lg font-bold leading-6 text-ink">
-                  What Africa’s Grid Bottleneck Means for the Next Decade of Renewables
+                  {featured.title}
                 </h2>
                 <p className="mt-2 max-w-[640px] text-sm leading-6 text-muted">
-                  Without transmission and four-hour storage, a decade of solar and wind auctions will stall at the substation gate. Naledi Mokoena traces the money now moving into wires and batteries.
+                  {featured.summary}
                 </p>
                 <p className="mt-3 text-xs text-muted">
-                  By Naledi Mokoena · 8 min read · Insights
+                  {[featured.byline, "Insights"].filter(Boolean).join(" · ")}
                 </p>
               </div>
-            </div>
+            </Link>
           </Container>
         </section>
       ) : null}
 
-      {showReports ? (
+      {reports?.length ? (
         <section className="py-4">
           <Container>
             <div className="flex items-end justify-between gap-4">
@@ -88,15 +74,17 @@ export function InsightsIndex({
               </Link>
             </div>
             <ul className="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-2 desk:grid-cols-4">
-              {REPORTS.map((report) => (
-                <li key={report.title}>
-                  <Link href="/insights/reports" className="block">
-                    <CoverImage
-                      src={report.image}
-                      alt={report.title}
-                      className="h-[150px] w-full"
-                      sizes="(max-width: 1439px) 50vw, 280px"
-                    />
+              {reports.map((report) => (
+                <li key={report.id}>
+                  <Link href={report.href} className="block">
+                    {report.image ? (
+                      <CoverImage
+                        src={report.image}
+                        alt={report.title}
+                        className="h-[150px] w-full"
+                        sizes="(max-width: 1439px) 50vw, 280px"
+                      />
+                    ) : null}
                     <p className="mt-2.5 text-[10px] font-semibold tracking-[0.8px] text-accent">
                       REPORT
                     </p>
@@ -111,35 +99,52 @@ export function InsightsIndex({
         </section>
       ) : null}
 
-      {showNotes ? (
+      {notes?.length ? (
         <section className="pb-12 pt-6">
           <Container>
             <h2 className="text-[26px] font-bold leading-none text-ink desk:text-[28px]">
               Analysis & briefing notes
             </h2>
             <ul className="mt-5 flex flex-col gap-6">
-              {NOTES.map((note) => (
-                <li key={note.title} className="grid gap-4 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center">
-                  <CoverImage
-                    src={note.image}
-                    alt=""
-                    className="h-[110px] w-full"
-                    sizes="180px"
-                  />
-                  <div>
-                    <p className="text-[10px] font-semibold tracking-[0.8px] text-accent">
-                      {note.kicker}
-                    </p>
-                    <h3 className="mt-1 text-lg font-bold leading-6 text-ink">
-                      {note.title}
-                    </h3>
-                    <p className="mt-1 max-w-[720px] text-sm leading-6 text-muted">
-                      {note.dek}
-                    </p>
-                  </div>
+              {notes.map((note) => (
+                <li key={note.id}>
+                  <Link
+                    href={note.href}
+                    className="grid gap-4 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center"
+                  >
+                    {note.image ? (
+                      <CoverImage
+                        src={note.image}
+                        alt=""
+                        className="h-[110px] w-full"
+                        sizes="180px"
+                      />
+                    ) : (
+                      <div className="hidden sm:block" />
+                    )}
+                    <div>
+                      <p className="text-[10px] font-semibold tracking-[0.8px] text-accent">
+                        {note.label}
+                      </p>
+                      <h3 className="mt-1 text-lg font-bold leading-6 text-ink">
+                        {note.title}
+                      </h3>
+                      <p className="mt-1 max-w-[720px] text-sm leading-6 text-muted">
+                        {note.summary}
+                      </p>
+                    </div>
+                  </Link>
                 </li>
               ))}
             </ul>
+          </Container>
+        </section>
+      ) : null}
+
+      {empty ? (
+        <section className="pb-12 pt-6">
+          <Container>
+            <p className="text-sm text-muted">Nothing published in this section yet.</p>
           </Container>
         </section>
       ) : null}

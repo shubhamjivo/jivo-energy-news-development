@@ -1,25 +1,26 @@
 import type { Metadata } from "next";
 import { InsightsIndex } from "@/components/insights/InsightsIndex";
 import { NewsletterCta } from "@/components/layout/NewsletterCta";
-import { routeByHref } from "@/lib/site";
+import { getInsights } from "@/lib/cms";
+import { pageContent, pageMetadata } from "@/lib/page-meta";
 
-const route = routeByHref("/insights")!;
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata("/insights");
+}
 
-export const metadata: Metadata = {
-  title: route.title,
-  description: route.description,
-  alternates: { canonical: route.href },
-  openGraph: {
-    title: route.title,
-    description: route.description,
-    url: route.href,
-  },
-};
+export default async function InsightsPage() {
+  const [intro, reports, longReads] = await Promise.all([
+    pageContent("/insights"),
+    getInsights({ types: ["Report"], limit: 4 }),
+    getInsights({ types: ["Analysis", "Opinion", "Interview", "Technology"], limit: 7 }),
+  ]);
+  // "The great read": the newest piece with a pull quote.
+  const featured = longReads.find((item) => item.pullQuote) ?? null;
+  const notes = longReads.filter((item) => item !== featured).slice(0, 6);
 
-export default function InsightsPage() {
   return (
     <>
-      <InsightsIndex />
+      <InsightsIndex intro={intro} featured={featured} reports={reports} notes={notes} />
       <NewsletterCta />
     </>
   );

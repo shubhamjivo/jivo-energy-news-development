@@ -4,10 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import { REELS } from "@/lib/content";
+import type { VideoEntry } from "@/lib/cms";
+import type { SectionHeading as Heading } from "@/lib/home-sections";
 import { Container } from "@/components/ui/Container";
 
-export function Reels() {
+export function Reels({ reels, heading }: { reels: VideoEntry[]; heading: Heading }) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
     containScroll: "trimSnaps",
@@ -32,19 +33,30 @@ export function Reels() {
     };
   }, [emblaApi]);
 
+  if (reels.length === 0) return null;
+
   return (
     <section className="py-8 desk:py-10">
       <Container>
         <div className="flex items-center justify-between">
-          <h2 className="text-[26px] font-bold text-ink desk:text-[28px]">Reels</h2>
-          <Link href="/news" className="text-sm font-semibold text-forest">
-            VIEW ALL →
-          </Link>
+          <div>
+            {heading.kicker ? (
+              <p className="text-[10px] font-semibold tracking-[1px] text-accent uppercase">
+                {heading.kicker}
+              </p>
+            ) : null}
+            <h2 className="text-[26px] font-bold text-ink desk:text-[28px]">{heading.title}</h2>
+          </div>
+          {heading.linkUrl && heading.linkLabel ? (
+            <Link href={heading.linkUrl} className="text-sm font-semibold text-forest">
+              {heading.linkLabel}
+            </Link>
+          ) : null}
         </div>
 
         <div className="mt-6 overflow-hidden" ref={emblaRef}>
           <div className="flex">
-            {REELS.map((reel, index) => (
+            {reels.map((reel, index) => (
               <div
                 key={reel.youtubeId}
                 className="min-w-0 shrink-0 grow-0 basis-[210px] pr-5 desk:basis-[240px]"
@@ -77,7 +89,7 @@ export function Reels() {
         </div>
 
         <div className="mt-3 flex justify-center gap-1.5 desk:justify-start" aria-hidden>
-          {REELS.map((reel, index) => (
+          {reels.map((reel, index) => (
             <button
               key={reel.youtubeId}
               type="button"
@@ -100,10 +112,10 @@ function ReelCard({
   reel,
   active,
 }: {
-  reel: (typeof REELS)[number];
+  reel: VideoEntry;
   active: boolean;
 }) {
-  const thumb = `https://i.ytimg.com/vi/${reel.youtubeId}/hqdefault.jpg`;
+  const thumb = reel.image;
   const src = `https://www.youtube-nocookie.com/embed/${reel.youtubeId}?autoplay=1&mute=1&playsinline=1&rel=0&modestbranding=1&loop=1&playlist=${reel.youtubeId}&controls=0`;
 
   return (
@@ -135,12 +147,16 @@ function ReelCard({
       >
         <span className="ml-0.5 border-y-[5px] border-l-[8px] border-y-transparent border-l-ink" />
       </a>
-      <span className="absolute right-3 top-3 rounded-full bg-neutral-900 px-2 py-1 text-[10px] font-semibold text-white">
-        {reel.duration}
-      </span>
+      {reel.duration ? (
+        <span className="absolute right-3 top-3 rounded-full bg-neutral-900 px-2 py-1 text-[10px] font-semibold text-white">
+          {reel.duration}
+        </span>
+      ) : null}
       <div className="absolute inset-x-3 bottom-4">
         <p className="text-base font-semibold leading-[22px] text-white">{reel.title}</p>
-        <p className="mt-1 text-[11px] text-white/70">{reel.source}</p>
+        {reel.source ? (
+          <p className="mt-1 text-[11px] text-white/70">{reel.source}</p>
+        ) : null}
       </div>
     </article>
   );

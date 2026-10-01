@@ -10,21 +10,10 @@ import {
   getStrapiOrigin,
   type StrapiArticle,
   type StrapiArticleSummary,
-  type StrapiMedia,
 } from "@/lib/strapi";
+import { mediaSrc } from "@/lib/media";
 
-// Strapi serves uploads from /uploads; the site proxies them through /media so
-// next/image treats them as local images. Absolute URLs (cloud upload
-// providers) are used as-is.
-export function mediaSrc(media: StrapiMedia | null | undefined) {
-  if (!media?.url) return "";
-  if (media.url.startsWith("/uploads/")) {
-    return `/media/${media.url.slice("/uploads/".length)}`;
-  }
-  return media.url;
-}
-
-function formatDate(value: string) {
+export function formatDate(value: string) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "";
   return date.toLocaleDateString("en-GB", {
@@ -150,9 +139,20 @@ export function mapStrapiArticle(article: StrapiArticle): CmsArticle {
     ogImage: mediaSrc(seo?.metaImage) || card.image,
     image: card.image,
     caption,
-    gallery: card.image
-      ? [{ src: card.image, alt: card.imageAlt, caption }]
-      : [],
+    gallery: [
+      ...(card.image ? [{ src: card.image, alt: card.imageAlt, caption }] : []),
+      ...(article.gallery ?? [])
+        .filter((media) => media.url)
+        .map((media) => {
+          const text =
+            media.caption?.trim() || media.alternativeText?.trim() || card.title;
+          return {
+            src: mediaSrc(media),
+            alt: media.alternativeText?.trim() || text,
+            caption: text,
+          };
+        }),
+    ],
     contentHtml: html,
     headings,
     relatedNewsIds: related.map((item) => item.id),
@@ -228,25 +228,6 @@ export async function getNewsTopics() {
   } catch (error) {
     console.error("Could not load categories from Strapi", error);
     return [];
-  }
-}
-
-// The featured lead story with its full record (for the gallery and related
-// list); falls back to the newest article when nothing is flagged featured.
-export async function getLeadArticle() {
-  try {
-    const featured = await fetchArticleSummaries({
-      featured: true,
-      pageSize: 1,
-    });
-    const pick =
-      featured.data[0] ??
-      (await fetchArticleSummaries({ pageSize: 1 })).data[0];
-    if (!pick?.slug) return null;
-    return getArticleBySlug(pick.slug);
-  } catch (error) {
-    console.error("Could not load lead article from Strapi", error);
-    return null;
   }
 }
 

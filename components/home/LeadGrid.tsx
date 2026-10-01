@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getLatestArticleCards, getLeadArticle } from "@/lib/articles";
+import { getLatestArticleCards } from "@/lib/articles";
+import { getLeadArticle } from "@/lib/cms";
 import { Container } from "@/components/ui/Container";
 import { ArticleHero } from "@/components/news/ArticleHero";
 import { LatestNews } from "@/components/news/LatestNews";
@@ -11,8 +12,15 @@ export async function LeadGrid() {
 
   const others = await getLatestArticleCards(10, [lead.id]);
   const latest = others.slice(0, 6);
-  // Without editor-picked related stories, fill the rail with the next newest.
-  const related = lead.related.length > 0 ? lead.related.slice(0, 4) : others.slice(6);
+  // Without editor-picked related stories, fill the rail with stories on the
+  // same topic, then the next newest; reuse the Latest list only when the
+  // site has too few articles for both.
+  const unused = others.slice(6);
+  const sameTopic = others.filter((item) => item.kicker && item.kicker === lead.kicker);
+  const related =
+    lead.related.length > 0
+      ? lead.related.slice(0, 4)
+      : [...new Set([...sameTopic, ...unused, ...others])].slice(0, 4);
 
   return (
     <section id="latest" className="scroll-mt-36 py-6 desk:py-8">
@@ -33,12 +41,12 @@ export async function LeadGrid() {
               {lead.kicker || lead.markets ? (
                 <div className="flex flex-wrap items-center gap-3 text-[11px]">
                   {lead.kicker ? (
-                    <span className="font-semibold uppercase tracking-[0.88px] text-accent">
+                    <span className="font-semibold tracking-[0.88px] text-accent">
                       {lead.kicker}
                     </span>
                   ) : null}
                   {lead.markets ? (
-                    <span className="uppercase tracking-[0.66px] text-muted">
+                    <span className="tracking-[0.66px] text-muted">
                       {lead.markets}
                     </span>
                   ) : null}

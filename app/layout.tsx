@@ -3,9 +3,9 @@ import { Roboto } from "next/font/google";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { getSiteSettings } from "@/lib/cms";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
-import { NewsletterCta } from "@/components/layout/NewsletterCta";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -77,14 +77,16 @@ export const viewport: Viewport = {
   themeColor: "#030e50",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const settings = await getSiteSettings();
+
   return (
     <html lang="en" className={`${roboto.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-paper font-sans text-ink">
         <JsonLd />
-        <Header />
+        <Header insightsFeature={settings.menuFeature} />
         {children}
-        <Footer />
+        <Footer settings={settings} />
       </body>
     </html>
   );

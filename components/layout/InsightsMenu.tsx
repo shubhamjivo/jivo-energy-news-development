@@ -2,16 +2,19 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FEATURED_INSIGHT, INSIGHTS_LINKS } from "@/lib/site";
+import type { InsightCard } from "@/lib/cms";
+import { INSIGHTS_LINKS } from "@/lib/site";
 
 type InsightsMenuProps = {
   pathname: string;
+  feature?: InsightCard | null;
   onNavigate?: () => void;
   variant?: "dropdown" | "inline";
 };
 
 export function InsightsMenu({
   pathname,
+  feature = null,
   onNavigate,
   variant = "dropdown",
 }: InsightsMenuProps) {
@@ -64,30 +67,34 @@ export function InsightsMenu({
           );
         })}
       </ul>
+      {feature ? (
       <Link
-        href={FEATURED_INSIGHT.href}
+        href={feature.href}
         onClick={onNavigate}
         className="relative m-3 hidden w-[280px] shrink-0 flex-col justify-end overflow-hidden bg-ink p-5 text-white sm:flex"
       >
-        <Image
-          src={FEATURED_INSIGHT.image}
-          alt=""
-          fill
-          sizes="280px"
-          className="object-cover opacity-35"
-        />
+        {feature.image ? (
+          <Image
+            src={feature.image}
+            alt=""
+            fill
+            sizes="280px"
+            className="object-cover opacity-35"
+          />
+        ) : null}
         <div className="relative">
           <p className="text-[11px] font-semibold tracking-[1.4px] text-accent uppercase">
-            {FEATURED_INSIGHT.kicker}
+            {feature.label}
           </p>
           <p className="mt-2 text-lg font-bold leading-6">
-            {FEATURED_INSIGHT.title}
+            {feature.title}
           </p>
           <p className="mt-2 text-[13px] leading-5 text-white/80">
-            {FEATURED_INSIGHT.dek}
+            {feature.summary}
           </p>
         </div>
       </Link>
+      ) : null}
     </div>
   );
 }

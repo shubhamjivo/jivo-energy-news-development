@@ -1,32 +1,41 @@
 import Link from "next/link";
-import { REPORTS } from "@/lib/content";
+import type { InsightCard } from "@/lib/cms";
+import type { SectionHeading as Heading } from "@/lib/home-sections";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { Carousel } from "@/components/ui/Carousel";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
-export function LatestReports() {
+export function LatestReports({
+  reports,
+  heading,
+}: {
+  reports: InsightCard[];
+  heading: Heading;
+}) {
+  if (reports.length === 0) return null;
+
   return (
     <section className="pb-8 pt-8 desk:pt-10">
       <Container>
       <SectionHeading
-        kicker="FROM THE DESK"
-        title="Latest Reports"
-        href="/insights"
-        action="Browse the library →"
+        kicker={heading.kicker}
+        title={heading.title}
+        href={heading.linkUrl}
+        action={heading.linkLabel}
       />
       <div className="mt-3.5 h-px bg-ink" />
 
       <div className="mt-4 hidden grid-cols-4 gap-6 desk:grid">
-        {REPORTS.map((report) => (
-          <ReportCard key={report.title} report={report} />
+        {reports.map((report) => (
+          <ReportCard key={report.id} report={report} />
         ))}
       </div>
 
       <div className="mt-4 desk:hidden">
         <Carousel spaceBetween={16}>
-          {REPORTS.map((report) => (
-            <div key={report.title} className="w-[220px]">
+          {reports.map((report) => (
+            <div key={report.id} className="w-[220px]">
               <ReportCard report={report} />
             </div>
           ))}
@@ -37,15 +46,17 @@ export function LatestReports() {
   );
 }
 
-function ReportCard({ report }: { report: (typeof REPORTS)[number] }) {
+function ReportCard({ report }: { report: InsightCard }) {
   return (
-    <Link href="/insights" className="flex flex-col gap-2.5">
-      <CoverImage
-        src={report.image}
-        alt={report.title}
-        className="h-[180px] w-full"
-        sizes="312px"
-      />
+    <Link href={report.href} className="flex flex-col gap-2.5">
+      {report.image ? (
+        <CoverImage
+          src={report.image}
+          alt={report.title}
+          className="h-[180px] w-full"
+          sizes="312px"
+        />
+      ) : null}
       <p className="text-sm font-semibold leading-[19px] text-ink">{report.title}</p>
     </Link>
   );

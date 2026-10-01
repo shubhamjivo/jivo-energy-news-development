@@ -130,17 +130,17 @@ export const NAV_LINKS = ROUTES.filter(
   (route) => route.href.split("/").filter(Boolean).length <= 1,
 ).map(({ href, label }) => ({ href, label }));
 
+export const UTILITY_LINKS = [
+  { href: "/#latest", label: "Latest" },
+  { href: "/#africa-times", label: "Africa Times" },
+  { href: "/#brief", label: "Africa Energy Brief" },
+  { href: "/#project-watch", label: "Project Watch" },
+  { href: "/#newsletter", label: "Newsletter" },
+] as const;
+
 export const INSIGHTS_LINKS = ROUTES.filter((route) =>
   route.href.startsWith("/insights/"),
 );
-
-export const FEATURED_INSIGHT = {
-  href: "/insights/reports",
-  kicker: "Featured Report",
-  title: "Africa Battery Storage Outlook 2026",
-  dek: "Deployment pipelines, procurement models and financing structures across ten priority markets.",
-  image: "/images/report-2.png",
-} as const;
 
 export function routeByHref(href: string) {
   const route = ROUTES.find((item) => item.href === href);

@@ -1,20 +1,11 @@
 import type { Metadata } from "next";
 import { NewsletterCta } from "@/components/layout/NewsletterCta";
 import { NewsIndex } from "@/components/news/NewsIndex";
-import { routeByHref } from "@/lib/site";
+import { pageContent, pageMetadata } from "@/lib/page-meta";
 
-const route = routeByHref("/news")!;
-
-export const metadata: Metadata = {
-  title: route.title,
-  description: route.description,
-  alternates: { canonical: route.href },
-  openGraph: {
-    title: route.title,
-    description: route.description,
-    url: route.href,
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata("/news");
+}
 
 type PageProps = {
   searchParams: Promise<{
@@ -35,9 +26,11 @@ export default async function NewsPage({ searchParams }: PageProps) {
     Math.trunc(Number(firstParam(params.page) ?? "1")) || 1,
   );
 
+  const intro = await pageContent("/news");
+
   return (
     <>
-      <NewsIndex page={page} topic={topic} />
+      <NewsIndex page={page} topic={topic} intro={intro} />
       <NewsletterCta />
     </>
   );

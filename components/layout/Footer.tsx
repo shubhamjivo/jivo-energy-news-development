@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { FOOTER_COLUMNS } from "@/lib/content";
 import { Logo } from "@/components/layout/Logo";
 import { Container } from "@/components/ui/Container";
+import type { SiteSettings } from "@/lib/cms";
 
-export function Footer() {
+export function Footer({ settings }: { settings: SiteSettings }) {
   return (
     <footer className="bg-neutral-900 pb-8 pt-10">
       <Container className="flex flex-col gap-8 desk:flex-row desk:items-start desk:justify-between">
@@ -12,18 +12,18 @@ export function Footer() {
             <Logo sizes="200px" className="h-auto w-full" />
           </Link>
           <p className="text-[11px] tracking-[0.22px] text-accent">
-            Energy intelligence, Africa-first
+            {settings.tagline}
           </p>
         </div>
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 desk:flex desk:w-[720px] desk:gap-12">
-          {FOOTER_COLUMNS.map((col) => (
+          {settings.footerColumns.map((col) => (
             <div key={col.heading} className="flex w-40 flex-col gap-1.5">
               <p className="text-[10px] font-semibold tracking-[0.8px] text-accent">
                 {col.heading}
               </p>
               {col.links.map((link) => (
                 <Link
-                  key={link.label}
+                  key={`${link.label}-${link.href}`}
                   href={link.href}
                   className="text-[13px] text-white hover:text-accent"
                 >
@@ -36,9 +36,25 @@ export function Footer() {
       </Container>
       <Container>
         <div className="mt-6 h-px bg-accent" />
-        <p className="mt-4 text-[11px] text-accent">
-          © 2026 Africa Energy. All rights reserved.
-        </p>
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
+          <p className="text-[11px] text-accent">{settings.copyright}</p>
+          {settings.socialLinks.length > 0 ? (
+            <ul className="flex flex-wrap gap-4">
+              {settings.socialLinks.map((link) => (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[11px] text-white hover:text-accent"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
       </Container>
     </footer>
   );

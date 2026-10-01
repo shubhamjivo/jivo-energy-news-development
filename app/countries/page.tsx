@@ -1,25 +1,19 @@
 import type { Metadata } from "next";
 import { CountriesIndex } from "@/components/countries/CountriesIndex";
 import { NewsletterCta } from "@/components/layout/NewsletterCta";
-import { routeByHref } from "@/lib/site";
+import { getCountries } from "@/lib/cms";
+import { pageContent, pageMetadata } from "@/lib/page-meta";
 
-const route = routeByHref("/countries")!;
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata("/countries");
+}
 
-export const metadata: Metadata = {
-  title: route.title,
-  description: route.description,
-  alternates: { canonical: route.href },
-  openGraph: {
-    title: route.title,
-    description: route.description,
-    url: route.href,
-  },
-};
+export default async function CountriesPage() {
+  const [intro, countries] = await Promise.all([pageContent("/countries"), getCountries()]);
 
-export default function CountriesPage() {
   return (
     <>
-      <CountriesIndex />
+      <CountriesIndex intro={intro} countries={countries} />
       <NewsletterCta />
     </>
   );

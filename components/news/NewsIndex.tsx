@@ -1,14 +1,12 @@
 import Link from "next/link";
 import {
   getLatestArticleCards,
-  getLeadArticle,
   getNewsPage,
-  getNewsTopics,
 } from "@/lib/articles";
+import { getLeadArticle, type PageContent } from "@/lib/cms";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { Kicker } from "@/components/ui/Kicker";
-import { NewsFilters } from "@/components/news/NewsFilters";
 import { NewsLatest } from "@/components/news/NewsLatest";
 
 const PAGE_SIZE = 6;
@@ -16,11 +14,13 @@ const PAGE_SIZE = 6;
 export async function NewsIndex({
   page,
   topic,
+  intro,
 }: {
   page: number;
   topic: string;
+  intro: PageContent;
 }) {
-  const [lead, topics] = await Promise.all([getLeadArticle(), getNewsTopics()]);
+  const lead = await getLeadArticle();
   const excludeIds = lead && !topic ? [lead.id] : [];
   const [latest, fallbackRelated] = await Promise.all([
     getNewsPage({
@@ -44,14 +44,13 @@ export async function NewsIndex({
       <section className="pt-8 pb-2 desk:pt-10">
         <Container>
           <p className="text-[10px] font-semibold tracking-[1px] text-accent">
-            THE NEWSROOM
+            {intro.kicker}
           </p>
           <h1 className="mt-2.5 text-[32px] font-bold leading-[38px] text-ink desk:text-[48px] desk:leading-none">
-            News
+            {intro.title}
           </h1>
           <p className="mt-2.5 max-w-[820px] text-sm leading-5 text-muted desk:text-base desk:leading-6">
-            Dispatches from the African energy beat — markets, policy, projects
-            and capital.
+            {intro.intro}
           </p>
           <div className="mt-2.5 h-px bg-hairline" />
         </Container>
@@ -74,10 +73,10 @@ export async function NewsIndex({
                   </Link>
                 ) : null}
                 <div className="mt-3 flex flex-wrap items-center gap-3 text-[11px]">
-                  <span className="font-semibold uppercase tracking-[0.88px] text-accent">
+                  <span className="font-semibold tracking-[0.88px] text-accent">
                     {lead.kicker}
                   </span>
-                  <span className="hidden uppercase tracking-[0.66px] text-muted desk:inline">
+                  <span className="hidden tracking-[0.66px] text-muted desk:inline">
                     {lead.markets}
                   </span>
                 </div>
@@ -130,10 +129,6 @@ export async function NewsIndex({
           </Container>
         </section>
       ) : null}
-
-      <Container>
-        <NewsFilters topics={topics} current={topic} />
-      </Container>
 
       <NewsLatest
         stories={latest.articles}

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getArticleSitemapEntries } from "@/lib/articles";
+import { getInsightSlugs } from "@/lib/cms";
 import { ROUTES, SITE_URL } from "@/lib/site";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -23,6 +24,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     articles = [];
   }
 
+  const insights = (await getInsightSlugs()).map((entry) => ({
+    url: `${SITE_URL}/insights/${entry.slug}`,
+    lastModified: new Date(entry.updatedAt),
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+  }));
+
   return [
     ...pages,
     {
@@ -32,5 +40,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     },
     ...articles,
+    ...insights,
   ];
 }

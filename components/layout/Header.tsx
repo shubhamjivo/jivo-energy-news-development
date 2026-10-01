@@ -3,13 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-  DATE_LINE,
-  MOBILE_DATE,
-  MOBILE_TIME,
-  NAV_LINKS,
-  UTILITY_LINKS,
-} from "@/lib/content";
+import type { InsightCard } from "@/lib/cms";
+import { NAV_LINKS, UTILITY_LINKS } from "@/lib/site";
 import { InsightsMenu } from "@/components/layout/InsightsMenu";
 import { Logo } from "@/components/layout/Logo";
 import { Container } from "@/components/ui/Container";
@@ -28,8 +23,35 @@ function SearchIcon() {
   );
 }
 
-export function Header() {
+// Formatted on the client so the date and time are the reader's "now"; empty
+// during server render to avoid a hydration mismatch.
+function useUtcClock() {
+  const [now, setNow] = useState<Date | null>(null);
+  useEffect(() => {
+    const tick = () => setNow(new Date());
+    tick();
+    const timer = window.setInterval(tick, 30_000);
+    return () => window.clearInterval(timer);
+  }, []);
+  if (!now) return { date: "", time: "" };
+  const date = now.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+  const time = `${now.toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "UTC",
+  })} UTC`;
+  return { date, time };
+}
+
+export function Header({ insightsFeature = null }: { insightsFeature?: InsightCard | null }) {
   const pathname = usePathname();
+  const clock = useUtcClock();
   const [compact, setCompact] = useState(false);
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -71,8 +93,8 @@ export function Header() {
         >
           <div className="overflow-hidden">
             <Container className="flex h-7 items-center justify-between text-[11px] tracking-[0.22px] text-muted">
-              <p>{MOBILE_DATE}</p>
-              <p>{MOBILE_TIME}</p>
+              <p>{clock.date}</p>
+              <p>{clock.time}</p>
             </Container>
           </div>
         </div>
@@ -184,7 +206,7 @@ export function Header() {
                       ))}
                     </nav>
                     <p className="shrink-0 text-[11px] tracking-[0.04em] text-muted">
-                      {DATE_LINE}
+                      {clock.date ? `${clock.date} · ${clock.time}` : ""}
                     </p>
                   </div>
                   <div className="my-3 h-px bg-hairline" />
@@ -220,6 +242,7 @@ export function Header() {
                             <div className="absolute top-full left-0 z-50 pt-3">
                               <InsightsMenu
                                 pathname={pathname}
+                                feature={insightsFeature}
                                 onNavigate={() => setInsightsOpen(false)}
                               />
                             </div>

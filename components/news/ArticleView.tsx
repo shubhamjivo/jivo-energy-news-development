@@ -96,7 +96,7 @@ export function ArticleView({
             id={`${idPrefix}-latest`}
           >
             <RelatedNews items={article.related} carousel={false} />
-            <div className={article.related.length > 0 ? "mt-8" : ""}>
+            <div className="mt-8">
               <LatestNews items={latestOthers} />
             </div>
           </aside>
