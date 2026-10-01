@@ -1,44 +1,28 @@
-"use client";
-
-import { useMemo } from "react";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { NEWS_LATEST } from "@/lib/content";
+import type { ArticleCard } from "@/lib/article-types";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { Kicker } from "@/components/ui/Kicker";
 
-const PAGE_SIZE = 6;
-
-function matchesFilter(kicker: string, filter: string) {
-  if (filter === "All") return true;
-  return kicker.toLowerCase().includes(filter.toLowerCase());
+function pageHref(page: number, topic: string) {
+  const params = new URLSearchParams();
+  if (topic) params.set("topic", topic);
+  if (page > 1) params.set("page", String(page));
+  const query = params.toString();
+  return query ? `/news?${query}` : "/news";
 }
 
-export function NewsLatest() {
-  const params = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
-  const filter = params.get("topic") ?? "All";
-  const page = Math.max(1, Number(params.get("page") ?? "1") || 1);
-
-  const filtered = useMemo(
-    () => NEWS_LATEST.filter((story) => matchesFilter(story.kicker, filter)),
-    [filter],
-  );
-
-  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const current = Math.min(page, pageCount);
-  const stories = filtered.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
-
-  function goToPage(n: number) {
-    const next = new URLSearchParams(params.toString());
-    if (n <= 1) next.delete("page");
-    else next.set("page", String(n));
-    const query = next.toString();
-    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
-  }
-
+export function NewsLatest({
+  stories,
+  page,
+  pageCount,
+  topic,
+}: {
+  stories: ArticleCard[];
+  page: number;
+  pageCount: number;
+  topic: string;
+}) {
   return (
     <section className="pb-10 pt-4 desk:pt-2">
       <Container>
@@ -52,20 +36,28 @@ export function NewsLatest() {
 
         <div className="mt-6 hidden grid-cols-3 gap-x-6 gap-y-6 desk:grid">
           {stories.map((story) => (
-            <Link key={story.title} href="/news" className="flex flex-col gap-3">
-              <CoverImage
-                src={story.image}
-                alt={story.title}
-                className="h-[240px] w-full"
-                sizes="(max-width: 1439px) 100vw, 384px"
-              />
-              <Kicker className="text-[10px] tracking-[0.8px]" tone="ink">
-                {story.kicker}
-              </Kicker>
+            <Link key={story.id} href={story.href} className="flex flex-col gap-3">
+              {story.image ? (
+                <CoverImage
+                  src={story.image}
+                  alt={story.imageAlt}
+                  className="h-[240px] w-full"
+                  sizes="(max-width: 1439px) 100vw, 384px"
+                />
+              ) : null}
+              {story.kicker ? (
+                <Kicker className="text-[10px] tracking-[0.8px]" tone="ink">
+                  {story.kicker}
+                </Kicker>
+              ) : null}
               <p className="text-[22px] font-semibold leading-7 text-ink">
                 {story.title}
               </p>
-              <p className="text-sm leading-[21px] text-muted">{story.dek}</p>
+              {story.dek ? (
+                <p className="line-clamp-3 text-sm leading-[21px] text-muted">
+                  {story.dek}
+                </p>
+              ) : null}
               <p className="text-xs text-muted">{story.byline}</p>
             </Link>
           ))}
@@ -74,18 +66,20 @@ export function NewsLatest() {
         <div className="desk:hidden">
           {stories.map((story) => (
             <Link
-              key={story.title}
-              href="/news"
+              key={story.id}
+              href={story.href}
               className="flex gap-3 border-b border-hairline py-3"
             >
-              <CoverImage
-                src={story.image}
-                alt={story.title}
-                className="h-20 w-[110px] shrink-0"
-                sizes="110px"
-              />
+              {story.thumbnail ? (
+                <CoverImage
+                  src={story.thumbnail}
+                  alt={story.imageAlt}
+                  className="h-20 w-[110px] shrink-0"
+                  sizes="110px"
+                />
+              ) : null}
               <div className="flex min-w-0 flex-col gap-1">
-                <Kicker>{story.kicker}</Kicker>
+                {story.kicker ? <Kicker>{story.kicker}</Kicker> : null}
                 <p className="text-sm font-semibold leading-[18px] text-ink">
                   {story.title}
                 </p>
@@ -95,39 +89,37 @@ export function NewsLatest() {
           ))}
         </div>
 
-        {filtered.length === 0 ? (
+        {stories.length === 0 ? (
           <p className="py-8 text-sm text-muted">No stories in this desk yet.</p>
-        ) : (
-          <nav
-            aria-label="News pages"
-            className="mt-6 flex items-center gap-2"
-          >
+        ) : pageCount > 1 ? (
+          <nav aria-label="News pages" className="mt-6 flex items-center gap-2">
             {Array.from({ length: pageCount }, (_, i) => i + 1).map((n) => (
-              <button
+              <Link
                 key={n}
-                type="button"
-                onClick={() => goToPage(n)}
+                href={pageHref(n, topic)}
+                scroll={false}
+                aria-current={n === page ? "page" : undefined}
                 className={`flex h-9 w-9 items-center justify-center text-[13px] ${
-                  n === current
+                  n === page
                     ? "bg-navy text-white"
                     : "border border-hairline text-ink"
                 }`}
               >
                 {n}
-              </button>
+              </Link>
             ))}
-            {current < pageCount ? (
-              <button
-                type="button"
+            {page < pageCount ? (
+              <Link
                 aria-label="Next page"
-                onClick={() => goToPage(current + 1)}
+                href={pageHref(page + 1, topic)}
+                scroll={false}
                 className="flex h-9 w-9 items-center justify-center border border-hairline text-[13px] text-ink"
               >
                 →
-              </button>
+              </Link>
             ) : null}
           </nav>
-        )}
+        ) : null}
       </Container>
     </section>
   );

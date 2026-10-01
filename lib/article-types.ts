@@ -1,3 +1,20 @@
+export type ArticleCard = {
+  id: number;
+  title: string;
+  slug: string;
+  href: string;
+  kicker: string;
+  categorySlug: string;
+  markets: string;
+  dek: string;
+  image: string;
+  imageAlt: string;
+  thumbnail: string;
+  byline: string;
+  meta: string;
+  publishedAt: string;
+};
+
 export type CmsArticle = {
   id: number;
   title: string;
@@ -15,6 +32,9 @@ export type CmsArticle = {
   updatedAt: string | null;
   seoTitle: string;
   seoDescription: string;
+  seoKeywords: string;
+  seoRobots: string;
+  canonicalUrl: string;
   ogTitle: string;
   ogDescription: string;
   ogImage: string;
@@ -28,4 +48,5 @@ export type CmsArticle = {
   contentHtml: string;
   headings: string[];
   relatedNewsIds: number[];
+  related: ArticleCard[];
 };

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { CmsArticle } from "@/lib/article-types";
+import type { ArticleCard, CmsArticle } from "@/lib/article-types";
 import { InfiniteScrollSentinel } from "@/components/news/InfiniteScrollSentinel";
 import { NewsArticle } from "@/components/news/NewsArticle";
 import { SITE_NAME } from "@/lib/site";
@@ -12,8 +12,10 @@ function articleHref(slug: string) {
 
 export function ContinuousNewsFeed({
   initialArticle,
+  latest,
 }: {
   initialArticle: CmsArticle;
+  latest: ArticleCard[];
 }) {
   const [articles, setArticles] = useState<CmsArticle[]>([initialArticle]);
   const [hasMore, setHasMore] = useState(true);
@@ -131,6 +133,7 @@ export function ContinuousNewsFeed({
         <NewsArticle
           key={article.id}
           article={article}
+          latest={latest}
           isFirst={index === 0}
         />
       ))}

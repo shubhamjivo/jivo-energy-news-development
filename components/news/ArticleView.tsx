@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { CmsArticle } from "@/lib/article-types";
+import type { ArticleCard, CmsArticle } from "@/lib/article-types";
 import { Container } from "@/components/ui/Container";
 import { ArticleHero } from "@/components/news/ArticleHero";
 import { LatestNews } from "@/components/news/LatestNews";
@@ -8,11 +8,16 @@ import { TableOfContents } from "@/components/news/TableOfContents";
 
 export function ArticleView({
   article,
+  latest,
   priorityImage = false,
 }: {
   article: CmsArticle;
+  latest: ArticleCard[];
   priorityImage?: boolean;
 }) {
+  const latestOthers = latest
+    .filter((item) => item.id !== article.id)
+    .slice(0, 6);
   const idPrefix = `article-${article.id}`;
 
   return (
@@ -70,7 +75,9 @@ export function ArticleView({
                   {article.dek}
                 </p>
               ) : null}
-              <p className="text-xs text-muted text-neutral-900">{article.byline}</p>
+              <p className="text-xs text-muted text-neutral-900">
+                {article.byline}
+              </p>
             </div>
 
             <div className="mt-6 h-px bg-hairline" />
@@ -88,9 +95,9 @@ export function ArticleView({
             className="w-full shrink-0 desk:sticky desk:top-14 desk:w-[320px]"
             id={`${idPrefix}-latest`}
           >
-            <RelatedNews carousel={false} />
-            <div className="mt-8">
-              <LatestNews />
+            <RelatedNews items={article.related} carousel={false} />
+            <div className={article.related.length > 0 ? "mt-8" : ""}>
+              <LatestNews items={latestOthers} />
             </div>
           </aside>
         </div>

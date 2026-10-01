@@ -16,20 +16,46 @@ function sanitizeArticleHtml(html: string) {
     .replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "");
 }
 
-function rewriteAssetUrls(html: string, adminUrl: string) {
-  const origin = adminUrl.replace(/\/$/, "");
+// Content pasted from Docs/Gemini carries inline typography that overrides the
+// site's article styles. Keep layout declarations (width, text-align, ...).
+const PASTED_STYLE_PROPS =
+  /^(font(-[a-z]+)?|line-height|letter-spacing|color|background(-color)?)$/i;
+
+function stripPastedStyles(html: string) {
+  return html.replace(
+    /\sstyle\s*=\s*("([^"]*)"|'([^']*)')/gi,
+    (_match, _quoted, double: string | undefined, single: string | undefined) => {
+      const kept = (double ?? single ?? "")
+        .replace(/&quot;/g, '"')
+        .split(";")
+        .map((decl) => decl.trim())
+        .filter((decl) => {
+          const prop = decl.split(":")[0]?.trim() ?? "";
+          return decl.includes(":") && !PASTED_STYLE_PROPS.test(prop);
+        })
+        .join("; ");
+      return kept ? ` style="${kept.replace(/"/g, "&quot;")}"` : "";
+    },
+  );
+}
+
+function rewriteMediaUrls(html: string, cmsUrl: string) {
+  const origin = cmsUrl.replace(/\/$/, "");
   return html
-    .split(`${origin}/assets/`)
-    .join("/api/assets/")
-    .replace(/(src=["'])\/assets\//gi, "$1/api/assets/");
+    .split(`${origin}/uploads/`)
+    .join("/media/")
+    .replace(/((?:src|href|srcset)=["'])\/uploads\//gi, "$1/media/");
 }
 
 export function prepareArticleHtml(
   html: string,
   articleId: number,
-  adminUrl: string,
+  cmsUrl: string,
 ) {
-  let out = rewriteAssetUrls(sanitizeArticleHtml(html), adminUrl);
+  let out = rewriteMediaUrls(
+    stripPastedStyles(sanitizeArticleHtml(html)),
+    cmsUrl,
+  );
   const headings: string[] = [];
 
   out = out.replace(

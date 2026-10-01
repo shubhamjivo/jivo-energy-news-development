@@ -16,10 +16,28 @@ export const metadata: Metadata = {
   },
 };
 
-export default function NewsPage() {
+type PageProps = {
+  searchParams: Promise<{
+    topic?: string | string[];
+    page?: string | string[];
+  }>;
+};
+
+function firstParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+export default async function NewsPage({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const topic = firstParam(params.topic)?.trim() ?? "";
+  const page = Math.max(
+    1,
+    Math.trunc(Number(firstParam(params.page) ?? "1")) || 1,
+  );
+
   return (
     <>
-      <NewsIndex />
+      <NewsIndex page={page} topic={topic} />
       <NewsletterCta />
     </>
   );

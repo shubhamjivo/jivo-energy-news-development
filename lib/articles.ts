@@ -1,29 +1,37 @@
-import type { CmsArticle } from "@/lib/article-types";
+import type { ArticleCard, CmsArticle } from "@/lib/article-types";
 import { prepareArticleHtml } from "@/lib/article-html";
 import {
-  bannerFileId,
-  bannerTitle,
+  fetchArticleBySlug,
   fetchArticlesByIds,
-  fetchArticlesBySlug,
   fetchArticleSlugs,
-  fetchLatestArticles,
-  getDirectusOrigin,
-  relatedNewsIds,
-  type DirectusArticle,
-} from "@/lib/directus";
+  fetchArticleSummaries,
+  fetchCategories,
+  fetchLatestFullArticles,
+  getStrapiOrigin,
+  type StrapiArticle,
+  type StrapiArticleSummary,
+  type StrapiMedia,
+} from "@/lib/strapi";
 
-function assetSrc(id: string) {
-  return `/api/assets/${id}`;
+// Strapi serves uploads from /uploads; the site proxies them through /media so
+// next/image treats them as local images. Absolute URLs (cloud upload
+// providers) are used as-is.
+export function mediaSrc(media: StrapiMedia | null | undefined) {
+  if (!media?.url) return "";
+  if (media.url.startsWith("/uploads/")) {
+    return `/media/${media.url.slice("/uploads/".length)}`;
+  }
+  return media.url;
 }
 
-function fallbackAuthorName(article: DirectusArticle) {
-  const first = article.user_created?.first_name?.trim() ?? "";
-  const last = article.user_created?.last_name?.trim() ?? "";
-  return `${first} ${last}`.trim();
-}
-
-function displayAuthor(article: DirectusArticle) {
-  return article.author?.trim() || fallbackAuthorName(article);
+function formatDate(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 }
 
 function formatByline(options: {
@@ -37,98 +45,131 @@ function formatByline(options: {
   const names = [options.author, options.coAuthors].filter(Boolean).join(", ");
   if (names) parts.push(`By ${names}`);
   if (options.source) parts.push(options.source);
-  const date = new Date(options.publishedAt);
-  if (!Number.isNaN(date.getTime())) {
-    parts.push(
-      date.toLocaleDateString("en-GB", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      }),
-    );
-  }
+  const date = formatDate(options.publishedAt);
+  if (date) parts.push(date);
   if (options.readTime && options.readTime > 0) {
     parts.push(`${options.readTime} min read`);
   }
   return parts.join(" · ");
 }
 
-export function mapDirectusArticle(article: DirectusArticle): CmsArticle {
-  const adminUrl = getDirectusOrigin();
-  const { html, headings } = prepareArticleHtml(
-    article.content ?? "",
-    article.id,
-    adminUrl,
-  );
-  const fileId = bannerFileId(article.banner);
-  const caption = bannerTitle(article.banner) || article.title;
-  const image = fileId ? assetSrc(fileId) : "";
-  const author = displayAuthor(article);
-  const coAuthors = article.co_authors?.trim() ?? "";
-  const source = article.source?.trim() ?? "";
-  const readTime =
-    typeof article.read_time === "number" && article.read_time > 0
-      ? article.read_time
-      : null;
-  const seo = article.seo && typeof article.seo === "object" ? article.seo : null;
-  const ogFileId = bannerFileId(seo?.og_image ?? null);
-  const seoTitle = seo?.meta_title?.trim() || article.title;
-  const seoDescription = seo?.meta_description?.trim() || article.title;
-  const ogTitle = seo?.og_title?.trim() || seoTitle;
-  const ogDescription = seo?.og_description?.trim() || seoDescription;
-  const ogImage = ogFileId ? assetSrc(ogFileId) : image;
+function readTimeOf(article: StrapiArticleSummary) {
+  return typeof article.read_time === "number" && article.read_time > 0
+    ? article.read_time
+    : null;
+}
+
+function publishedAtOf(article: StrapiArticleSummary) {
+  return article.publishedAt ?? article.createdAt;
+}
+
+export function mapArticleCard(article: StrapiArticleSummary): ArticleCard {
+  const title = article.title?.trim() ?? "";
+  const slug = article.slug ?? "";
+  const author = article.author?.trim() ?? "";
+  const coAuthors = article.co_author?.trim() ?? "";
+  const markets = article.markets?.trim() ?? "";
+  const publishedAt = publishedAtOf(article);
+  const image = mediaSrc(article.banner) || mediaSrc(article.thumbnail);
+  const thumbnail = mediaSrc(article.thumbnail) || image;
 
   return {
     id: article.id,
-    title: article.title,
-    slug: article.slug,
-    href: `/news/${article.slug}`,
-    kicker: "",
-    markets: "",
-    dek: "",
+    title,
+    slug,
+    href: `/news/${slug}`,
+    kicker: article.category?.title?.trim() ?? "",
+    categorySlug: article.category?.slug ?? "",
+    markets,
+    dek: article.short_content?.trim() ?? "",
+    image,
+    imageAlt: article.banner?.alternativeText?.trim() || title,
+    thumbnail,
+    byline: formatByline({
+      author,
+      coAuthors,
+      source: "",
+      publishedAt,
+      readTime: readTimeOf(article),
+    }),
+    meta: [formatDate(publishedAt), markets].filter(Boolean).join(" · "),
+    publishedAt,
+  };
+}
+
+export function mapStrapiArticle(article: StrapiArticle): CmsArticle {
+  const card = mapArticleCard(article);
+  const { html, headings } = prepareArticleHtml(
+    article.content ?? "",
+    article.id,
+    getStrapiOrigin(),
+  );
+  const caption =
+    article.banner?.caption?.trim() ||
+    article.banner?.alternativeText?.trim() ||
+    card.title;
+  const author = article.author?.trim() ?? "";
+  const coAuthors = article.co_author?.trim() ?? "";
+  const source = article.source?.trim() ?? "";
+  const readTime = readTimeOf(article);
+  const seo = article.seo ?? null;
+  const seoTitle = seo?.metaTitle?.trim() || card.title;
+  const seoDescription = seo?.metaDescription?.trim() || card.dek || card.title;
+  const related = (article.related_articles ?? [])
+    .filter((item) => item.slug)
+    .map(mapArticleCard);
+
+  return {
+    id: article.id,
+    title: card.title,
+    slug: card.slug,
+    href: card.href,
+    kicker: card.kicker,
+    markets: card.markets,
+    dek: card.dek,
     byline: formatByline({
       author,
       coAuthors,
       source,
-      publishedAt: article.date_created,
+      publishedAt: card.publishedAt,
       readTime,
     }),
     author,
     coAuthors,
     source,
     readTime,
-    publishedAt: article.date_created,
-    updatedAt: article.date_updated,
+    publishedAt: card.publishedAt,
+    updatedAt: article.updatedAt,
     seoTitle,
     seoDescription,
-    ogTitle,
-    ogDescription,
-    ogImage,
-    image,
+    seoKeywords: seo?.keywords?.trim() ?? "",
+    seoRobots: seo?.metaRobots?.trim() ?? "",
+    canonicalUrl: seo?.canonicalURL?.trim() ?? "",
+    ogTitle: seoTitle,
+    ogDescription: seoDescription,
+    ogImage: mediaSrc(seo?.metaImage) || card.image,
+    image: card.image,
     caption,
-    gallery: fileId
-      ? [
-          {
-            src: image,
-            alt: caption,
-            caption,
-          },
-        ]
+    gallery: card.image
+      ? [{ src: card.image, alt: card.imageAlt, caption }]
       : [],
     contentHtml: html,
     headings,
-    relatedNewsIds: relatedNewsIds(article.Related_News),
+    relatedNewsIds: related.map((item) => item.id),
+    related,
   };
 }
 
 export async function getArticleBySlug(slug: string) {
-  const article = await fetchArticlesBySlug(slug);
-  return article ? mapDirectusArticle(article) : null;
+  const article = await fetchArticleBySlug(slug);
+  return article ? mapStrapiArticle(article) : null;
 }
 
 export async function getArticleSlugs() {
   const rows = await fetchArticleSlugs();
-  return rows.map((row) => row.slug).filter(Boolean);
+  return rows
+    .map((row) => row.slug)
+    .filter((slug): slug is string => Boolean(slug));
 }
 
 export async function getArticleSitemapEntries() {
@@ -136,9 +177,77 @@ export async function getArticleSitemapEntries() {
   return rows
     .filter((row) => row.slug)
     .map((row) => ({
-      slug: row.slug,
-      lastModified: row.date_updated ?? row.date_created,
+      slug: row.slug as string,
+      lastModified: row.updatedAt ?? row.publishedAt,
     }));
+}
+
+export async function getLatestArticleCards(
+  limit: number,
+  excludeIds: number[] = [],
+) {
+  try {
+    const payload = await fetchArticleSummaries({
+      pageSize: limit,
+      excludeIds,
+    });
+    return payload.data.filter((item) => item.slug).map(mapArticleCard);
+  } catch (error) {
+    console.error("Could not load latest articles from Strapi", error);
+    return [];
+  }
+}
+
+export async function getNewsPage(options: {
+  page: number;
+  pageSize: number;
+  category?: string;
+  excludeIds?: number[];
+}) {
+  try {
+    const payload = await fetchArticleSummaries(options);
+    return {
+      articles: payload.data.filter((item) => item.slug).map(mapArticleCard),
+      pageCount: payload.meta?.pagination?.pageCount ?? 1,
+    };
+  } catch (error) {
+    console.error("Could not load news page from Strapi", error);
+    return { articles: [], pageCount: 1 };
+  }
+}
+
+export async function getNewsTopics() {
+  try {
+    const categories = await fetchCategories();
+    return categories
+      .filter((category) => category.slug && category.title)
+      .map((category) => ({
+        slug: category.slug as string,
+        title: category.title as string,
+      }));
+  } catch (error) {
+    console.error("Could not load categories from Strapi", error);
+    return [];
+  }
+}
+
+// The featured lead story with its full record (for the gallery and related
+// list); falls back to the newest article when nothing is flagged featured.
+export async function getLeadArticle() {
+  try {
+    const featured = await fetchArticleSummaries({
+      featured: true,
+      pageSize: 1,
+    });
+    const pick =
+      featured.data[0] ??
+      (await fetchArticleSummaries({ pageSize: 1 })).data[0];
+    if (!pick?.slug) return null;
+    return getArticleBySlug(pick.slug);
+  } catch (error) {
+    console.error("Could not load lead article from Strapi", error);
+    return null;
+  }
 }
 
 export async function getNextFeedArticles(options: {
@@ -156,8 +265,8 @@ export async function getNextFeedArticles(options: {
   if (relatedToFetch.length > 0) {
     const related = await fetchArticlesByIds(relatedToFetch);
     for (const item of related) {
-      if (exclude.has(item.id)) continue;
-      articles.push(mapDirectusArticle(item));
+      if (exclude.has(item.id) || !item.slug) continue;
+      articles.push(mapStrapiArticle(item));
       exclude.add(item.id);
     }
     for (const id of relatedToFetch) {
@@ -166,13 +275,13 @@ export async function getNextFeedArticles(options: {
   }
 
   if (articles.length < options.limit) {
-    const latest = await fetchLatestArticles(
+    const latest = await fetchLatestFullArticles(
       [...exclude],
       options.limit - articles.length,
     );
     for (const item of latest) {
-      if (exclude.has(item.id)) continue;
-      articles.push(mapDirectusArticle(item));
+      if (exclude.has(item.id) || !item.slug) continue;
+      articles.push(mapStrapiArticle(item));
       exclude.add(item.id);
     }
   }
@@ -180,8 +289,11 @@ export async function getNextFeedArticles(options: {
   const remainingRelated = options.relatedIds.filter((id) => !exclude.has(id));
   let hasMore = remainingRelated.length > 0;
   if (!hasMore) {
-    const peek = await fetchLatestArticles([...exclude], 1);
-    hasMore = peek.length > 0;
+    const peek = await fetchArticleSummaries({
+      pageSize: 1,
+      excludeIds: [...exclude],
+    });
+    hasMore = peek.data.length > 0;
   }
 
   return { articles, hasMore };

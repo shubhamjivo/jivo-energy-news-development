@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ContinuousNewsFeed } from "@/components/news/ContinuousNewsFeed";
 import { NewsletterCta } from "@/components/layout/NewsletterCta";
-import { getArticleBySlug, getArticleSlugs } from "@/lib/articles";
+import {
+  getArticleBySlug,
+  getArticleSlugs,
+  getLatestArticleCards,
+} from "@/lib/articles";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 type PageProps = {
@@ -39,12 +43,15 @@ export async function generateMetadata({
   return {
     title: article.seoTitle || article.title,
     description: article.seoDescription || article.title,
-    alternates: { canonical: article.href },
+    alternates: { canonical: article.canonicalUrl || article.href },
+    keywords: article.seoKeywords || undefined,
+    robots: article.seoRobots || undefined,
     authors: authors.length > 0 ? authors : undefined,
     openGraph: {
       type: "article",
       title: article.ogTitle || article.title,
-      description: article.ogDescription || article.seoDescription || article.title,
+      description:
+        article.ogDescription || article.seoDescription || article.title,
       url,
       images: image
         ? [
@@ -60,7 +67,8 @@ export async function generateMetadata({
     twitter: {
       card: "summary_large_image",
       title: article.ogTitle || article.title,
-      description: article.ogDescription || article.seoDescription || article.title,
+      description:
+        article.ogDescription || article.seoDescription || article.title,
       images: image ? [image] : undefined,
     },
   };
@@ -68,7 +76,10 @@ export async function generateMetadata({
 
 export default async function ArticlePage({ params }: PageProps) {
   const { slug } = await params;
-  const article = await getArticleBySlug(slug);
+  const [article, latest] = await Promise.all([
+    getArticleBySlug(slug),
+    getLatestArticleCards(7),
+  ]);
   if (!article) notFound();
 
   const ogImage = article.ogImage || article.image;
@@ -114,7 +125,11 @@ export default async function ArticlePage({ params }: PageProps) {
           __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
         }}
       />
-      <ContinuousNewsFeed key={article.id} initialArticle={article} />
+      <ContinuousNewsFeed
+        key={article.id}
+        initialArticle={article}
+        latest={latest}
+      />
       <NewsletterCta />
     </main>
   );
