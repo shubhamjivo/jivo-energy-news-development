@@ -1,8 +1,8 @@
+import "server-only";
 import type { ArticleCard, CmsArticle } from "@/lib/article-types";
 import { prepareArticleHtml } from "@/lib/article-html";
 import {
   fetchArticleBySlug,
-  fetchArticlesByIds,
   fetchArticleSlugs,
   fetchArticleSummaries,
   fetchCategories,
@@ -21,6 +21,41 @@ export function formatDate(value: string) {
     month: "short",
     year: "numeric",
   });
+}
+
+// "42 min ago", "3 hr ago", "Yesterday", "2 days ago", then the date, as in
+// the site's original design.
+export function formatRelative(value: string, now = Date.now()) {
+  const time = new Date(value).getTime();
+  if (Number.isNaN(time)) return "";
+  const minutes = Math.floor((now - time) / 60_000);
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return `${minutes} min ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} hr ago`;
+  const days = Math.floor(hours / 24);
+  if (days === 1) return "Yesterday";
+  if (days < 7) return `${days} days ago`;
+  return formatDate(value);
+}
+
+// Card byline: "By Naledi Mokoena · 6 hr ago · Nigeria · Ghana".
+function cardByline(names: string, publishedAt: string, markets: string) {
+  return [names ? `By ${names}` : "", formatRelative(publishedAt), markets]
+    .filter(Boolean)
+    .join(" · ");
+}
+
+// Lead story byline: "By Amara Chukwu · 18 min ago · 6 min read".
+export function leadByline(article: CmsArticle) {
+  const names = [article.author, article.coAuthors].filter(Boolean).join(", ");
+  return [
+    names ? `By ${names}` : "",
+    formatRelative(article.publishedAt),
+    article.readTime ? `${article.readTime} min read` : "",
+  ]
+    .filter(Boolean)
+    .join(" · ");
 }
 
 function formatByline(options: {
@@ -74,14 +109,8 @@ export function mapArticleCard(article: StrapiArticleSummary): ArticleCard {
     image,
     imageAlt: article.banner?.alternativeText?.trim() || title,
     thumbnail,
-    byline: formatByline({
-      author,
-      coAuthors,
-      source: "",
-      publishedAt,
-      readTime: readTimeOf(article),
-    }),
-    meta: [formatDate(publishedAt), markets].filter(Boolean).join(" · "),
+    byline: cardByline([author, coAuthors].filter(Boolean).join(", "), publishedAt, markets),
+    meta: [formatRelative(publishedAt), markets].filter(Boolean).join(" · "),
     publishedAt,
   };
 }
@@ -114,6 +143,7 @@ export function mapStrapiArticle(article: StrapiArticle): CmsArticle {
     slug: card.slug,
     href: card.href,
     kicker: card.kicker,
+    categorySlug: card.categorySlug,
     markets: card.markets,
     dek: card.dek,
     byline: formatByline({
@@ -182,16 +212,20 @@ export async function getArticleSitemapEntries() {
     }));
 }
 
+// One shared request for the newest articles; callers drop the ones they
+// already show and take what they need.
+const LATEST_POOL = 16;
+
 export async function getLatestArticleCards(
   limit: number,
   excludeIds: number[] = [],
 ) {
   try {
-    const payload = await fetchArticleSummaries({
-      pageSize: limit,
-      excludeIds,
-    });
-    return payload.data.filter((item) => item.slug).map(mapArticleCard);
+    const payload = await fetchArticleSummaries({ pageSize: LATEST_POOL });
+    return payload.data
+      .filter((item) => item.slug && !excludeIds.includes(item.id))
+      .map(mapArticleCard)
+      .slice(0, limit);
   } catch (error) {
     console.error("Could not load latest articles from Strapi", error);
     return [];
@@ -231,47 +265,42 @@ export async function getNewsTopics() {
   }
 }
 
+// The scroll feed under an article: first the newest article, then every
+// article in the opened article's category, newest first.
 export async function getNextFeedArticles(options: {
   excludeIds: number[];
-  relatedIds: number[];
+  category: string;
+  latestShown: boolean;
   limit: number;
 }) {
   const exclude = new Set(options.excludeIds);
-  const relatedToFetch = options.relatedIds
-    .filter((id) => !exclude.has(id))
-    .slice(0, options.limit);
-
   const articles: CmsArticle[] = [];
-
-  if (relatedToFetch.length > 0) {
-    const related = await fetchArticlesByIds(relatedToFetch);
-    for (const item of related) {
+  const take = (items: StrapiArticle[]) => {
+    for (const item of items) {
       if (exclude.has(item.id) || !item.slug) continue;
       articles.push(mapStrapiArticle(item));
       exclude.add(item.id);
     }
-    for (const id of relatedToFetch) {
-      exclude.add(id);
-    }
-  }
+  };
 
-  if (articles.length < options.limit) {
-    const latest = await fetchLatestFullArticles(
-      [...exclude],
-      options.limit - articles.length,
+  if (!options.latestShown) {
+    take(await fetchLatestFullArticles([...exclude], 1));
+  }
+  if (articles.length < options.limit && options.category) {
+    take(
+      await fetchLatestFullArticles(
+        [...exclude],
+        options.limit - articles.length,
+        options.category,
+      ),
     );
-    for (const item of latest) {
-      if (exclude.has(item.id) || !item.slug) continue;
-      articles.push(mapStrapiArticle(item));
-      exclude.add(item.id);
-    }
   }
 
-  const remainingRelated = options.relatedIds.filter((id) => !exclude.has(id));
-  let hasMore = remainingRelated.length > 0;
-  if (!hasMore) {
+  let hasMore = false;
+  if (options.category) {
     const peek = await fetchArticleSummaries({
       pageSize: 1,
+      category: options.category,
       excludeIds: [...exclude],
     });
     hasMore = peek.data.length > 0;

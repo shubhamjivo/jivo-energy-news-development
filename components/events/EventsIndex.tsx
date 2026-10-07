@@ -2,7 +2,8 @@ import Link from "next/link";
 import { PageIntro } from "@/components/layout/PageIntro";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
-import type { EventEntry, PageContent, VideoEntry } from "@/lib/cms";
+import type { EventEntry, VideoEntry } from "@/lib/cms";
+import type { PageContent } from "@/lib/pages";
 
 export function EventsIndex({
   intro,

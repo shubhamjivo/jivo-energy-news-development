@@ -12,7 +12,7 @@ export default async function InsightsPage() {
   const [intro, reports, longReads] = await Promise.all([
     pageContent("/insights"),
     getInsights({ types: ["Report"], limit: 4 }),
-    getInsights({ types: ["Analysis", "Opinion", "Interview", "Technology"], limit: 7 }),
+    getInsights({ types: ["Analysis", "Opinion", "Interview"], limit: 7 }),
   ]);
   // "The great read": the newest piece with a pull quote.
   const featured = longReads.find((item) => item.pullQuote) ?? null;

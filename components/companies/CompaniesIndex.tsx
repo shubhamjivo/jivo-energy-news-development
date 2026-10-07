@@ -6,7 +6,9 @@ import { PageIntro } from "@/components/layout/PageIntro";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { FilterBar } from "@/components/ui/FilterBar";
-import type { CompanyEntry, DealEntry, PageContent } from "@/lib/cms";
+import type { CompanyEntry, DealEntry } from "@/lib/cms";
+import { COMPANY_FILTERS } from "@/lib/filters";
+import type { PageContent } from "@/lib/pages";
 
 const COMPANY_TYPE_NAMES: Record<string, string> = {
   IPP: "Independent power producer",
@@ -23,19 +25,18 @@ export function CompaniesIndex({
   companies: CompanyEntry[];
   deals: DealEntry[];
 }) {
-  const filters = useMemo(
-    () => ["All", ...new Set(allCompanies.map((company) => company.type))],
-    [allCompanies],
-  );
+  const filters = ["All", ...COMPANY_FILTERS];
   const [filter, setFilter] = useState("All");
+  const spotlight = allCompanies.find((company) => company.spotlight);
+  // The spotlight company is featured above the directory, not repeated in it.
   const companies = useMemo(
     () =>
-      filter === "All"
-        ? allCompanies
-        : allCompanies.filter((company) => company.type === filter),
-    [allCompanies, filter],
+      allCompanies.filter(
+        (company) =>
+          company !== spotlight && (filter === "All" || company.type === filter),
+      ),
+    [allCompanies, filter, spotlight],
   );
-  const spotlight = allCompanies.find((company) => company.spotlight);
   const showSpotlight =
     spotlight && (filter === "All" || filter === spotlight.type);
 
@@ -157,7 +158,7 @@ export function CompaniesIndex({
                   className="grid grid-cols-[72px_1fr_auto] items-start gap-4 border-b border-hairline py-4"
                 >
                   <p className="pt-0.5 text-[10px] font-semibold tracking-[0.8px] text-accent">
-                    {deal.type}
+                    {deal.shortType}
                   </p>
                   <div>
                     {deal.href ? (

@@ -24,7 +24,9 @@ export function ContinuousNewsFeed({
 
   const articlesRef = useRef(articles);
   const loadedIdsRef = useRef(new Set([initialArticle.id]));
-  const relatedQueueRef = useRef([...initialArticle.relatedNewsIds]);
+  // Feed order: the newest article first, then the opened article's category.
+  const latestShownRef = useRef(false);
+  const categoryRef = useRef(initialArticle.categorySlug);
   const loadingRef = useRef(false);
   const hasMoreRef = useRef(true);
   const activeSlugRef = useRef(initialArticle.slug);
@@ -41,10 +43,10 @@ export function ContinuousNewsFeed({
     abortRef.current = controller;
 
     const exclude = [...loadedIdsRef.current].join(",");
-    const related = relatedQueueRef.current.join(",");
     const params = new URLSearchParams({
       exclude,
-      related,
+      category: categoryRef.current,
+      latest: latestShownRef.current ? "shown" : "next",
       limit: "1",
     });
 
@@ -66,9 +68,7 @@ export function ContinuousNewsFeed({
       for (const article of unique) {
         loadedIdsRef.current.add(article.id);
       }
-      relatedQueueRef.current = relatedQueueRef.current.filter(
-        (id) => !loadedIdsRef.current.has(id),
-      );
+      latestShownRef.current = true;
 
       if (unique.length === 0) {
         hasMoreRef.current = false;

@@ -2,8 +2,9 @@ import Link from "next/link";
 import {
   getLatestArticleCards,
   getNewsPage,
+  leadByline,
 } from "@/lib/articles";
-import { getLeadArticle, type PageContent } from "@/lib/cms";
+import { getLeadArticle, getPage, type PageContent } from "@/lib/pages";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { Kicker } from "@/components/ui/Kicker";
@@ -20,7 +21,8 @@ export async function NewsIndex({
   topic: string;
   intro: PageContent;
 }) {
-  const lead = await getLeadArticle();
+  // The lead story is the one picked for the home page.
+  const lead = await getLeadArticle(await getPage("home"));
   const excludeIds = lead && !topic ? [lead.id] : [];
   const [latest, fallbackRelated] = await Promise.all([
     getNewsPage({
@@ -89,7 +91,7 @@ export async function NewsIndex({
                   {lead.dek}
                 </p>
                 <p className="mt-2 text-[11px] text-muted desk:text-xs">
-                  {lead.byline}
+                  {leadByline(lead)}
                 </p>
               </article>
 

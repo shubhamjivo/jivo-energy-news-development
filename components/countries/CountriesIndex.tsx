@@ -10,7 +10,8 @@ import {
 import { PageIntro } from "@/components/layout/PageIntro";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
-import type { CountryEntry, PageContent } from "@/lib/cms";
+import type { CountryEntry } from "@/lib/cms";
+import type { PageContent } from "@/lib/pages";
 
 const LABEL_PLACE: Record<string, string> = {
   morocco: "top-full left-1/2 mt-1 -translate-x-1/2",

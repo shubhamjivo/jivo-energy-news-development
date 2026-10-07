@@ -19,7 +19,9 @@ function parseIdList(value: string | null, limit = 100) {
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const excludeIds = parseIdList(searchParams.get("exclude"));
-  const relatedIds = parseIdList(searchParams.get("related"));
+  const rawCategory = searchParams.get("category") ?? "";
+  const category = /^[a-z0-9-]{1,100}$/.test(rawCategory) ? rawCategory : "";
+  const latestShown = searchParams.get("latest") === "shown";
   const requestedLimit = Number(searchParams.get("limit") ?? "1");
   const limit = Number.isFinite(requestedLimit)
     ? Math.min(3, Math.max(1, Math.trunc(requestedLimit)))
@@ -28,7 +30,8 @@ export async function GET(request: NextRequest) {
   try {
     const result = await getNextFeedArticles({
       excludeIds,
-      relatedIds,
+      category,
+      latestShown,
       limit,
     });
     return NextResponse.json(result);

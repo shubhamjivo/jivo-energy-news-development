@@ -5,7 +5,9 @@ import { PageIntro } from "@/components/layout/PageIntro";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { FilterBar } from "@/components/ui/FilterBar";
-import type { PageContent, ProjectEntry } from "@/lib/cms";
+import type { ProjectEntry } from "@/lib/cms";
+import { technologyFilters } from "@/lib/filters";
+import type { PageContent } from "@/lib/pages";
 
 export function ProjectsIndex({
   intro,
@@ -14,10 +16,7 @@ export function ProjectsIndex({
   intro: PageContent;
   projects: ProjectEntry[];
 }) {
-  const filters = useMemo(
-    () => ["All", ...new Set(allProjects.map((project) => project.technology))],
-    [allProjects],
-  );
+  const filters = ["All", ...technologyFilters("page")];
   const [filter, setFilter] = useState("All");
   const projects = useMemo(
     () =>

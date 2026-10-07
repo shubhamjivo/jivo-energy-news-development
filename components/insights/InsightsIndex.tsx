@@ -2,7 +2,8 @@ import Link from "next/link";
 import { PageIntro } from "@/components/layout/PageIntro";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
-import type { InsightCard, PageContent } from "@/lib/cms";
+import type { InsightCard } from "@/lib/cms";
+import type { PageContent } from "@/lib/pages";
 
 export function InsightsIndex({
   intro,
@@ -110,7 +111,9 @@ export function InsightsIndex({
                 <li key={note.id}>
                   <Link
                     href={note.href}
-                    className="grid gap-4 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center"
+                    className={`grid gap-4 sm:items-center ${
+                      note.image ? "sm:grid-cols-[180px_minmax(0,1fr)]" : ""
+                    }`}
                   >
                     {note.image ? (
                       <CoverImage
@@ -119,9 +122,7 @@ export function InsightsIndex({
                         className="h-[110px] w-full"
                         sizes="180px"
                       />
-                    ) : (
-                      <div className="hidden sm:block" />
-                    )}
+                    ) : null}
                     <div>
                       <p className="text-[10px] font-semibold tracking-[0.8px] text-accent">
                         {note.label}

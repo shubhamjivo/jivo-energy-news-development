@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { ProjectEntry } from "@/lib/cms";
+import { technologyFilters } from "@/lib/filters";
 import type { SectionHeading as Heading } from "@/lib/home-sections";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
@@ -17,10 +18,7 @@ export function ProjectWatch({
   projects: ProjectEntry[];
   heading: Heading;
 }) {
-  const filters = useMemo(
-    () => ["All", ...new Set(projects.map((project) => project.technology))],
-    [projects],
-  );
+  const filters = ["All", ...technologyFilters("home")];
   const [filter, setFilter] = useState("All");
   const items = useMemo(
     () =>

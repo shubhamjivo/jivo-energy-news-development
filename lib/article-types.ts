@@ -21,6 +21,7 @@ export type CmsArticle = {
   slug: string;
   href: string;
   kicker: string;
+  categorySlug: string;
   markets: string;
   dek: string;
   byline: string;

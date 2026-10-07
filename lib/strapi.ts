@@ -1,3 +1,4 @@
+import "server-only";
 export type StrapiMedia = {
   id: number;
   url: string;
@@ -67,34 +68,17 @@ export const STRAPI_CACHE_TAG = "strapi";
 type QueryValue = string | number | boolean | QueryValue[] | Query;
 export type Query = { [key: string]: QueryValue };
 
-export const MEDIA_FIELDS = ["url", "alternativeText", "caption", "width", "height"];
+// Populate follows the forms in Strapi's REST docs: populate=* for one level
+// of everything, or a list of relation paths (populate[0]=a&populate[1]=b.c,
+// where "b.c" also loads b). No per-field selection.
+export const ARTICLE_POPULATE = ["banner", "thumbnail", "category"];
 
-export const SUMMARY_FIELDS = [
-  "title",
-  "slug",
-  "author",
-  "co_author",
-  "source",
-  "read_time",
-  "short_content",
-  "markets",
-  "publishedAt",
-  "createdAt",
-  "updatedAt",
+const ARTICLE_FULL_POPULATE = [
+  ...ARTICLE_POPULATE,
+  "gallery",
+  "seo.metaImage",
+  ...ARTICLE_POPULATE.map((path) => `related_articles.${path}`),
 ];
-
-export const SUMMARY_POPULATE: Query = {
-  banner: { fields: MEDIA_FIELDS },
-  thumbnail: { fields: MEDIA_FIELDS },
-  category: { fields: ["title", "slug"] },
-};
-
-const FULL_POPULATE: Query = {
-  ...SUMMARY_POPULATE,
-  gallery: { fields: MEDIA_FIELDS },
-  seo: { populate: { metaImage: { fields: MEDIA_FIELDS } } },
-  related_articles: { fields: SUMMARY_FIELDS, populate: SUMMARY_POPULATE },
-};
 
 function getStrapiConfig() {
   const url = process.env.STRAPI_URL?.replace(/\/$/, "");
@@ -183,39 +167,25 @@ export async function strapiMedia(path: string) {
 export async function fetchArticleBySlug(slug: string) {
   const payload = await strapiList<StrapiArticle>("articles", {
     filters: { slug: { $eq: slug } },
-    populate: FULL_POPULATE,
-    pagination: { pageSize: 1 },
+    populate: ARTICLE_FULL_POPULATE,
   });
   return payload.data[0] ?? null;
-}
-
-export async function fetchArticlesByIds(ids: number[]) {
-  if (ids.length === 0) return [];
-  const payload = await strapiList<StrapiArticle>(
-    "articles",
-    {
-      filters: { id: { $in: ids } },
-      populate: FULL_POPULATE,
-      pagination: { pageSize: ids.length },
-    },
-    { cache: "no-store" },
-  );
-  const byId = new Map(payload.data.map((article) => [article.id, article]));
-  return ids
-    .map((id) => byId.get(id))
-    .filter((article): article is StrapiArticle => Boolean(article));
 }
 
 export async function fetchLatestFullArticles(
   excludeIds: number[],
   limit: number,
+  category?: string,
 ) {
+  const filters: Query = {};
+  if (excludeIds.length > 0) filters.id = { $notIn: excludeIds };
+  if (category) filters.category = { slug: { $eq: category } };
   const query: Query = {
-    sort: ["publishedAt:desc"],
-    populate: FULL_POPULATE,
+    sort: "publishedAt:desc",
+    populate: ARTICLE_FULL_POPULATE,
+    filters,
     pagination: { pageSize: limit },
   };
-  if (excludeIds.length > 0) query.filters = { id: { $notIn: excludeIds } };
   const payload = await strapiList<StrapiArticle>("articles", query, {
     cache: "no-store",
   });
@@ -234,18 +204,19 @@ export async function fetchArticleSummaries(options: {
     filters.id = { $notIn: options.excludeIds };
   }
   return strapiList<StrapiArticleSummary>("articles", {
-    fields: SUMMARY_FIELDS,
-    populate: SUMMARY_POPULATE,
+    populate: ARTICLE_POPULATE,
     filters,
-    sort: ["publishedAt:desc"],
-    pagination: { page: options.page ?? 1, pageSize: options.pageSize ?? 10 },
+    sort: "publishedAt:desc",
+    pagination: {
+      ...(options.page && options.page > 1 ? { page: options.page } : {}),
+      pageSize: options.pageSize ?? 10,
+    },
   });
 }
 
 export async function fetchCategories() {
   const payload = await strapiList<StrapiCategory>("categories", {
-    fields: ["title", "slug"],
-    sort: ["title:asc"],
+    sort: "title:asc",
     pagination: { pageSize: 50 },
   });
   return payload.data;
@@ -258,7 +229,7 @@ export async function fetchArticleSlugs() {
     updatedAt: string | null;
   }>("articles", {
     fields: ["slug", "publishedAt", "updatedAt"],
-    sort: ["publishedAt:desc"],
+    sort: "publishedAt:desc",
     pagination: { pageSize: 100 },
   });
   return payload.data;

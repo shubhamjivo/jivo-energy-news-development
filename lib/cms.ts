@@ -1,25 +1,19 @@
+import "server-only";
 import type { ArticleCard } from "@/lib/article-types";
-import { getArticleBySlug, mapArticleCard } from "@/lib/articles";
-import { defaultHomeSections, resolveHomeSections, type HomeSection } from "@/lib/home-sections";
+import { mapArticleCard } from "@/lib/articles";
 import { mediaSrc } from "@/lib/media";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from "@/lib/site";
 import {
-  MEDIA_FIELDS,
   strapiList,
   strapiSingle,
-  SUMMARY_FIELDS,
-  SUMMARY_POPULATE,
   type Query,
   type StrapiArticleSummary,
   type StrapiMedia,
   type StrapiSeo,
 } from "@/lib/strapi";
 
-const IMAGE: Query = { fields: MEDIA_FIELDS };
-const ARTICLE_CARDS: Query = { fields: SUMMARY_FIELDS, populate: SUMMARY_POPULATE };
-const SEO: Query = { populate: { metaImage: IMAGE } };
 
-async function safe<T>(label: string, fallback: T, load: () => Promise<T>) {
+export async function safe<T>(label: string, fallback: T, load: () => Promise<T>) {
   try {
     return await load();
   } catch (error) {
@@ -28,21 +22,21 @@ async function safe<T>(label: string, fallback: T, load: () => Promise<T>) {
   }
 }
 
-function text(value: string | null | undefined) {
+export function text(value: string | null | undefined) {
   return value?.trim() ?? "";
 }
 
-function cards(items: StrapiArticleSummary[] | null | undefined): ArticleCard[] {
+export function cards(items: StrapiArticleSummary[] | null | undefined): ArticleCard[] {
   return (items ?? []).filter((item) => item.slug).map(mapArticleCard);
 }
 
-type StrapiStat = { value: string | null; label: string | null };
+export type StrapiStat = { value: string | null; label: string | null };
 type StrapiLink = { label: string | null; url: string | null };
 
 export type Stat = { value: string; label: string };
 export type SiteLink = { label: string; href: string };
 
-function stats(items: StrapiStat[] | null | undefined): Stat[] {
+export function stats(items: StrapiStat[] | null | undefined): Stat[] {
   return (items ?? [])
     .map((item) => ({ value: text(item.value), label: text(item.label) }))
     .filter((item) => item.value);
@@ -66,7 +60,7 @@ export const INSIGHT_TYPES = [
 ] as const;
 export type InsightType = (typeof INSIGHT_TYPES)[number];
 
-type StrapiInsight = {
+export type StrapiInsight = {
   id: number;
   title: string | null;
   slug: string | null;
@@ -100,23 +94,7 @@ export type InsightCard = {
   publishedAt: string;
 };
 
-const INSIGHT_CARD_FIELDS = [
-  "title",
-  "slug",
-  "insight_type",
-  "label",
-  "summary",
-  "pull_quote",
-  "author",
-  "read_time",
-  "publishedAt",
-];
-const INSIGHT_CARD_POPULATE: Query = {
-  cover: IMAGE,
-  report_file: { fields: ["url"] },
-};
-
-function mapInsight(item: StrapiInsight): InsightCard {
+export function mapInsight(item: StrapiInsight): InsightCard {
   const readTime = item.read_time && item.read_time > 0 ? `${item.read_time} min read` : "";
   const author = text(item.author);
   return {
@@ -137,26 +115,25 @@ function mapInsight(item: StrapiInsight): InsightCard {
   };
 }
 
+// One request for every insight; pages pick their types from the result.
 export async function getInsights(options: { types?: InsightType[]; limit?: number } = {}) {
-  return safe("insights", [] as InsightCard[], async () => {
-    const filters: Query = {};
-    if (options.types?.length) filters.insight_type = { $in: options.types };
+  const all = await safe("insights", [] as InsightCard[], async () => {
     const payload = await strapiList<StrapiInsight>("insights", {
-      fields: INSIGHT_CARD_FIELDS,
-      populate: INSIGHT_CARD_POPULATE,
-      filters,
-      sort: ["publishedAt:desc"],
-      pagination: { pageSize: options.limit ?? 24 },
+      populate: "*",
+      sort: "publishedAt:desc",
+      pagination: { pageSize: 100 },
     });
     return payload.data.filter((item) => item.slug).map(mapInsight);
   });
+  const { types, limit } = options;
+  const picked = types?.length ? all.filter((item) => types.includes(item.type)) : all;
+  return limit ? picked.slice(0, limit) : picked;
 }
 
 export async function getInsightBySlug(slug: string) {
   const payload = await strapiList<StrapiInsight>("insights", {
     filters: { slug: { $eq: slug } },
-    populate: { ...INSIGHT_CARD_POPULATE, seo: SEO },
-    pagination: { pageSize: 1 },
+    populate: ["cover", "report_file", "seo.metaImage"],
   });
   const item = payload.data[0];
   if (!item) return null;
@@ -226,12 +203,12 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       social_links?: StrapiLink[];
       menu_featured_insight?: StrapiInsight | null;
     }>("site-setting", {
-      populate: {
-        default_share_image: IMAGE,
-        footer_columns: { populate: { links: true } },
-        social_links: true,
-        menu_featured_insight: { fields: INSIGHT_CARD_FIELDS, populate: INSIGHT_CARD_POPULATE },
-      },
+      populate: [
+        "default_share_image",
+        "footer_columns.links",
+        "social_links",
+        "menu_featured_insight.cover",
+      ],
     });
     if (!data) return DEFAULT_SETTINGS;
     return {
@@ -252,157 +229,6 @@ export async function getSiteSettings(): Promise<SiteSettings> {
   });
 }
 
-// --------------------------------------------------------------------- pages
-
-export type SitePage =
-  | "Home"
-  | "News"
-  | "Projects"
-  | "Companies"
-  | "Countries"
-  | "Insights"
-  | "Learning Center"
-  | "Technology"
-  | "Reports"
-  | "Opinion"
-  | "Interviews"
-  | "Events"
-  | "About";
-
-export type PageContent = {
-  kicker: string;
-  title: string;
-  intro: string;
-  stats: Stat[];
-  seoTitle: string;
-  seoDescription: string;
-  seoImage: string;
-};
-
-export async function getPageContent(
-  sitePage: SitePage,
-  fallback: { kicker: string; title: string; intro: string },
-): Promise<PageContent> {
-  const empty: PageContent = {
-    ...fallback,
-    stats: [],
-    seoTitle: "",
-    seoDescription: "",
-    seoImage: "",
-  };
-  return safe(`page ${sitePage}`, empty, async () => {
-    const payload = await strapiList<{
-      title: string | null;
-      kicker: string | null;
-      intro: string | null;
-      stats?: StrapiStat[];
-      seo?: StrapiSeo | null;
-    }>("pages", {
-      filters: { site_page: { $eq: sitePage } },
-      populate: { stats: true, seo: SEO },
-      pagination: { pageSize: 1 },
-    });
-    const page = payload.data[0];
-    if (!page) return empty;
-    return {
-      kicker: text(page.kicker) || fallback.kicker,
-      title: text(page.title) || fallback.title,
-      intro: text(page.intro) || fallback.intro,
-      stats: stats(page.stats),
-      seoTitle: text(page.seo?.metaTitle),
-      seoDescription: text(page.seo?.metaDescription),
-      seoImage: mediaSrc(page.seo?.metaImage),
-    };
-  });
-}
-
-// ----------------------------------------------------------------- home page
-
-export type HomePage = {
-  sections: HomeSection[];
-  leadSlug: string;
-  whatMatters: ArticleCard[];
-  trending: ArticleCard[];
-  missedIt: ArticleCard[];
-  mostRead: ArticleCard[];
-  theBrief: ArticleCard[];
-  featuredInsight: InsightCard | null;
-};
-
-const EMPTY_HOME: HomePage = {
-  sections: defaultHomeSections(),
-  leadSlug: "",
-  whatMatters: [],
-  trending: [],
-  missedIt: [],
-  mostRead: [],
-  theBrief: [],
-  featuredInsight: null,
-};
-
-export async function getHomePage(): Promise<HomePage> {
-  return safe("home page", EMPTY_HOME, async () => {
-    const data = await strapiSingle<{
-      sections?: {
-        section: string;
-        kicker: string | null;
-        title: string | null;
-        link_label: string | null;
-        link_url: string | null;
-        hidden: boolean | null;
-      }[];
-      lead_story?: StrapiArticleSummary | null;
-      what_matters_today?: StrapiArticleSummary[];
-      trending?: StrapiArticleSummary[];
-      missed_it?: StrapiArticleSummary[];
-      most_read?: StrapiArticleSummary[];
-      the_brief?: StrapiArticleSummary[];
-      featured_insight?: StrapiInsight | null;
-    }>("home-page", {
-      populate: {
-        sections: true,
-        lead_story: { fields: ["slug"] },
-        what_matters_today: ARTICLE_CARDS,
-        trending: ARTICLE_CARDS,
-        missed_it: ARTICLE_CARDS,
-        most_read: ARTICLE_CARDS,
-        the_brief: ARTICLE_CARDS,
-        featured_insight: { fields: INSIGHT_CARD_FIELDS, populate: INSIGHT_CARD_POPULATE },
-      },
-    });
-    if (!data) return EMPTY_HOME;
-    return {
-      sections: resolveHomeSections(data.sections ?? []),
-      leadSlug: data.lead_story?.slug ?? "",
-      whatMatters: cards(data.what_matters_today),
-      trending: cards(data.trending),
-      missedIt: cards(data.missed_it),
-      mostRead: cards(data.most_read),
-      theBrief: cards(data.the_brief),
-      featuredInsight: data.featured_insight?.slug ? mapInsight(data.featured_insight) : null,
-    };
-  });
-}
-
-// The editor-picked lead story with its full record (for the gallery and
-// related list); falls back to the newest article.
-export async function getLeadArticle() {
-  return safe("lead article", null, async () => {
-    const home = await getHomePage();
-    if (home.leadSlug) {
-      const lead = await getArticleBySlug(home.leadSlug);
-      if (lead) return lead;
-    }
-    const newest = await strapiList<StrapiArticleSummary>("articles", {
-      fields: ["slug"],
-      sort: ["publishedAt:desc"],
-      pagination: { pageSize: 1 },
-    });
-    const slug = newest.data[0]?.slug;
-    return slug ? getArticleBySlug(slug) : null;
-  });
-}
-
 // --------------------------------------------------------------- energy brief
 
 export type BriefItem = { label: string; text: string; href: string };
@@ -414,11 +240,9 @@ export async function getBriefItems() {
       headline: string | null;
       article?: { slug: string | null } | null;
     }>("tickers", {
-      fields: ["label", "headline"],
-      populate: { article: { fields: ["slug"] } },
+      populate: "*",
       filters: { is_active: { $eq: true } },
-      sort: ["publishedAt:desc"],
-      pagination: { pageSize: 20 },
+      sort: "publishedAt:desc",
     });
     return payload.data
       .map((item) => ({
@@ -464,15 +288,17 @@ export async function getCountries() {
       latest_news: string | null;
       latest_investment: string | null;
       latest_policy: string | null;
+      priority_market: boolean | null;
       image?: StrapiMedia | null;
       energy_mix?: { technology: string; projects: number }[];
     }>("countries", {
-      populate: { image: IMAGE, energy_mix: true },
+      populate: ["image", "energy_mix"],
       sort: ["sort_order:asc", "name:asc"],
       pagination: { pageSize: 60 },
     });
     const count = (value: number | null) => (value === null ? "—" : value.toLocaleString("en-GB"));
-    return payload.data.map((item) => ({
+    // Countries that only exist for project links stay off the page.
+    return payload.data.filter((item) => item.priority_market !== false).map((item) => ({
       slug: item.slug,
       name: item.name,
       region: item.region.toUpperCase(),
@@ -520,8 +346,8 @@ export async function getCompanies() {
       image?: StrapiMedia | null;
       spotlight_stats?: StrapiStat[];
     }>("companies", {
-      populate: { image: IMAGE, spotlight_stats: true },
-      sort: ["name:asc"],
+      populate: "*",
+      sort: "publishedAt:desc",
       pagination: { pageSize: 100 },
     });
     return payload.data.map((item) => ({
@@ -541,9 +367,14 @@ export async function getCompanies() {
 
 // ------------------------------------------------------------------- projects
 
+// CMS technology values in the order the filter chips show them, with the
+// shorter chip label where the original design used one.
+const TECHNOLOGY_LABELS: Record<string, string> = { "Battery Storage": "Battery" };
+
 export type ProjectEntry = {
   slug: string;
   name: string;
+  /** Short label used by filter chips and the projects table. */
   technology: string;
   status: string;
   country: string;
@@ -566,8 +397,9 @@ function relativeDays(value: string) {
   return new Date(value).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 }
 
-export async function getProjects(limit = 100) {
-  return safe("projects", [] as ProjectEntry[], async () => {
+// One request for all projects; the home page shows the first few.
+export async function getProjects(limit?: number) {
+  const all = await safe("projects", [] as ProjectEntry[], async () => {
     const payload = await strapiList<{
       name: string;
       slug: string;
@@ -579,42 +411,53 @@ export async function getProjects(limit = 100) {
       image?: StrapiMedia | null;
       country?: { name: string } | null;
     }>("projects", {
-      populate: { image: IMAGE, country: { fields: ["name"] } },
-      sort: ["updatedAt:desc"],
-      pagination: { pageSize: limit },
+      populate: "*",
+      // Newest tracked asset first; "Updated" shows the last edit.
+      sort: "publishedAt:desc",
+      pagination: { pageSize: 100 },
     });
     return payload.data.map((item) => {
       const country = item.country?.name ?? "";
+      const technology = TECHNOLOGY_LABELS[item.technology] ?? item.technology;
       const updated = relativeDays(item.updatedAt);
       return {
         slug: item.slug,
         name: item.name,
-        technology: item.technology,
+        technology,
         status: item.project_status,
         country,
         developer: text(item.developer),
         capacity: text(item.capacity),
         image: mediaSrc(item.image),
-        kicker: [country, item.technology].filter(Boolean).join(" · ").toUpperCase(),
+        kicker: [country, technology].filter(Boolean).join(" · ").toUpperCase(),
         meta: [text(item.capacity), item.project_status, text(item.developer)].filter(Boolean).join(" · "),
         updated,
       };
     });
   });
+  return limit ? all.slice(0, limit) : all;
 }
 
 // ---------------------------------------------------------------------- deals
 
+// Short labels for the narrow label column on the Companies page.
+const DEAL_SHORT_TYPES: Record<string, string> = {
+  "Financial close": "FINANCE",
+  "Development finance": "DFI",
+};
+
 export type DealEntry = {
   title: string;
   type: string;
+  shortType: string;
   value: string;
   markets: string;
   href: string;
 };
 
+// One request for the recent deals; pages show the first few.
 export async function getDeals(limit = 8) {
-  return safe("deals", [] as DealEntry[], async () => {
+  const all = await safe("deals", [] as DealEntry[], async () => {
     const payload = await strapiList<{
       title: string;
       deal_type: string;
@@ -622,18 +465,19 @@ export async function getDeals(limit = 8) {
       markets: string | null;
       article?: { slug: string | null } | null;
     }>("deals", {
-      populate: { article: { fields: ["slug"] } },
+      populate: "*",
       sort: ["deal_date:desc", "publishedAt:desc"],
-      pagination: { pageSize: limit },
     });
     return payload.data.map((item) => ({
       title: item.title,
       type: item.deal_type.toUpperCase(),
+      shortType: DEAL_SHORT_TYPES[item.deal_type] ?? item.deal_type.toUpperCase(),
       value: text(item.value),
       markets: text(item.markets),
       href: item.article?.slug ? `/news/${item.article.slug}` : "",
     }));
   });
+  return all.slice(0, limit);
 }
 
 // --------------------------------------------------------------------- events
@@ -653,6 +497,8 @@ export type EventEntry = {
   featured: boolean;
   highlights: Stat[];
 };
+
+const MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 
 function formatDateRange(start: string, end: string | null) {
   const options: Intl.DateTimeFormatOptions = { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" };
@@ -682,22 +528,22 @@ export async function getUpcomingEvents() {
       image?: StrapiMedia | null;
       highlights?: StrapiStat[];
     }>("events", {
-      populate: { image: IMAGE, highlights: true },
-      // An event stays listed until it has ended.
-      filters: {
-        $or: [{ end_date: { $gte: today } }, { end_date: { $null: true }, start_date: { $gte: today } }],
-      },
-      sort: ["start_date:asc"],
-      pagination: { pageSize: 50 },
+      populate: "*",
+      sort: "start_date:asc",
+      pagination: { pageSize: 100 },
     });
-    return payload.data.map((item) => {
+    // An event stays listed until it has ended.
+    const upcoming = payload.data.filter(
+      (item) => (item.end_date ?? item.start_date) >= today,
+    );
+    return upcoming.map((item) => {
       const start = new Date(`${item.start_date}T00:00:00Z`);
       return {
         slug: item.slug,
         title: item.title,
         type: item.event_type.toUpperCase(),
         day: String(start.getUTCDate()).padStart(2, "0"),
-        month: start.toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" }).toUpperCase(),
+        month: MONTHS[start.getUTCMonth()],
         dateRange: formatDateRange(item.start_date, item.end_date),
         meta: [text(item.city), text(item.attendance)].filter(Boolean).join(" · "),
         venue: text(item.venue) || text(item.city),
@@ -728,34 +574,38 @@ function youtubeId(url: string) {
   return match?.[1] ?? "";
 }
 
-export async function getVideos(type: "Reel" | "Video", limit = 12) {
-  return safe(`${type} videos`, [] as VideoEntry[], async () => {
+// One request for all videos; callers pick reels or videos from the result.
+export async function getVideos(type: "Reel" | "Video", limit?: number) {
+  const all = await safe("videos", [] as (VideoEntry & { type: string })[], async () => {
     const payload = await strapiList<{
       id: number;
       title: string;
+      video_type: string;
       source: string | null;
       duration: string | null;
       youtube_url: string | null;
       thumbnail?: StrapiMedia | null;
     }>("videos", {
-      populate: { thumbnail: IMAGE },
-      filters: { video_type: { $eq: type } },
-      sort: ["publishedAt:desc"],
-      pagination: { pageSize: limit },
+      populate: "*",
+      sort: "publishedAt:desc",
+      pagination: { pageSize: 100 },
     });
-    return payload.data
-      .map((item) => {
-        const id = youtubeId(text(item.youtube_url));
-        return {
-          id: item.id,
-          title: item.title,
-          source: text(item.source),
-          duration: text(item.duration),
-          youtubeId: id,
-          href: id ? `https://www.youtube.com/watch?v=${id}` : "",
-          image: mediaSrc(item.thumbnail) || (id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : ""),
-        };
-      })
-      .filter((item) => item.image && (type === "Video" || item.youtubeId));
+    return payload.data.map((item) => {
+      const id = youtubeId(text(item.youtube_url));
+      return {
+        id: item.id,
+        type: item.video_type,
+        title: item.title,
+        source: text(item.source),
+        duration: text(item.duration),
+        youtubeId: id,
+        href: id ? `https://www.youtube.com/watch?v=${id}` : "",
+        image: mediaSrc(item.thumbnail) || (id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : ""),
+      };
+    });
   });
+  const picked = all.filter(
+    (item) => item.type === type && item.image && (type === "Video" || item.youtubeId),
+  );
+  return limit ? picked.slice(0, limit) : picked;
 }

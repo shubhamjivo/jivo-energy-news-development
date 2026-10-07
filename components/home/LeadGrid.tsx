@@ -1,13 +1,13 @@
 import Link from "next/link";
-import { getLatestArticleCards } from "@/lib/articles";
-import { getLeadArticle } from "@/lib/cms";
+import { getLatestArticleCards, leadByline } from "@/lib/articles";
+import { getLeadArticle, type CmsPage } from "@/lib/pages";
 import { Container } from "@/components/ui/Container";
 import { ArticleHero } from "@/components/news/ArticleHero";
 import { LatestNews } from "@/components/news/LatestNews";
 import { RelatedNews } from "@/components/news/RelatedNews";
 
-export async function LeadGrid() {
-  const lead = await getLeadArticle();
+export async function LeadGrid({ home }: { home: CmsPage | null }) {
+  const lead = await getLeadArticle(home);
   if (!lead) return null;
 
   const others = await getLatestArticleCards(10, [lead.id]);
@@ -60,7 +60,7 @@ export async function LeadGrid() {
               {lead.dek ? (
                 <p className="text-sm leading-[21px] text-muted">{lead.dek}</p>
               ) : null}
-              <p className="text-xs text-muted">{lead.byline}</p>
+              <p className="text-xs text-muted">{leadByline(lead)}</p>
             </div>
           </article>
 
