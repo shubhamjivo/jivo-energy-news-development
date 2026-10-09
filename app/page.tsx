@@ -87,19 +87,22 @@ export default async function Home() {
 
   // The home Insights block is one screen fed by four Insights pages: Learning
   // Center leads on top, Technology fills the three cards below, and the side
-  // column is split between Opinion and Reports. The editor's first pick goes
-  // first in the slot of its own page.
-  const pickedInsight = sectionInsights(home, "insights")[0];
+  // column is split between Opinion and Reports. Each slot shows the editor's
+  // picks from its "insights-<page>" section first, then the newest insights
+  // of that page.
   const insightSlot = (tag: string, count: number): InsightSlot => {
     const { label, href } = routeByHref(`/insights/${tag}`);
-    const items = insights.filter((item) => item.tags.includes(tag));
-    const picked = items.find((item) => item.id === pickedInsight?.id);
-    const ordered = picked ? [picked, ...items.filter((item) => item !== picked)] : items;
-    return { label, href, items: ordered.slice(0, count) };
+    const picked = sectionInsights(home, `insights-${tag}`).map(
+      (pick) => insights.find((item) => item.id === pick.id) ?? pick,
+    );
+    const newest = insights.filter(
+      (item) => item.tags.includes(tag) && !picked.some((pick) => pick.id === item.id),
+    );
+    return { label, href, items: [...picked, ...newest].slice(0, count) };
   };
   const insightLead = insightSlot("learning-center", 1);
   const insightCards = insightSlot("technology", 3);
-  const insightSide = [insightSlot("opinion", 2), insightSlot("reports", 2)];
+  const insightSide = [insightSlot("opinion", 2), insightSlot("reports", 3)];
 
   const render = (slug: HomeSectionSlug): ReactNode => {
     const heading = DEFAULT_HEADINGS[slug];
