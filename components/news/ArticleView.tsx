@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ArticleCard, CmsArticle } from "@/lib/article-types";
 import { Container } from "@/components/ui/Container";
+import { Faq } from "@/components/ui/Faq";
 import { ArticleHero } from "@/components/news/ArticleHero";
 import { LatestNews } from "@/components/news/LatestNews";
 import { RelatedNews } from "@/components/news/RelatedNews";
@@ -81,6 +82,7 @@ export function ArticleView({
               className="article-body mt-6 scroll-mt-16"
               dangerouslySetInnerHTML={{ __html: article.contentHtml }}
             />
+            <Faq items={article.faqs} />
           </article>
 
           <aside

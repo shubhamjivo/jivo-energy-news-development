@@ -10,8 +10,9 @@ import {
   type Stat,
   type StrapiInsight,
 } from "@/lib/cms";
-import { mediaSrc } from "@/lib/media";
+import { mapSeo, type SeoData } from "@/lib/seo-data";
 import {
+  SEO_POPULATE,
   strapiList,
   type StrapiArticleSummary,
   type StrapiSeo,
@@ -33,16 +34,15 @@ export type CmsPage = {
 };
 
 // What each page needs populated. Pages without sections only load SEO.
-const SEO_POPULATE = "seo.metaImage";
 const PAGE_POPULATE: Record<string, string[]> = {
   home: [
     "sections.articles.banner",
     "sections.articles.thumbnail",
     "sections.articles.category",
     "sections.insights.cover",
-    SEO_POPULATE,
+    ...SEO_POPULATE,
   ],
-  about: ["sections.items", "sections.people", SEO_POPULATE],
+  about: ["sections.items", "sections.people", ...SEO_POPULATE],
 };
 
 // Server-side only: called from page and layout server components.
@@ -71,9 +71,7 @@ export type PageContent = {
   title: string;
   intro: string;
   stats: Stat[];
-  seoTitle: string;
-  seoDescription: string;
-  seoImage: string;
+  seo: SeoData;
 };
 
 // The intro text is part of the design; only SEO comes from the Page entry.
@@ -84,9 +82,7 @@ export function pageIntro(
   return {
     ...intro,
     stats: intro.stats ?? [],
-    seoTitle: text(page?.seo?.metaTitle),
-    seoDescription: text(page?.seo?.metaDescription),
-    seoImage: mediaSrc(page?.seo?.metaImage),
+    seo: mapSeo(page?.seo),
   };
 }
 

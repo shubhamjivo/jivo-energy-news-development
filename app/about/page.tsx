@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { AboutIndex } from "@/components/about/AboutIndex";
 import { NewsletterCta } from "@/components/layout/NewsletterCta";
 import { aboutContent, getPage, pageIntro } from "@/lib/pages";
+import { buildMetadata } from "@/lib/seo";
 
 // /about is not in the main navigation routes, so its fallback text lives here.
 const FALLBACK = {
@@ -12,16 +13,13 @@ const FALLBACK = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const intro = pageIntro(await getPage("about"), FALLBACK);
-  const title = intro.seoTitle || intro.title;
-  const description =
-    intro.seoDescription ||
-    "About Africa Energy News — energy intelligence from Johannesburg, Lagos, and Nairobi.";
-  return {
-    title,
-    description,
-    alternates: { canonical: "/about" },
-    openGraph: { title, description, url: "/about" },
-  };
+  return buildMetadata({
+    seo: intro.seo,
+    title: intro.title,
+    description:
+      "About Africa Energy News — energy intelligence from Johannesburg, Lagos, and Nairobi.",
+    path: "/about",
+  });
 }
 
 export default async function AboutPage() {

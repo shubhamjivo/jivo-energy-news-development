@@ -1,5 +1,19 @@
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 
+// A schema.org block. Renders nothing for empty or non-object data, so an
+// entry's optional "Structured data" field can be passed straight in.
+export function JsonLdScript({ data }: { data: unknown }) {
+  if (!data || typeof data !== "object") return null;
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify(data).replace(/</g, "\\u003c"),
+      }}
+    />
+  );
+}
+
 export function JsonLd() {
   const jsonLd = {
     "@context": "https://schema.org",
@@ -31,12 +45,5 @@ export function JsonLd() {
     ],
   };
 
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{
-        __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
-      }}
-    />
-  );
+  return <JsonLdScript data={jsonLd} />;
 }

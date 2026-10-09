@@ -1,5 +1,5 @@
 import "server-only";
-import type { ArticleCard, CmsArticle } from "@/lib/article-types";
+import type { ArticleCard, CmsArticle, FaqItem } from "@/lib/article-types";
 import { prepareArticleHtml } from "@/lib/article-html";
 import {
   fetchArticleBySlug,
@@ -9,9 +9,11 @@ import {
   fetchLatestFullArticles,
   getStrapiOrigin,
   type StrapiArticle,
+  type StrapiFaq,
   type StrapiArticleSummary,
 } from "@/lib/strapi";
 import { mediaSrc } from "@/lib/media";
+import { mapSeo } from "@/lib/seo-data";
 
 export function formatDate(value: string) {
   const date = new Date(value);
@@ -115,6 +117,15 @@ export function mapArticleCard(article: StrapiArticleSummary): ArticleCard {
   };
 }
 
+export function mapFaqs(items: StrapiFaq[] | null | undefined): FaqItem[] {
+  return (items ?? [])
+    .map((item) => ({
+      question: item.question?.trim() ?? "",
+      answer: item.answer?.trim() ?? "",
+    }))
+    .filter((item) => item.question && item.answer);
+}
+
 export function mapStrapiArticle(article: StrapiArticle): CmsArticle {
   const card = mapArticleCard(article);
   const { html, headings } = prepareArticleHtml(
@@ -130,9 +141,6 @@ export function mapStrapiArticle(article: StrapiArticle): CmsArticle {
   const coAuthors = article.co_author?.trim() ?? "";
   const source = article.source?.trim() ?? "";
   const readTime = readTimeOf(article);
-  const seo = article.seo ?? null;
-  const seoTitle = seo?.metaTitle?.trim() || card.title;
-  const seoDescription = seo?.metaDescription?.trim() || card.dek || card.title;
   const related = (article.related_articles ?? [])
     .filter((item) => item.slug)
     .map(mapArticleCard);
@@ -159,14 +167,7 @@ export function mapStrapiArticle(article: StrapiArticle): CmsArticle {
     readTime,
     publishedAt: card.publishedAt,
     updatedAt: article.updatedAt,
-    seoTitle,
-    seoDescription,
-    seoKeywords: seo?.keywords?.trim() ?? "",
-    seoRobots: seo?.metaRobots?.trim() ?? "",
-    canonicalUrl: seo?.canonicalURL?.trim() ?? "",
-    ogTitle: seoTitle,
-    ogDescription: seoDescription,
-    ogImage: mediaSrc(seo?.metaImage) || card.image,
+    seo: mapSeo(article.seo),
     image: card.image,
     caption,
     gallery: [
@@ -185,6 +186,7 @@ export function mapStrapiArticle(article: StrapiArticle): CmsArticle {
     ],
     contentHtml: html,
     headings,
+    faqs: mapFaqs(article.faqs),
     relatedNewsIds: related.map((item) => item.id),
     related,
   };

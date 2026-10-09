@@ -4,7 +4,8 @@ import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getSiteSettings } from "@/lib/cms";
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+import { DEFAULT_SHARE_IMAGE } from "@/lib/seo";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const roboto = Roboto({
@@ -13,65 +14,71 @@ const roboto = Roboto({
   variable: "--font-roboto",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: {
-    default: SITE_NAME,
-    template: `%s | ${SITE_NAME}`,
-  },
-  description: SITE_DESCRIPTION,
-  applicationName: SITE_NAME,
-  keywords: [
-    "Africa energy news",
-    "renewable energy Africa",
-    "solar",
-    "wind",
-    "battery storage",
-    "green hydrogen",
-    "grid investment",
-    "energy policy",
-  ],
-  authors: [{ name: SITE_NAME }],
-  creator: SITE_NAME,
-  publisher: SITE_NAME,
-  category: "news",
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    type: "website",
-    locale: "en_GB",
-    url: SITE_URL,
-    siteName: SITE_NAME,
-    title: SITE_NAME,
-    description: SITE_DESCRIPTION,
-    images: [
-      {
-        url: "/images/lead-featured.png",
-        width: 1152,
-        height: 896,
-        alt: "Utility-scale solar array at sunrise — West Africa",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: SITE_NAME,
-    description: SITE_DESCRIPTION,
-    images: ["/images/lead-featured.png"],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+const DEFAULT_KEYWORDS = [
+  "Africa energy news",
+  "renewable energy Africa",
+  "solar",
+  "wind",
+  "battery storage",
+  "green hydrogen",
+  "grid investment",
+  "energy policy",
+];
+
+// Site-wide defaults from Site Settings; pages override them with their own
+// "SEO & sharing" fields (see lib/seo.ts).
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  const image = settings.shareImage || DEFAULT_SHARE_IMAGE;
+
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: SITE_NAME,
+      template: `%s | ${SITE_NAME}`,
+    },
+    description: settings.description,
+    applicationName: SITE_NAME,
+    keywords: settings.keywords.length > 0 ? settings.keywords : DEFAULT_KEYWORDS,
+    authors: [{ name: SITE_NAME }],
+    creator: SITE_NAME,
+    publisher: SITE_NAME,
+    category: "news",
+    alternates: {
+      canonical: "/",
+    },
+    openGraph: {
+      type: "website",
+      locale: "en_GB",
+      url: SITE_URL,
+      siteName: SITE_NAME,
+      title: SITE_NAME,
+      description: settings.description,
+      images: [{ url: image, alt: SITE_NAME }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      site: settings.twitterHandle || undefined,
+      title: SITE_NAME,
+      description: settings.description,
+      images: [image],
+    },
+    verification: settings.googleVerification
+      ? { google: settings.googleVerification }
+      : undefined,
+    robots: {
       index: true,
       follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
     },
-  },
-};
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: "#030e50",

@@ -2,11 +2,14 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ContinuousNewsFeed } from "@/components/news/ContinuousNewsFeed";
 import { NewsletterCta } from "@/components/layout/NewsletterCta";
+import { JsonLdScript } from "@/components/seo/JsonLd";
+import { FaqJsonLd } from "@/components/ui/Faq";
 import {
   getArticleBySlug,
   getArticleSlugs,
   getLatestArticleCards,
 } from "@/lib/articles";
+import { buildMetadata } from "@/lib/seo";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 type PageProps = {
@@ -29,49 +32,19 @@ export async function generateMetadata({
   const article = await getArticleBySlug(slug);
   if (!article) return {};
 
-  const url = `${SITE_URL}${article.href}`;
-  const ogImage = article.ogImage || article.image;
-  const image = ogImage
-    ? ogImage.startsWith("http")
-      ? ogImage
-      : `${SITE_URL}${ogImage}`
-    : undefined;
-  const authors = [article.author, article.coAuthors]
-    .filter(Boolean)
-    .map((name) => ({ name }));
-
-  return {
-    title: article.seoTitle || article.title,
-    description: article.seoDescription || article.title,
-    alternates: { canonical: article.canonicalUrl || article.href },
-    keywords: article.seoKeywords || undefined,
-    robots: article.seoRobots || undefined,
-    authors: authors.length > 0 ? authors : undefined,
-    openGraph: {
-      type: "article",
-      title: article.ogTitle || article.title,
-      description:
-        article.ogDescription || article.seoDescription || article.title,
-      url,
-      images: image
-        ? [
-            {
-              url: image,
-              alt: article.caption || article.title,
-            },
-          ]
-        : undefined,
+  return buildMetadata({
+    seo: article.seo,
+    title: article.title,
+    description: article.dek || article.title,
+    image: article.image,
+    imageAlt: article.caption || article.title,
+    path: article.href,
+    article: {
       publishedTime: article.publishedAt,
       modifiedTime: article.updatedAt ?? article.publishedAt,
+      authors: [article.author, article.coAuthors],
     },
-    twitter: {
-      card: "summary_large_image",
-      title: article.ogTitle || article.title,
-      description:
-        article.ogDescription || article.seoDescription || article.title,
-      images: image ? [image] : undefined,
-    },
-  };
+  });
 }
 
 export default async function ArticlePage({ params }: PageProps) {
@@ -82,7 +55,7 @@ export default async function ArticlePage({ params }: PageProps) {
   ]);
   if (!article) notFound();
 
-  const ogImage = article.ogImage || article.image;
+  const ogImage = article.seo.image || article.image;
   const image = ogImage
     ? ogImage.startsWith("http")
       ? ogImage
@@ -103,7 +76,7 @@ export default async function ArticlePage({ params }: PageProps) {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
     headline: article.title,
-    description: article.seoDescription || article.title,
+    description: article.seo.description || article.dek || article.title,
     image: image ? [image] : undefined,
     datePublished: article.publishedAt,
     dateModified: article.updatedAt ?? article.publishedAt,
@@ -119,12 +92,9 @@ export default async function ArticlePage({ params }: PageProps) {
 
   return (
     <main>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
-        }}
-      />
+      <JsonLdScript data={jsonLd} />
+      <JsonLdScript data={article.seo.structuredData} />
+      <FaqJsonLd items={article.faqs} />
       <ContinuousNewsFeed
         key={article.id}
         initialArticle={article}

@@ -33,19 +33,19 @@ import {
   sectionArticles,
   sectionInsights,
 } from "@/lib/pages";
+import { buildMetadata } from "@/lib/seo";
+import { mapSeo } from "@/lib/seo-data";
 import { routeByHref, SITE_TAGLINE } from "@/lib/site";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [settings, home] = await Promise.all([getSiteSettings(), getPage("home")]);
-  return {
-    title: {
-      absolute:
-        home?.seo?.metaTitle?.trim() ||
-        `${settings.siteName} — ${settings.tagline || SITE_TAGLINE}`,
-    },
-    description: home?.seo?.metaDescription?.trim() || settings.description,
-    alternates: { canonical: "/" },
-  };
+  return buildMetadata({
+    seo: mapSeo(home?.seo),
+    title: `${settings.siteName} — ${settings.tagline || SITE_TAGLINE}`,
+    description: settings.description,
+    path: "/",
+    absoluteTitle: true,
+  });
 }
 
 export default async function Home() {

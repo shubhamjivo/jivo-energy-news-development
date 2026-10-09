@@ -1,24 +1,15 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ContinuousInsightFeed } from "@/components/insights/ContinuousInsightFeed";
 import { NewsletterCta } from "@/components/layout/NewsletterCta";
-import { Container } from "@/components/ui/Container";
-import { CoverImage } from "@/components/ui/CoverImage";
-import { prepareArticleHtml } from "@/lib/article-html";
+import { JsonLdScript } from "@/components/seo/JsonLd";
+import { FaqJsonLd } from "@/components/ui/Faq";
 import { getInsightBySlug, getInsightSlugs } from "@/lib/cms";
-import { getStrapiOrigin } from "@/lib/strapi";
+import { buildMetadata } from "@/lib/seo";
+import { SITE_URL } from "@/lib/site";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
-};
-
-const SECTION_HREF: Record<string, { href: string; label: string }> = {
-  "learning-center": { href: "/insights/learning-center", label: "Learning Center" },
-  technology: { href: "/insights/technology", label: "Technology" },
-  reports: { href: "/insights/reports", label: "Reports" },
-  opinion: { href: "/insights/opinion", label: "Opinion" },
-  interviews: { href: "/insights/interviews", label: "Interviews" },
-  analysis: { href: "/insights", label: "Analysis" },
 };
 
 async function loadInsight(slug: string) {
@@ -39,22 +30,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const insight = await loadInsight(slug);
   if (!insight) return {};
-  const title = insight.seoTitle || insight.title;
-  const description = insight.seoDescription || insight.summary || insight.title;
-  const image = insight.seoImage || insight.image;
-  return {
-    title,
-    description,
-    alternates: { canonical: insight.href },
-    openGraph: {
-      type: "article",
-      title,
-      description,
-      url: insight.href,
-      images: image ? [image] : undefined,
+  return buildMetadata({
+    seo: insight.seo,
+    title: insight.title,
+    description: insight.summary || insight.title,
+    image: insight.image,
+    path: insight.href,
+    article: {
       publishedTime: insight.publishedAt,
+      modifiedTime: insight.updatedAt,
+      authors: [insight.author],
     },
-  };
+  });
 }
 
 export default async function InsightPage({ params }: PageProps) {
@@ -62,65 +49,29 @@ export default async function InsightPage({ params }: PageProps) {
   const insight = await loadInsight(slug);
   if (!insight) notFound();
 
-  const section =
-    SECTION_HREF[insight.tags.find((tag) => SECTION_HREF[tag]) ?? ""] ?? SECTION_HREF.analysis;
-  const { html } = prepareArticleHtml(insight.content, insight.id, getStrapiOrigin());
+  const image = insight.seo.image || insight.image;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: insight.title,
+    description: insight.seo.description || insight.summary || insight.title,
+    image: image ? [image.startsWith("http") ? image : `${SITE_URL}${image}`] : undefined,
+    datePublished: insight.publishedAt,
+    dateModified: insight.updatedAt,
+    inLanguage: "en",
+    author: insight.author
+      ? { "@type": "Person", name: insight.author }
+      : { "@id": `${SITE_URL}/#organization` },
+    publisher: { "@id": `${SITE_URL}/#organization` },
+    mainEntityOfPage: `${SITE_URL}${insight.href}`,
+  };
 
   return (
     <main>
-      <section className="py-5 desk:py-6">
-        <Container>
-          <article className="mx-auto max-w-[760px]">
-            <p className="text-[11px] tracking-[0.22px] text-muted">
-              <Link href="/insights" className="hover:text-ink">
-                Insights
-              </Link>
-              <span className="px-1.5">/</span>
-              <Link href={section.href} className="hover:text-ink">
-                {section.label}
-              </Link>
-            </p>
-            <p className="mt-4 text-[11px] font-semibold tracking-[0.88px] text-accent">
-              {insight.label}
-            </p>
-            <h1 className="mt-2 text-[28px] font-bold leading-[34px] text-ink desk:text-[36px] desk:leading-[42px]">
-              {insight.title}
-            </h1>
-            {insight.summary ? (
-              <p className="mt-3 text-[15px] leading-[22px] text-muted">{insight.summary}</p>
-            ) : null}
-            {insight.byline ? <p className="mt-3 text-xs text-muted">{insight.byline}</p> : null}
-            {insight.image ? (
-              <CoverImage
-                src={insight.image}
-                alt={insight.title}
-                className="mt-6 aspect-[16/9] w-full"
-                sizes="(max-width: 1439px) 100vw, 760px"
-                priority
-              />
-            ) : null}
-            {insight.pullQuote ? (
-              <blockquote className="mt-6 border-l-2 border-accent pl-4 text-lg font-semibold leading-7 text-ink">
-                “{insight.pullQuote}”
-              </blockquote>
-            ) : null}
-            <div
-              className="article-body mt-6"
-              dangerouslySetInnerHTML={{ __html: html }}
-            />
-            {insight.reportFile ? (
-              <a
-                href={insight.reportFile}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-8 inline-flex h-10 items-center bg-accent px-5 text-sm font-semibold text-white"
-              >
-                Download the report (PDF)
-              </a>
-            ) : null}
-          </article>
-        </Container>
-      </section>
+      <JsonLdScript data={jsonLd} />
+      <JsonLdScript data={insight.seo.structuredData} />
+      <FaqJsonLd items={insight.faqs} />
+      <ContinuousInsightFeed key={insight.id} initialInsight={insight} />
       <NewsletterCta />
     </main>
   );

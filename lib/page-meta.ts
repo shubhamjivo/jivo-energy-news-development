@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getPage, pageIntro } from "@/lib/pages";
+import { buildMetadata } from "@/lib/seo";
 import { routeByHref } from "@/lib/site";
 
 import type { Stat } from "@/lib/cms";
@@ -64,17 +65,10 @@ export async function pageContent(href: string) {
 export async function pageMetadata(href: string): Promise<Metadata> {
   const content = await pageContent(href);
   const route = routeByHref(href);
-  const title = content.seoTitle || route.title;
-  const description = content.seoDescription || route.description;
-  return {
-    title,
-    description,
-    alternates: { canonical: href },
-    openGraph: {
-      title,
-      description,
-      url: href,
-      images: content.seoImage ? [content.seoImage] : undefined,
-    },
-  };
+  return buildMetadata({
+    seo: content.seo,
+    title: route.title,
+    description: route.description,
+    path: href,
+  });
 }

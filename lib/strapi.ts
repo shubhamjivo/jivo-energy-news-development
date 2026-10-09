@@ -20,6 +20,11 @@ export type StrapiTag = {
   slug: string | null;
 };
 
+export type StrapiFaq = {
+  question: string | null;
+  answer: string | null;
+};
+
 export type StrapiSeo = {
   metaTitle?: string | null;
   metaDescription?: string | null;
@@ -27,7 +32,19 @@ export type StrapiSeo = {
   keywords?: string | null;
   metaRobots?: string | null;
   canonicalURL?: string | null;
+  metaSocial?:
+    | {
+        socialNetwork: "Facebook" | "Twitter";
+        title: string | null;
+        description: string | null;
+        image?: StrapiMedia | null;
+      }[]
+    | null;
+  structuredData?: unknown;
 };
+
+// Relation paths that load everything in an entry's "SEO & sharing" block.
+export const SEO_POPULATE = ["seo.metaImage", "seo.metaSocial.image"];
 
 export type StrapiArticleSummary = {
   id: number;
@@ -51,6 +68,7 @@ export type StrapiArticleSummary = {
 export type StrapiArticle = StrapiArticleSummary & {
   content?: string | null;
   gallery?: StrapiMedia[] | null;
+  faqs?: StrapiFaq[] | null;
   seo?: StrapiSeo | null;
   related_articles?: StrapiArticleSummary[] | null;
 };
@@ -82,7 +100,8 @@ export const ARTICLE_POPULATE = ["banner", "thumbnail", "category"];
 const ARTICLE_FULL_POPULATE = [
   ...ARTICLE_POPULATE,
   "gallery",
-  "seo.metaImage",
+  "faqs",
+  ...SEO_POPULATE,
   ...ARTICLE_POPULATE.map((path) => `related_articles.${path}`),
 ];
 

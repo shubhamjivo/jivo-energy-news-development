@@ -1,3 +1,5 @@
+import type { SeoData } from "@/lib/seo-data";
+
 export type ArticleCard = {
   id: number;
   title: string;
@@ -15,6 +17,8 @@ export type ArticleCard = {
   publishedAt: string;
 };
 
+export type FaqItem = { question: string; answer: string };
+
 export type CmsArticle = {
   id: number;
   title: string;
@@ -31,14 +35,7 @@ export type CmsArticle = {
   readTime: number | null;
   publishedAt: string;
   updatedAt: string | null;
-  seoTitle: string;
-  seoDescription: string;
-  seoKeywords: string;
-  seoRobots: string;
-  canonicalUrl: string;
-  ogTitle: string;
-  ogDescription: string;
-  ogImage: string;
+  seo: SeoData;
   image: string;
   caption: string;
   gallery: {
@@ -48,6 +45,7 @@ export type CmsArticle = {
   }[];
   contentHtml: string;
   headings: string[];
+  faqs: FaqItem[];
   relatedNewsIds: number[];
   related: ArticleCard[];
 };

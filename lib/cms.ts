@@ -1,15 +1,20 @@
 import "server-only";
-import type { ArticleCard } from "@/lib/article-types";
-import { mapArticleCard } from "@/lib/articles";
+import { prepareArticleHtml } from "@/lib/article-html";
+import type { ArticleCard, FaqItem } from "@/lib/article-types";
+import { mapArticleCard, mapFaqs } from "@/lib/articles";
 import { mediaSrc } from "@/lib/media";
+import { mapSeo, type SeoData } from "@/lib/seo-data";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from "@/lib/site";
 import {
   fetchArticleSummaries,
   fetchTags,
+  getStrapiOrigin,
+  SEO_POPULATE,
   strapiList,
   strapiSingle,
   type Query,
   type StrapiArticleSummary,
+  type StrapiFaq,
   type StrapiMedia,
   type StrapiSeo,
   type StrapiTag,
@@ -72,10 +77,12 @@ export type StrapiInsight = {
   author: string | null;
   read_time: number | null;
   publishedAt: string;
+  updatedAt?: string | null;
   cover?: StrapiMedia | null;
   report_file?: StrapiMedia | null;
   tags?: StrapiTag[] | null;
   content?: string | null;
+  faqs?: StrapiFaq[] | null;
   seo?: StrapiSeo | null;
 };
 
@@ -135,19 +142,53 @@ export async function getInsights(options: { tags?: InsightSection[]; limit?: nu
   return limit ? picked.slice(0, limit) : picked;
 }
 
+export type InsightDetail = InsightCard & {
+  contentHtml: string;
+  faqs: FaqItem[];
+  updatedAt: string;
+  seo: SeoData;
+};
+
+const INSIGHT_FULL_POPULATE = ["cover", "report_file", "tags", "faqs", ...SEO_POPULATE];
+
+function mapInsightDetail(item: StrapiInsight): InsightDetail {
+  return {
+    ...mapInsight(item),
+    contentHtml: prepareArticleHtml(item.content ?? "", item.id, getStrapiOrigin()).html,
+    faqs: mapFaqs(item.faqs),
+    updatedAt: item.updatedAt ?? item.publishedAt,
+    seo: mapSeo(item.seo),
+  };
+}
+
 export async function getInsightBySlug(slug: string) {
   const payload = await strapiList<StrapiInsight>("insights", {
     filters: { slug: { $eq: slug } },
-    populate: ["cover", "report_file", "tags", "seo.metaImage"],
+    populate: INSIGHT_FULL_POPULATE,
   });
   const item = payload.data[0];
-  if (!item) return null;
+  return item ? mapInsightDetail(item) : null;
+}
+
+// The scroll feed under an insight: the newest other insights, one request
+// per step. One extra row tells whether more follow.
+export async function getNextInsights(options: { excludeIds: number[]; limit: number }) {
+  const payload = await strapiList<StrapiInsight>(
+    "insights",
+    {
+      ...(options.excludeIds.length > 0
+        ? { filters: { id: { $notIn: options.excludeIds } } }
+        : {}),
+      populate: INSIGHT_FULL_POPULATE,
+      sort: "publishedAt:desc",
+      pagination: { pageSize: options.limit + 1 },
+    },
+    { cache: "no-store" },
+  );
+  const rows = payload.data.filter((item) => item.slug);
   return {
-    ...mapInsight(item),
-    content: item.content ?? "",
-    seoTitle: text(item.seo?.metaTitle),
-    seoDescription: text(item.seo?.metaDescription),
-    seoImage: mediaSrc(item.seo?.metaImage),
+    insights: rows.slice(0, options.limit).map(mapInsightDetail),
+    hasMore: rows.length > options.limit,
   };
 }
 
@@ -190,6 +231,9 @@ export type SiteSettings = {
   tagline: string;
   description: string;
   shareImage: string;
+  keywords: string[];
+  twitterHandle: string;
+  googleVerification: string;
   newsletterHeading: string;
   newsletterText: string;
   newsletterButton: string;
@@ -204,6 +248,9 @@ const DEFAULT_SETTINGS: SiteSettings = {
   tagline: SITE_TAGLINE,
   description: SITE_DESCRIPTION,
   shareImage: "",
+  keywords: [],
+  twitterHandle: "",
+  googleVerification: "",
   newsletterHeading: "The 5 energy stories you need to know today.",
   newsletterText: "Africa Energy Brief — intelligence from Johannesburg, Lagos and Nairobi.",
   newsletterButton: "Subscribe to the Brief",
@@ -219,6 +266,9 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       site_name: string | null;
       tagline: string | null;
       site_description: string | null;
+      seo_keywords?: string | null;
+      twitter_handle?: string | null;
+      google_site_verification?: string | null;
       newsletter_heading: string | null;
       newsletter_text: string | null;
       newsletter_button: string | null;
@@ -241,6 +291,12 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       tagline: text(data.tagline) || DEFAULT_SETTINGS.tagline,
       description: text(data.site_description) || DEFAULT_SETTINGS.description,
       shareImage: mediaSrc(data.default_share_image),
+      keywords: text(data.seo_keywords)
+        .split(",")
+        .map((word) => word.trim())
+        .filter(Boolean),
+      twitterHandle: text(data.twitter_handle),
+      googleVerification: text(data.google_site_verification),
       newsletterHeading: text(data.newsletter_heading) || DEFAULT_SETTINGS.newsletterHeading,
       newsletterText: text(data.newsletter_text) || DEFAULT_SETTINGS.newsletterText,
       newsletterButton: text(data.newsletter_button) || DEFAULT_SETTINGS.newsletterButton,
