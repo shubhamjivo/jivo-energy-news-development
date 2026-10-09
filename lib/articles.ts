@@ -7,6 +7,7 @@ import {
   fetchArticleSummaries,
   fetchCategories,
   fetchLatestFullArticles,
+  fetchTags,
   getStrapiOrigin,
   type StrapiArticle,
   type StrapiArticleSummary,
@@ -247,6 +248,30 @@ export async function getNewsPage(options: {
   } catch (error) {
     console.error("Could not load news page from Strapi", error);
     return { articles: [], pageCount: 1 };
+  }
+}
+
+// Africa Times on the home page: one column per tag, in the tags' order, each
+// with its newest articles. Tags without articles are left out.
+export async function getTagDesks(columns = 4, perDesk = 4) {
+  try {
+    const tags = (await fetchTags()).filter((tag) => tag.slug && tag.title);
+    const desks = await Promise.all(
+      tags.map(async (tag) => {
+        const payload = await fetchArticleSummaries({
+          tag: tag.slug as string,
+          pageSize: perDesk,
+        });
+        return {
+          title: (tag.title as string).trim(),
+          stories: payload.data.filter((item) => item.slug).map(mapArticleCard),
+        };
+      }),
+    );
+    return desks.filter((desk) => desk.stories.length > 0).slice(0, columns);
+  } catch (error) {
+    console.error("Could not load tags from Strapi", error);
+    return [];
   }
 }
 

@@ -123,7 +123,7 @@ export function Header({ insightsFeature = null }: { insightsFeature?: InsightCa
                       aria-current={active ? "page" : undefined}
                       className={
                         active
-                          ? "whitespace-nowrap text-ink"
+                          ? "whitespace-nowrap text-accent"
                           : "whitespace-nowrap"
                       }
                     >
@@ -161,7 +161,7 @@ export function Header({ insightsFeature = null }: { insightsFeature?: InsightCa
                   aria-current={active ? "page" : undefined}
                   className={
                     active
-                      ? "whitespace-nowrap text-ink"
+                      ? "whitespace-nowrap text-accent"
                       : "whitespace-nowrap text-muted"
                   }
                 >
@@ -230,7 +230,7 @@ export function Header({ insightsFeature = null }: { insightsFeature?: InsightCa
                             aria-expanded={insightsOpen}
                             aria-haspopup="true"
                             className={`inline-flex items-center gap-1 ${
-                              active ? "text-ink" : "text-muted hover:text-ink"
+                              active ? "text-accent" : "text-muted hover:text-ink"
                             }`}
                           >
                             {link.label}
@@ -257,7 +257,7 @@ export function Header({ insightsFeature = null }: { insightsFeature?: InsightCa
                         aria-current={active ? "page" : undefined}
                         className={
                           active
-                            ? "whitespace-nowrap text-ink"
+                            ? "whitespace-nowrap text-accent"
                             : "whitespace-nowrap text-muted hover:text-ink"
                         }
                       >
@@ -310,7 +310,7 @@ export function Header({ insightsFeature = null }: { insightsFeature?: InsightCa
                         href={link.href}
                         aria-current={active ? "page" : undefined}
                         className={
-                          active ? "text-sm font-semibold text-ink" : "text-sm text-ink"
+                          active ? "text-sm font-semibold text-accent" : "text-sm text-ink"
                         }
                         onClick={() => setOpen(false)}
                       >
@@ -330,7 +330,7 @@ export function Header({ insightsFeature = null }: { insightsFeature?: InsightCa
                     href={link.href}
                     aria-current={active ? "page" : undefined}
                     className={
-                      active ? "text-sm font-semibold text-ink" : "text-sm text-ink"
+                      active ? "text-sm font-semibold text-accent" : "text-sm text-ink"
                     }
                     onClick={() => setOpen(false)}
                   >

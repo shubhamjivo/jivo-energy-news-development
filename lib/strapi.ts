@@ -14,6 +14,12 @@ export type StrapiCategory = {
   slug: string | null;
 };
 
+export type StrapiTag = {
+  id: number;
+  title: string | null;
+  slug: string | null;
+};
+
 export type StrapiSeo = {
   metaTitle?: string | null;
   metaDescription?: string | null;
@@ -196,10 +202,12 @@ export async function fetchArticleSummaries(options: {
   page?: number;
   pageSize?: number;
   category?: string;
+  tag?: string;
   excludeIds?: number[];
 }) {
   const filters: Query = {};
   if (options.category) filters.category = { slug: { $eq: options.category } };
+  if (options.tag) filters.tags = { slug: { $eq: options.tag } };
   if (options.excludeIds && options.excludeIds.length > 0) {
     filters.id = { $notIn: options.excludeIds };
   }
@@ -217,6 +225,14 @@ export async function fetchArticleSummaries(options: {
 export async function fetchCategories() {
   const payload = await strapiList<StrapiCategory>("categories", {
     sort: "title:asc",
+    pagination: { pageSize: 50 },
+  });
+  return payload.data;
+}
+
+export async function fetchTags() {
+  const payload = await strapiList<StrapiTag>("tags", {
+    sort: ["sort_order:asc", "title:asc"],
     pagination: { pageSize: 50 },
   });
   return payload.data;

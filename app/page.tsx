@@ -12,7 +12,7 @@ import { Reels } from "@/components/home/Reels";
 import { WatchListen } from "@/components/home/WatchListen";
 import { WhatMatters } from "@/components/home/WhatMatters";
 import { NewsletterCta } from "@/components/layout/NewsletterCta";
-import { getLatestArticleCards } from "@/lib/articles";
+import { getLatestArticleCards, getTagDesks } from "@/lib/articles";
 import {
   getBriefItems,
   getDeals,
@@ -30,7 +30,6 @@ import {
 import {
   getPage,
   sectionArticles,
-  sectionDesks,
   sectionInsights,
 } from "@/lib/pages";
 import { SITE_TAGLINE } from "@/lib/site";
@@ -50,10 +49,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Home() {
   // All CMS requests run here on the server; components only receive data.
-  const [home, latest, brief, projects, insights, reports, deals, reels, videos] =
+  const [home, latest, tagDesks, brief, projects, insights, reports, deals, reels, videos] =
     await Promise.all([
       getPage("home"),
       getLatestArticleCards(12),
+      getTagDesks(),
       getBriefItems(),
       getProjects(8),
       getInsights({ types: ["Learning Center", "Technology"], limit: 24 }),
@@ -63,7 +63,8 @@ export default async function Home() {
       getVideos("Video", 3),
     ]);
 
-  // Desks without picked articles fall back to the newest stories. Each desk
+  // Africa Times has one desk per Tag with its newest tagged articles. Without
+  // tagged articles the desks fall back to the newest stories. Each desk
   // starts further down the list so the four columns of the design stay
   // filled and differ even when there are few articles.
   const fallbackDesk = (desk: number) => {
@@ -71,10 +72,9 @@ export default async function Home() {
     const start = (desk * 4) % latest.length;
     return [...latest.slice(start), ...latest.slice(0, start)].slice(0, 4);
   };
-  const pickedDesks = sectionDesks(home, "africa-times");
   const desks = (
-    pickedDesks.length > 0
-      ? pickedDesks
+    tagDesks.length > 0
+      ? tagDesks
       : DEFAULT_DESKS.map((title) => ({ title, stories: [] as typeof latest }))
   ).map((desk, index) => ({
     title: desk.title || DEFAULT_DESKS[index] || "",

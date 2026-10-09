@@ -31,7 +31,7 @@ export function InsightsMenu({
                 onClick={onNavigate}
                 className={
                   active
-                    ? "text-sm font-semibold text-ink"
+                    ? "text-sm font-semibold text-accent"
                     : "text-sm text-muted"
                 }
               >
@@ -57,7 +57,7 @@ export function InsightsMenu({
                 onClick={onNavigate}
                 className={
                   active
-                    ? "text-[15px] font-semibold text-ink"
+                    ? "text-[15px] font-semibold text-accent"
                     : "text-[15px] text-ink hover:text-muted"
                 }
               >

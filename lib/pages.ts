@@ -39,7 +39,6 @@ const PAGE_POPULATE: Record<string, string[]> = {
     "sections.articles.banner",
     "sections.articles.thumbnail",
     "sections.articles.category",
-    "sections.desks.articles.thumbnail",
     "sections.insights.cover",
     SEO_POPULATE,
   ],
@@ -95,14 +94,6 @@ export function pageIntro(
 
 export function sectionArticles(page: CmsPage | null, slug: string): ArticleCard[] {
   return cards(findSection(page, slug)?.articles as StrapiArticleSummary[] | undefined);
-}
-
-export function sectionDesks(page: CmsPage | null, slug: string) {
-  const desks = (findSection(page, slug)?.desks ?? []) as {
-    title: string | null;
-    articles?: StrapiArticleSummary[];
-  }[];
-  return desks.map((desk) => ({ title: text(desk.title), stories: cards(desk.articles) }));
 }
 
 export function sectionInsights(page: CmsPage | null, slug: string): InsightCard[] {

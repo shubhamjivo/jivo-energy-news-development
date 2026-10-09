@@ -4,7 +4,6 @@ import { Container } from "@/components/ui/Container";
 import { ArticleHero } from "@/components/news/ArticleHero";
 import { LatestNews } from "@/components/news/LatestNews";
 import { RelatedNews } from "@/components/news/RelatedNews";
-import { TableOfContents } from "@/components/news/TableOfContents";
 
 export function ArticleView({
   article,
@@ -70,19 +69,12 @@ export function ArticleView({
               <h1 className="text-[28px] font-bold leading-[34px] text-ink desk:text-[32px] desk:leading-[38px]">
                 {article.title}
               </h1>
-              {article.dek ? (
-                <p className="text-sm leading-[21px] text-muted desk:text-[15px] desk:leading-[22px]">
-                  {article.dek}
-                </p>
-              ) : null}
               <p className="text-xs text-muted text-neutral-900">
                 {article.byline}
               </p>
             </div>
 
             <div className="mt-6 h-px bg-hairline" />
-
-            <TableOfContents headings={article.headings} idPrefix={idPrefix} />
 
             <div
               id={`${idPrefix}-overview`}
