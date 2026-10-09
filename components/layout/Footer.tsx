@@ -2,8 +2,11 @@ import Link from "next/link";
 import { Logo } from "@/components/layout/Logo";
 import { Container } from "@/components/ui/Container";
 import type { SiteSettings } from "@/lib/cms";
+import { withAllFooterLinks } from "@/lib/site";
 
 export function Footer({ settings }: { settings: SiteSettings }) {
+  const columns = withAllFooterLinks(settings.footerColumns);
+
   return (
     <footer className="bg-neutral-900 pb-8 pt-10">
       <Container className="flex flex-col gap-8 desk:flex-row desk:items-start desk:justify-between">
@@ -15,9 +18,9 @@ export function Footer({ settings }: { settings: SiteSettings }) {
             {settings.tagline}
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 desk:flex desk:w-[720px] desk:gap-12">
-          {settings.footerColumns.map((col) => (
-            <div key={col.heading} className="flex w-40 flex-col gap-1.5">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4 desk:flex desk:gap-12">
+          {columns.map((col) => (
+            <div key={col.heading} className="flex flex-col gap-1.5 desk:w-40">
               <p className="text-[10px] font-semibold tracking-[0.8px] text-accent">
                 {col.heading}
               </p>

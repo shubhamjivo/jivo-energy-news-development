@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Fragment, type ReactNode } from "react";
 import { AfricaTimes } from "@/components/home/AfricaTimes";
 import { EnergyBrief } from "@/components/home/EnergyBrief";
-import { Insights } from "@/components/home/Insights";
+import { Insights, type InsightGroup } from "@/components/home/Insights";
 import { InvestmentWatch } from "@/components/home/InvestmentWatch";
 import { LatestReports } from "@/components/home/LatestReports";
 import { LeadGrid } from "@/components/home/LeadGrid";
@@ -33,7 +33,7 @@ import {
   sectionArticles,
   sectionInsights,
 } from "@/lib/pages";
-import { SITE_TAGLINE } from "@/lib/site";
+import { INSIGHTS_LINKS, SITE_TAGLINE } from "@/lib/site";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [settings, home] = await Promise.all([getSiteSettings(), getPage("home")]);
@@ -57,7 +57,7 @@ export default async function Home() {
       getTagDesks(),
       getBriefItems(),
       getProjects(8),
-      getInsights({ tags: ["learning-center", "technology"], limit: 24 }),
+      getInsights(),
       getInsights({ tags: ["reports"], limit: 4 }),
       getDeals(4),
       getVideos("Reel"),
@@ -85,14 +85,20 @@ export default async function Home() {
   const whatMatters = sectionArticles(home, "what-matters-today");
   const newsPicks = sectionArticles(home, "news");
 
-  // The home Insights block is the explainer desk: Learning Center and
-  // Technology pieces, led by the editor's first pick.
-  const featuredInsight = sectionInsights(home, "insights")[0] ?? insights[0] ?? null;
-  const otherInsights = insights.filter((item) => item.id !== featuredInsight?.id);
-  const insightCards = otherInsights.filter((item) => item.image).slice(0, 3);
-  const insightSidebar = otherInsights
-    .filter((item) => !insightCards.includes(item))
-    .slice(0, 4);
+  // The home Insights block has one tab per Insights page (Learning Center,
+  // Technology, Reports, Opinion, Interviews) that has stories, newest first.
+  // The editor's first pick leads the tab of its own page.
+  const pickedInsight = sectionInsights(home, "insights")[0];
+  const insightGroups = INSIGHTS_LINKS.flatMap((link): InsightGroup[] => {
+    const tag = link.href.split("/").pop() ?? "";
+    const items = insights.filter((item) => item.tags.includes(tag));
+    const featured = items.find((item) => item.id === pickedInsight?.id) ?? items[0];
+    if (!featured) return [];
+    const others = items.filter((item) => item !== featured);
+    const cards = others.filter((item) => item.image).slice(0, 3);
+    const sidebar = others.filter((item) => !cards.includes(item)).slice(0, 4);
+    return [{ label: link.label, href: link.href, featured, cards, sidebar }];
+  });
 
   const render = (slug: HomeSectionSlug): ReactNode => {
     const heading = DEFAULT_HEADINGS[slug];
@@ -123,12 +129,7 @@ export default async function Home() {
         return <ProjectWatch heading={heading} projects={projects} />;
       case "insights":
         return (
-          <Insights
-            heading={heading}
-            featured={featuredInsight}
-            cards={insightCards}
-            sidebar={insightSidebar}
-          />
+          <Insights heading={heading} groups={insightGroups} />
         );
       case "investment-watch":
         return <InvestmentWatch heading={heading} deals={deals} />;

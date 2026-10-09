@@ -142,6 +142,65 @@ export const INSIGHTS_LINKS = ROUTES.filter((route) =>
   route.href.startsWith("/insights/"),
 );
 
+const routeLinks = (...hrefs: string[]) =>
+  ROUTES.filter((route) => hrefs.includes(route.href)).map(
+    ({ href, label }) => ({ href, label }),
+  );
+
+type FooterColumn = {
+  heading: string;
+  links: { href: string; label: string }[];
+};
+
+// Every link the footer must carry. The CMS can rename, reorder, and add
+// columns, but anything it leaves out is filled in from here.
+const FOOTER_COLUMNS: FooterColumn[] = [
+  { heading: "NEWS", links: [...routeLinks("/news"), ...UTILITY_LINKS] },
+  {
+    heading: "INTELLIGENCE",
+    links: routeLinks("/projects", "/companies", "/countries"),
+  },
+  {
+    heading: "INSIGHTS",
+    links: [
+      ...routeLinks("/insights"),
+      ...INSIGHTS_LINKS.map(({ href, label }) => ({ href, label })),
+    ],
+  },
+  {
+    heading: "MORE",
+    links: [
+      ...routeLinks("/", "/events"),
+      { href: "/about", label: "About" },
+    ],
+  },
+];
+
+export function withAllFooterLinks(cmsColumns: FooterColumn[]): FooterColumn[] {
+  const columns = cmsColumns.map((column) => ({
+    heading: column.heading,
+    links: [...column.links],
+  }));
+  const hrefs = new Set(columns.flatMap((c) => c.links.map((l) => l.href)));
+
+  for (const fallback of FOOTER_COLUMNS) {
+    let column = columns.find(
+      (c) => c.heading.toLowerCase() === fallback.heading.toLowerCase(),
+    );
+    for (const link of fallback.links) {
+      if (hrefs.has(link.href)) continue;
+      if (!column) {
+        column = { heading: fallback.heading, links: [] };
+        columns.push(column);
+      }
+      if (column.links.some((l) => l.label === link.label)) continue;
+      column.links.push(link);
+      hrefs.add(link.href);
+    }
+  }
+  return columns;
+}
+
 export function routeByHref(href: string) {
   const route = ROUTES.find((item) => item.href === href);
   if (!route) {

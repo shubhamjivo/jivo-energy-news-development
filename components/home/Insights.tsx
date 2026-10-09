@@ -1,22 +1,34 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import type { InsightCard } from "@/lib/cms";
 import type { SectionHeading as Heading } from "@/lib/home-sections";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { Kicker } from "@/components/ui/Kicker";
 
+// One Insights page (Learning Center, Reports, Opinion, …) with its stories
+// laid out for the block: the lead, three image cards and the side list.
+export type InsightGroup = {
+  label: string;
+  href: string;
+  featured: InsightCard;
+  cards: InsightCard[];
+  sidebar: InsightCard[];
+};
+
 export function Insights({
-  featured,
-  cards,
-  sidebar,
+  groups,
   heading,
 }: {
   heading: Heading;
-  featured: InsightCard | null;
-  cards: InsightCard[];
-  sidebar: InsightCard[];
+  groups: InsightGroup[];
 }) {
-  if (!featured && cards.length === 0 && sidebar.length === 0) return null;
+  const [active, setActive] = useState(groups[0]?.href ?? "");
+  const group = groups.find((item) => item.href === active) ?? groups[0];
+  if (!group) return null;
+  const { featured, cards, sidebar } = group;
 
   return (
     <section className="py-10 desk:py-16">
@@ -32,17 +44,37 @@ export function Insights({
               </h2>
             ) : null}
           </div>
-          {heading.linkUrl && heading.linkLabel ? (
-            <Link href={heading.linkUrl} className="text-sm font-semibold text-ink">
+          {heading.linkLabel ? (
+            <Link href={group.href} className="text-sm font-semibold text-ink">
               {heading.linkLabel}
             </Link>
           ) : null}
         </div>
         <div className="mt-2 h-px bg-hairline" />
 
+        {groups.length > 1 ? (
+          <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto pb-2">
+            {groups.map((item) => {
+              const selected = item.href === group.href;
+              return (
+                <button
+                  key={item.href}
+                  type="button"
+                  aria-pressed={selected}
+                  onClick={() => setActive(item.href)}
+                  className={`h-8 shrink-0 rounded-full px-3.5 text-[13px] leading-[19px] ${
+                    selected ? "bg-ink text-white" : "border border-muted text-ink"
+                  }`}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
+        ) : null}
+
         <div className="mt-8 flex flex-col gap-10 desk:flex-row desk:gap-8">
           <div className="min-w-0 flex-1">
-            {featured ? (
             <Link
               href={featured.href}
               className="flex gap-6 flex-col overflow-hidden desk:h-[250px] desk:flex-row"
@@ -75,7 +107,6 @@ export function Insights({
                 />
               ) : null}
             </Link>
-            ) : null}
 
             <div className="mt-4 grid gap-6 border-t border-hairline pt-2 sm:grid-cols-3">
               {cards.map((card) => (
