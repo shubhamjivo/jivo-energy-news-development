@@ -13,12 +13,12 @@ type PageProps = {
 };
 
 const SECTION_HREF: Record<string, { href: string; label: string }> = {
-  "Learning Center": { href: "/insights/learning-center", label: "Learning Center" },
-  Technology: { href: "/insights/technology", label: "Technology" },
-  Report: { href: "/insights/reports", label: "Reports" },
-  Opinion: { href: "/insights/opinion", label: "Opinion" },
-  Interview: { href: "/insights/interviews", label: "Interviews" },
-  Analysis: { href: "/insights", label: "Analysis" },
+  "learning-center": { href: "/insights/learning-center", label: "Learning Center" },
+  technology: { href: "/insights/technology", label: "Technology" },
+  reports: { href: "/insights/reports", label: "Reports" },
+  opinion: { href: "/insights/opinion", label: "Opinion" },
+  interviews: { href: "/insights/interviews", label: "Interviews" },
+  analysis: { href: "/insights", label: "Analysis" },
 };
 
 async function loadInsight(slug: string) {
@@ -62,7 +62,8 @@ export default async function InsightPage({ params }: PageProps) {
   const insight = await loadInsight(slug);
   if (!insight) notFound();
 
-  const section = SECTION_HREF[insight.type] ?? SECTION_HREF.Analysis;
+  const section =
+    SECTION_HREF[insight.tags.find((tag) => SECTION_HREF[tag]) ?? ""] ?? SECTION_HREF.analysis;
   const { html } = prepareArticleHtml(insight.content, insight.id, getStrapiOrigin());
 
   return (

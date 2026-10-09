@@ -11,8 +11,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function InsightsPage() {
   const [intro, reports, longReads] = await Promise.all([
     pageContent("/insights"),
-    getInsights({ types: ["Report"], limit: 4 }),
-    getInsights({ types: ["Analysis", "Opinion", "Interview"], limit: 7 }),
+    getInsights({ tags: ["reports"], limit: 4 }),
+    getInsights({ tags: ["analysis", "opinion", "interviews"], limit: 7 }),
   ]);
   // "The great read": the newest piece with a pull quote.
   const featured = longReads.find((item) => item.pullQuote) ?? null;

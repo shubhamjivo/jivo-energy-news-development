@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function InterviewsPage() {
   const [intro, items] = await Promise.all([
     pageContent(href),
-    getInsights({ types: ["Interview"] }),
+    getInsights({ tags: ["interviews"] }),
   ]);
 
   return (

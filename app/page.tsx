@@ -12,13 +12,14 @@ import { Reels } from "@/components/home/Reels";
 import { WatchListen } from "@/components/home/WatchListen";
 import { WhatMatters } from "@/components/home/WhatMatters";
 import { NewsletterCta } from "@/components/layout/NewsletterCta";
-import { getLatestArticleCards, getTagDesks } from "@/lib/articles";
+import { getLatestArticleCards } from "@/lib/articles";
 import {
   getBriefItems,
   getDeals,
   getInsights,
   getProjects,
   getSiteSettings,
+  getTagDesks,
   getVideos,
 } from "@/lib/cms";
 import {
@@ -56,8 +57,8 @@ export default async function Home() {
       getTagDesks(),
       getBriefItems(),
       getProjects(8),
-      getInsights({ types: ["Learning Center", "Technology"], limit: 24 }),
-      getInsights({ types: ["Report"], limit: 4 }),
+      getInsights({ tags: ["learning-center", "technology"], limit: 24 }),
+      getInsights({ tags: ["reports"], limit: 4 }),
       getDeals(4),
       getVideos("Reel"),
       getVideos("Video", 3),

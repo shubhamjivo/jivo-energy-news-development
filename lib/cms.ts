@@ -4,12 +4,15 @@ import { mapArticleCard } from "@/lib/articles";
 import { mediaSrc } from "@/lib/media";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from "@/lib/site";
 import {
+  fetchArticleSummaries,
+  fetchTags,
   strapiList,
   strapiSingle,
   type Query,
   type StrapiArticleSummary,
   type StrapiMedia,
   type StrapiSeo,
+  type StrapiTag,
 } from "@/lib/strapi";
 
 
@@ -50,21 +53,19 @@ function links(items: StrapiLink[] | null | undefined): SiteLink[] {
 
 // ------------------------------------------------------------------ insights
 
-export const INSIGHT_TYPES = [
-  "Learning Center",
-  "Technology",
-  "Report",
-  "Opinion",
-  "Interview",
-  "Analysis",
-] as const;
-export type InsightType = (typeof INSIGHT_TYPES)[number];
+// Tag slugs that place an insight on the Insights pages.
+export type InsightSection =
+  | "learning-center"
+  | "technology"
+  | "reports"
+  | "opinion"
+  | "interviews"
+  | "analysis";
 
 export type StrapiInsight = {
   id: number;
   title: string | null;
   slug: string | null;
-  insight_type: InsightType;
   label: string | null;
   summary: string | null;
   pull_quote: string | null;
@@ -73,6 +74,7 @@ export type StrapiInsight = {
   publishedAt: string;
   cover?: StrapiMedia | null;
   report_file?: StrapiMedia | null;
+  tags?: StrapiTag[] | null;
   content?: string | null;
   seo?: StrapiSeo | null;
 };
@@ -82,7 +84,7 @@ export type InsightCard = {
   title: string;
   slug: string;
   href: string;
-  type: InsightType;
+  tags: string[];
   label: string;
   summary: string;
   pullQuote: string;
@@ -97,13 +99,14 @@ export type InsightCard = {
 export function mapInsight(item: StrapiInsight): InsightCard {
   const readTime = item.read_time && item.read_time > 0 ? `${item.read_time} min read` : "";
   const author = text(item.author);
+  const tags = (item.tags ?? []).map((tag) => tag.slug ?? "").filter(Boolean);
   return {
     id: item.id,
     title: text(item.title),
     slug: item.slug ?? "",
     href: `/insights/${item.slug}`,
-    type: item.insight_type,
-    label: text(item.label) || item.insight_type.toUpperCase(),
+    tags,
+    label: text(item.label) || (tags[0] ?? "").replace(/-/g, " ").toUpperCase(),
     summary: text(item.summary),
     pullQuote: text(item.pull_quote),
     author,
@@ -115,8 +118,8 @@ export function mapInsight(item: StrapiInsight): InsightCard {
   };
 }
 
-// One request for every insight; pages pick their types from the result.
-export async function getInsights(options: { types?: InsightType[]; limit?: number } = {}) {
+// One request for every insight; pages pick their tags from the result.
+export async function getInsights(options: { tags?: InsightSection[]; limit?: number } = {}) {
   const all = await safe("insights", [] as InsightCard[], async () => {
     const payload = await strapiList<StrapiInsight>("insights", {
       populate: "*",
@@ -125,15 +128,17 @@ export async function getInsights(options: { types?: InsightType[]; limit?: numb
     });
     return payload.data.filter((item) => item.slug).map(mapInsight);
   });
-  const { types, limit } = options;
-  const picked = types?.length ? all.filter((item) => types.includes(item.type)) : all;
+  const { tags, limit } = options;
+  const picked = tags?.length
+    ? all.filter((item) => tags.some((tag) => item.tags.includes(tag)))
+    : all;
   return limit ? picked.slice(0, limit) : picked;
 }
 
 export async function getInsightBySlug(slug: string) {
   const payload = await strapiList<StrapiInsight>("insights", {
     filters: { slug: { $eq: slug } },
-    populate: ["cover", "report_file", "seo.metaImage"],
+    populate: ["cover", "report_file", "tags", "seo.metaImage"],
   });
   const item = payload.data[0];
   if (!item) return null;
@@ -155,6 +160,26 @@ export async function getInsightSlugs() {
     return payload.data
       .filter((item) => item.slug)
       .map((item) => ({ slug: item.slug as string, updatedAt: item.updatedAt }));
+  });
+}
+
+// ---------------------------------------------------------------------- tags
+
+// Africa Times on the home page: one column per tag, in the tags' order, each
+// with its newest tagged articles. Tags without articles are left out.
+export async function getTagDesks(columns = 4, perDesk = 4) {
+  return safe("tags", [] as { title: string; stories: ArticleCard[] }[], async () => {
+    const tags = (await fetchTags()).filter((tag) => tag.slug && tag.title);
+    const desks = await Promise.all(
+      tags.map(async (tag) => {
+        const payload = await fetchArticleSummaries({
+          tag: tag.slug as string,
+          pageSize: perDesk,
+        });
+        return { title: text(tag.title), stories: cards(payload.data) };
+      }),
+    );
+    return desks.filter((desk) => desk.stories.length > 0).slice(0, columns);
   });
 }
 
