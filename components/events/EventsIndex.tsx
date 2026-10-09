@@ -21,7 +21,7 @@ export function EventsIndex({
       <PageIntro kicker={intro.kicker} title={intro.title} dek={intro.intro} />
 
       {featured ? (
-        <section className="py-6">
+        <section className="py-5 desk:py-6">
           <Container>
             <div className="grid items-center gap-6 desk:grid-cols-2 desk:gap-10">
               {featured.image ? (
@@ -69,7 +69,7 @@ export function EventsIndex({
         </section>
       ) : null}
 
-      <section className="py-4">
+      <section className="py-5 desk:py-6">
         <Container>
           <h2 className="text-[26px] font-bold leading-none text-ink desk:text-[28px]">
             Upcoming on the diary
@@ -107,7 +107,7 @@ export function EventsIndex({
       </section>
 
       {replays.length > 0 ? (
-      <section id="diary" className="pb-12 pt-6">
+      <section id="diary" className="py-5 desk:py-6">
         <Container>
           <div className="flex items-end justify-between gap-4">
             <h2 className="text-[26px] font-bold leading-none text-ink desk:text-[28px]">

@@ -36,7 +36,7 @@ export function Reels({ reels, heading }: { reels: VideoEntry[]; heading: Headin
   if (reels.length === 0) return null;
 
   return (
-    <section className="py-8 desk:py-10">
+    <section className="py-5 desk:py-6">
       <Container>
         <div className="flex items-center justify-between">
           <div>

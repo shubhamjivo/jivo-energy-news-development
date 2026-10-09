@@ -44,7 +44,7 @@ export function Insights({
   if (!featured && cards.items.length === 0 && sideLists.length === 0) return null;
 
   return (
-    <section className="py-10 desk:py-16">
+    <section className="py-5 desk:py-6">
       <Container>
         <div className="flex items-center justify-between">
           <div>

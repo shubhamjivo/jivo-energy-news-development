@@ -52,7 +52,7 @@ export function CountriesIndex({
     <main>
       <PageIntro kicker={intro.kicker} title={intro.title} dek={intro.intro} />
 
-      <section className="py-8">
+      <section className="py-5 desk:py-6">
         <Container>
           <h2 className="text-[26px] font-bold leading-none text-ink desk:text-[28px]">
             Africa&apos;s Energy Landscape
@@ -222,7 +222,7 @@ export function CountriesIndex({
         </Container>
       </section>
 
-      <section id="markets" className="pb-12">
+      <section id="markets" className="py-5 desk:py-6">
         <Container>
           <div className="flex items-end justify-between gap-4">
             <h2 className="text-[26px] font-bold leading-none text-ink desk:text-[28px]">

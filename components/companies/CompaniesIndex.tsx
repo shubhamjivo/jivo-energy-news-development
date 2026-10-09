@@ -44,14 +44,14 @@ export function CompaniesIndex({
     <main>
       <PageIntro kicker={intro.kicker} title={intro.title} dek={intro.intro} />
 
-      <section className="pt-4">
+      <section className="pt-5 desk:pt-6">
         <Container>
           <FilterBar options={filters} value={filter} onChange={setFilter} />
         </Container>
       </section>
 
       {showSpotlight ? (
-        <section className="py-6">
+        <section className="py-5 desk:py-6">
           <Container>
             <div className="grid items-center gap-6 desk:grid-cols-2 desk:gap-10">
               {spotlight.image ? (
@@ -105,7 +105,7 @@ export function CompaniesIndex({
         </section>
       ) : null}
 
-      <section id="directory" className="py-4">
+      <section id="directory" className="py-5 desk:py-6">
         <Container>
           <div className="flex items-end justify-between gap-4">
             <h2 className="text-[26px] font-bold leading-none text-ink desk:text-[28px]">
@@ -146,7 +146,7 @@ export function CompaniesIndex({
       </section>
 
       {deals.length > 0 ? (
-        <section className="pb-10 pt-4">
+        <section className="py-5 desk:py-6">
           <Container>
             <h2 className="text-[26px] font-bold leading-none text-ink desk:text-[28px]">
               Recent deals

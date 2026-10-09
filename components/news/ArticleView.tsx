@@ -20,7 +20,7 @@ export function ArticleView({
   const idPrefix = `article-${article.id}`;
 
   return (
-    <section className="py-6 desk:py-8">
+    <section className="py-5 desk:py-6">
       <Container>
         <div className="flex flex-col gap-10 desk:flex-row desk:items-start desk:gap-8">
           <article

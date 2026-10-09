@@ -10,7 +10,7 @@ export function WatchListen({ videos, heading }: { videos: VideoEntry[]; heading
   if (videos.length === 0) return null;
 
   return (
-    <section className="pb-2 pt-8 desk:pt-10">
+    <section className="py-5 desk:py-6">
       <Container>
       <SectionHeading
         kicker={heading.kicker}

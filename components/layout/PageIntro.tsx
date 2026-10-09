@@ -10,7 +10,7 @@ export function PageIntro({
   dek: string;
 }) {
   return (
-    <section className="pt-8 pb-2 desk:pt-10">
+    <section className="pt-5 desk:pt-6">
       <Container>
         <p className="text-[10px] font-semibold tracking-[1px] text-accent">
           {kicker}

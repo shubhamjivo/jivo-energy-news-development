@@ -11,7 +11,7 @@ export function NewsAnalysis({ items, heading }: { items: ArticleCard[]; heading
   if (items.length === 0) return null;
 
   return (
-    <section className="pb-3 pt-8 desk:pt-10">
+    <section className="py-5 desk:py-6">
       <Container>
         <SectionHeading
           kicker={heading.kicker}

@@ -68,7 +68,7 @@ export default async function InsightPage({ params }: PageProps) {
 
   return (
     <main>
-      <section className="py-6 desk:py-8">
+      <section className="py-5 desk:py-6">
         <Container>
           <article className="mx-auto max-w-[760px]">
             <p className="text-[11px] tracking-[0.22px] text-muted">

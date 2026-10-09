@@ -23,7 +23,7 @@ export async function LeadGrid({ home }: { home: CmsPage | null }) {
       : [...new Set([...sameTopic, ...unused, ...others])].slice(0, 4);
 
   return (
-    <section id="latest" className="scroll-mt-36 py-6 desk:py-8">
+    <section id="latest" className="scroll-mt-36 py-5 desk:py-6">
       <Container>
         <div className="flex flex-col gap-8 desk:flex-row desk:items-start desk:gap-6">
           <aside className="order-3 hidden w-[300px] shrink-0 desk:order-1 desk:block">

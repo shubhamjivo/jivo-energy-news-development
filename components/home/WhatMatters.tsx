@@ -11,7 +11,7 @@ export function WhatMatters({ items, heading }: { items: ArticleCard[]; heading:
   if (items.length === 0) return null;
 
   return (
-    <section id="what-matters" className="scroll-mt-36 pb-3 pt-8 desk:pt-10">
+    <section id="what-matters" className="scroll-mt-36 py-5 desk:py-6">
       <Container className="relative">
         <SectionHeading
           kicker={heading.kicker}

@@ -14,7 +14,7 @@ export function EnergyBrief({ items, heading }: { items: BriefItem[]; heading: H
   const tickerItems = [...items, ...items];
 
   return (
-    <section id="brief" className="scroll-mt-36 bg-ink" aria-label={heading.title}>
+    <section id="brief" className="my-5 scroll-mt-36 bg-ink desk:my-6" aria-label={heading.title}>
       <Container className="flex items-center gap-4">
         <div className="flex h-[52px] shrink-0 items-center border-r border-white/20 px-4">
           <p className="text-[11px] font-bold tracking-[0.44px] whitespace-nowrap text-white">

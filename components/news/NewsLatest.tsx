@@ -24,7 +24,7 @@ export function NewsLatest({
   topic: string;
 }) {
   return (
-    <section className="pb-10 pt-4 desk:pt-2">
+    <section className="py-5 desk:py-6">
       <Container>
         <div className="flex items-end justify-between">
           <h2 className="text-[22px] font-bold text-ink desk:text-[28px]">

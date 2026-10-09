@@ -43,7 +43,7 @@ export async function NewsIndex({
 
   return (
     <main>
-      <section className="pt-8 pb-2 desk:pt-10">
+      <section className="pt-5 desk:pt-6">
         <Container>
           <p className="text-[10px] font-semibold tracking-[1px] text-accent">
             {intro.kicker}
@@ -59,7 +59,7 @@ export async function NewsIndex({
       </section>
 
       {lead ? (
-        <section className="py-3 desk:py-6">
+        <section className="py-5 desk:py-6">
           <Container>
             <div className="flex flex-col gap-8 desk:flex-row desk:items-start desk:gap-7">
               <article className="min-w-0 flex-1">

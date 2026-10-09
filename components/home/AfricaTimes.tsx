@@ -13,7 +13,7 @@ export function AfricaTimes({ desks, heading }: { desks: TimesDesk[]; heading: H
   if (columns.length === 0) return null;
 
   return (
-    <section id="africa-times" className="scroll-mt-36 py-8 desk:py-10">
+    <section id="africa-times" className="scroll-mt-36 py-5 desk:py-6">
       <Container>
         <div className="flex flex-col gap-2 desk:flex-row desk:items-center desk:gap-2.5">
           <div className="flex items-center gap-2.5">

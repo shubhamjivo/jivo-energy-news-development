@@ -30,7 +30,7 @@ export function ProjectsIndex({
     <main>
       <PageIntro kicker={intro.kicker} title={intro.title} dek={intro.intro} />
 
-      <section className="pt-4">
+      <section className="pt-5 desk:pt-6">
         <Container>
           {intro.stats.length > 0 ? (
             <dl className="mb-5 grid grid-cols-2 gap-x-6 gap-y-5 desk:grid-cols-4">
@@ -52,7 +52,7 @@ export function ProjectsIndex({
         </Container>
       </section>
 
-      <section className="py-6">
+      <section className="py-5 desk:py-6">
         <Container>
           <div className="flex items-end justify-between gap-4">
             <h2 className="text-[26px] font-bold leading-none text-ink desk:text-[28px]">
@@ -92,7 +92,7 @@ export function ProjectsIndex({
         </Container>
       </section>
 
-      <section className="pb-10">
+      <section className="py-5 desk:py-6">
         <Container>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[720px] border-collapse text-left">

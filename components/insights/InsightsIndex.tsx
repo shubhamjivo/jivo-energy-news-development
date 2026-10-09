@@ -25,7 +25,7 @@ export function InsightsIndex({
       <PageIntro kicker={intro.kicker} title={intro.title} dek={intro.intro} />
 
       {featured ? (
-        <section className="py-6">
+        <section className="py-5 desk:py-6">
           <Container>
             <Link
               href={featured.href}
@@ -64,7 +64,7 @@ export function InsightsIndex({
       ) : null}
 
       {reports?.length ? (
-        <section className="py-4">
+        <section className="py-5 desk:py-6">
           <Container>
             <div className="flex items-end justify-between gap-4">
               <h2 className="text-[26px] font-bold leading-none text-ink desk:text-[28px]">
@@ -101,7 +101,7 @@ export function InsightsIndex({
       ) : null}
 
       {notes?.length ? (
-        <section className="pb-12 pt-6">
+        <section className="py-5 desk:py-6">
           <Container>
             <h2 className="text-[26px] font-bold leading-none text-ink desk:text-[28px]">
               Analysis & briefing notes
@@ -143,7 +143,7 @@ export function InsightsIndex({
       ) : null}
 
       {empty ? (
-        <section className="pb-12 pt-6">
+        <section className="py-5 desk:py-6">
           <Container>
             <p className="text-sm text-muted">Nothing published in this section yet.</p>
           </Container>

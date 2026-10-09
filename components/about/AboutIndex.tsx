@@ -8,7 +8,7 @@ export function AboutIndex({ intro, about }: { intro: PageContent; about: AboutC
     <main>
       <PageIntro kicker={intro.kicker} title={intro.title} dek={intro.intro} />
 
-      <section className="py-8">
+      <section className="py-5 desk:py-6">
         <Container>
           <h2 className="text-[26px] font-bold leading-tight text-ink desk:text-[32px]">
             {about.heading}
@@ -31,7 +31,7 @@ export function AboutIndex({ intro, about }: { intro: PageContent; about: AboutC
         </Container>
       </section>
 
-      <section className="pb-8">
+      <section className="py-5 desk:py-6">
         <Container>
           <h2 className="text-[26px] font-bold leading-none text-ink desk:text-[28px]">
             {about.coverageHeading}
@@ -47,7 +47,7 @@ export function AboutIndex({ intro, about }: { intro: PageContent; about: AboutC
         </Container>
       </section>
 
-      <section className="pb-8">
+      <section className="py-5 desk:py-6">
         <Container>
           <h2 className="text-[26px] font-bold leading-none text-ink desk:text-[28px]">
             {about.bureausHeading}
@@ -66,7 +66,7 @@ export function AboutIndex({ intro, about }: { intro: PageContent; about: AboutC
         </Container>
       </section>
 
-      <section className="pb-8">
+      <section className="py-5 desk:py-6">
         <Container>
           <div className="flex items-end justify-between gap-4">
             <h2 className="text-[26px] font-bold leading-none text-ink desk:text-[28px]">
@@ -96,7 +96,7 @@ export function AboutIndex({ intro, about }: { intro: PageContent; about: AboutC
         </Container>
       </section>
 
-      <section className="pb-12">
+      <section className="py-5 desk:py-6">
         <Container>
           <div className="grid gap-6 desk:grid-cols-2 desk:items-stretch">
             <div>

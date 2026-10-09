@@ -31,7 +31,7 @@ export function ProjectWatch({
   if (projects.length === 0) return null;
 
   return (
-    <section id="project-watch" className="scroll-mt-36 pb-2 pt-8 desk:pt-10">
+    <section id="project-watch" className="scroll-mt-36 py-5 desk:py-6">
       <Container>
       <SectionHeading
         kicker={heading.kicker}
