@@ -26,7 +26,7 @@ export function Faq({ items }: { items: FaqItem[] }) {
                 />
               </svg>
             </summary>
-            <p className="whitespace-pre-line pb-5 pr-8 text-sm leading-6 text-muted">
+            <p className="whitespace-pre-line pb-5 pr-8 text-sm leading-6 text-neutral-900">
               {item.answer}
             </p>
           </details>
