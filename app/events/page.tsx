@@ -7,7 +7,7 @@ import { pageContent, pageMetadata } from "@/lib/page-meta";
 export async function generateMetadata(): Promise<Metadata> {
   return pageMetadata("/events");
 }
-
+// insight page
 export default async function EventsPage() {
   const [intro, events, replays] = await Promise.all([
     pageContent("/events"),
