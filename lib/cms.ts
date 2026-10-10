@@ -81,6 +81,7 @@ export type StrapiInsight = {
   cover?: StrapiMedia | null;
   report_file?: StrapiMedia | null;
   tags?: StrapiTag[] | null;
+  related_insights?: StrapiInsight[] | null;
   content?: string | null;
   faqs?: StrapiFaq[] | null;
   seo?: StrapiSeo | null;
@@ -145,17 +146,28 @@ export async function getInsights(options: { tags?: InsightSection[]; limit?: nu
 export type InsightDetail = InsightCard & {
   contentHtml: string;
   faqs: FaqItem[];
+  // The editor's Related insights picks.
+  related: InsightCard[];
   updatedAt: string;
   seo: SeoData;
 };
 
-const INSIGHT_FULL_POPULATE = ["cover", "report_file", "tags", "faqs", ...SEO_POPULATE];
+const INSIGHT_FULL_POPULATE = [
+  "cover",
+  "report_file",
+  "tags",
+  "faqs",
+  "related_insights.cover",
+  "related_insights.tags",
+  ...SEO_POPULATE,
+];
 
 function mapInsightDetail(item: StrapiInsight): InsightDetail {
   return {
     ...mapInsight(item),
     contentHtml: prepareArticleHtml(item.content ?? "", item.id, getStrapiOrigin()).html,
     faqs: mapFaqs(item.faqs),
+    related: (item.related_insights ?? []).filter((related) => related.slug).map(mapInsight),
     updatedAt: item.updatedAt ?? item.publishedAt,
     seo: mapSeo(item.seo),
   };

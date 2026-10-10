@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { SubscribeButton } from "@/components/layout/SubscribeButton";
 import { Container } from "@/components/ui/Container";
 import { getSiteSettings } from "@/lib/cms";
 
@@ -16,12 +16,12 @@ export async function NewsletterCta() {
             {settings.newsletterText}
           </p>
         </div>
-        <Link
-          href="#newsletter"
+        <SubscribeButton
+          source="Newsletter box"
           className="flex h-12 w-full items-center justify-center bg-accent text-[10px] font-semibold tracking-[1px] uppercase text-white desk:w-[280px]"
         >
           {settings.newsletterButton}
-        </Link>
+        </SubscribeButton>
       </Container>
     </section>
   );

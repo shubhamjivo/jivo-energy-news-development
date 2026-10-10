@@ -8,17 +8,23 @@ import type { PageContent } from "@/lib/pages";
 export function InsightsIndex({
   intro,
   featured = null,
+  sections,
   reports,
   notes,
+  notesHeading,
 }: {
   intro: PageContent;
   featured?: InsightCard | null;
+  /** One block per Insights sub-page, each linking through to that page. */
+  sections?: { label: string; href: string; items: InsightCard[] }[];
   /** Omit to hide the reports section. */
   reports?: InsightCard[];
   /** Omit to hide the notes section. */
   notes?: InsightCard[];
+  /** Title above the notes; leave out where the page intro already names them. */
+  notesHeading?: string;
 }) {
-  const empty = !featured && !reports?.length && !notes?.length;
+  const empty = !featured && !sections?.length && !reports?.length && !notes?.length;
 
   return (
     <main>
@@ -63,18 +69,58 @@ export function InsightsIndex({
         </section>
       ) : null}
 
+      {sections?.map((section) => (
+        <section key={section.href} className="py-5 desk:py-6">
+          <Container>
+            <div className="flex items-end justify-between gap-4 border-b border-hairline pb-2">
+              <h2 className="text-[22px] font-bold leading-none text-ink desk:text-[28px]">
+                <Link href={section.href} className="hover:text-accent">
+                  {section.label}
+                </Link>
+              </h2>
+              <Link href={section.href} className="text-xs text-muted hover:text-ink">
+                View all →
+              </Link>
+            </div>
+            {section.items.length > 0 ? (
+              <ul className="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-2 desk:grid-cols-4">
+                {section.items.map((item) => (
+                  <li key={item.id}>
+                    <Link href={item.href} className="block">
+                      {item.image ? (
+                        <CoverImage
+                          src={item.image}
+                          alt={item.title}
+                          className="h-[150px] w-full"
+                          sizes="(max-width: 1439px) 50vw, 280px"
+                        />
+                      ) : null}
+                      <p className="mt-2.5 text-[10px] font-semibold tracking-[0.8px] text-accent">
+                        {item.label}
+                      </p>
+                      <h3 className="mt-1 text-base font-semibold leading-5 text-ink">
+                        {item.title}
+                      </h3>
+                      {item.summary ? (
+                        <p className="mt-1 line-clamp-2 text-[13px] leading-[19px] text-muted">
+                          {item.summary}
+                        </p>
+                      ) : null}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-4 text-sm text-muted">Nothing published in this section yet.</p>
+            )}
+          </Container>
+        </section>
+      ))}
+
       {reports?.length ? (
         <section className="py-5 desk:py-6">
           <Container>
-            <div className="flex items-end justify-between gap-4">
-              <h2 className="text-[26px] font-bold leading-none text-ink desk:text-[28px]">
-                Latest Reports
-              </h2>
-              <Link href="/insights/reports" className="text-xs text-muted hover:text-ink">
-                Browse the library →
-              </Link>
-            </div>
-            <ul className="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-2 desk:grid-cols-4">
+            <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 desk:grid-cols-4">
               {reports.map((report) => (
                 <li key={report.id}>
                   <Link href={report.href} className="block">
@@ -103,10 +149,12 @@ export function InsightsIndex({
       {notes?.length ? (
         <section className="py-5 desk:py-6">
           <Container>
-            <h2 className="text-[26px] font-bold leading-none text-ink desk:text-[28px]">
-              Analysis & briefing notes
-            </h2>
-            <ul className="mt-5 flex flex-col gap-6">
+            {notesHeading ? (
+              <h2 className="mb-5 text-[26px] font-bold leading-none text-ink desk:text-[28px]">
+                {notesHeading}
+              </h2>
+            ) : null}
+            <ul className="flex flex-col gap-6">
               {notes.map((note) => (
                 <li key={note.id}>
                   <Link

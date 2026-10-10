@@ -4,7 +4,7 @@ import { ContinuousInsightFeed } from "@/components/insights/ContinuousInsightFe
 import { NewsletterCta } from "@/components/layout/NewsletterCta";
 import { JsonLdScript } from "@/components/seo/JsonLd";
 import { FaqJsonLd } from "@/components/ui/Faq";
-import { getInsightBySlug, getInsightSlugs } from "@/lib/cms";
+import { getInsightBySlug, getInsights, getInsightSlugs } from "@/lib/cms";
 import { buildMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
@@ -46,7 +46,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function InsightPage({ params }: PageProps) {
   const { slug } = await params;
-  const insight = await loadInsight(slug);
+  // The newest insights feed the Related and Latest lists beside the story.
+  const [insight, latest] = await Promise.all([loadInsight(slug), getInsights({ limit: 24 })]);
   if (!insight) notFound();
 
   const image = insight.seo.image || insight.image;
@@ -71,7 +72,7 @@ export default async function InsightPage({ params }: PageProps) {
       <JsonLdScript data={jsonLd} />
       <JsonLdScript data={insight.seo.structuredData} />
       <FaqJsonLd items={insight.faqs} />
-      <ContinuousInsightFeed key={insight.id} initialInsight={insight} />
+      <ContinuousInsightFeed key={insight.id} initialInsight={insight} latest={latest} />
       <NewsletterCta />
     </main>
   );

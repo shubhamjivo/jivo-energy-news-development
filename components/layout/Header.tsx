@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import type { InsightCard } from "@/lib/cms";
 import { NAV_LINKS, UTILITY_LINKS } from "@/lib/site";
 import { InsightsMenu } from "@/components/layout/InsightsMenu";
+import { SubscribeButton } from "@/components/layout/SubscribeButton";
 import { Logo } from "@/components/layout/Logo";
 import { Container } from "@/components/ui/Container";
 
@@ -287,13 +288,12 @@ export function Header({ insightsFeature = null }: { insightsFeature?: InsightCa
                   </Link>
                 );
               })}
-              <Link
-                href="/#newsletter"
+              <SubscribeButton
+                source="Header menu"
                 className="mt-2 flex h-10 items-center justify-center bg-accent text-sm font-semibold text-white"
-                onClick={() => setOpen(false)}
               >
                 Subscribe
-              </Link>
+              </SubscribeButton>
             </Container>
           </nav>
         ) : null}

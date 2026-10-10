@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { InsightDetail } from "@/lib/cms";
+import type { InsightCard, InsightDetail } from "@/lib/cms";
 import { InsightView } from "@/components/insights/InsightView";
 import { InfiniteScrollSentinel } from "@/components/news/InfiniteScrollSentinel";
 import { UpNextDivider } from "@/components/news/UpNextDivider";
@@ -9,7 +9,13 @@ import { SITE_NAME } from "@/lib/site";
 
 // The opened insight, then the newest other insights one by one as the
 // reader scrolls, like the news feed under an article.
-export function ContinuousInsightFeed({ initialInsight }: { initialInsight: InsightDetail }) {
+export function ContinuousInsightFeed({
+  initialInsight,
+  latest,
+}: {
+  initialInsight: InsightDetail;
+  latest: InsightCard[];
+}) {
   const [insights, setInsights] = useState<InsightDetail[]>([initialInsight]);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -118,7 +124,7 @@ export function ContinuousInsightFeed({ initialInsight }: { initialInsight: Insi
       {insights.map((insight, index) => (
         <div key={insight.id}>
           {index === 0 ? null : <UpNextDivider />}
-          <InsightView insight={insight} priorityImage={index === 0} />
+          <InsightView insight={insight} latest={latest} priorityImage={index === 0} />
         </div>
       ))}
 
