@@ -28,6 +28,8 @@ export function ArticleHero({
   const [index, setIndex] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
   const current = slides[index] ?? slides[0];
+  // A single image is a plain banner: no arrows, dots or counter.
+  const multiple = slides.length > 1;
 
   return (
     <div className={className}>
@@ -35,7 +37,7 @@ export function ArticleHero({
         <Swiper
           slidesPerView={1}
           spaceBetween={0}
-          grabCursor
+          grabCursor={multiple}
           onSwiper={(swiper) => {
             swiperRef.current = swiper;
           }}
@@ -54,41 +56,47 @@ export function ArticleHero({
             </SwiperSlide>
           ))}
         </Swiper>
-        <button
-          type="button"
-          aria-label="Previous image"
-          onClick={() => swiperRef.current?.slidePrev()}
-          className="absolute left-3 top-1/2 z-10 flex size-9 -translate-y-1/2 items-center justify-center rounded-full border border-hairline bg-paper/90 text-lg text-ink disabled:opacity-40"
-        >
-          ‹
-        </button>
-        <button
-          type="button"
-          aria-label="Next image"
-          onClick={() => swiperRef.current?.slideNext()}
-          className="absolute right-3 top-1/2 z-10 flex size-9 -translate-y-1/2 items-center rounded-full justify-center bg-navy text-lg text-white disabled:opacity-40"
-        >
-          ›
-        </button>
-        <div className="pointer-events-none absolute inset-x-0 bottom-3 z-10 flex items-center justify-center gap-1.5">
-          {slides.map((slide, i) => (
+        {multiple ? (
+          <>
             <button
-              key={slide.src}
               type="button"
-              aria-label={`Show image ${i + 1}`}
-              onClick={() => swiperRef.current?.slideTo(i)}
-              className={`pointer-events-auto rounded-full ${i === index
-                  ? "size-2 bg-accent"
-                  : "size-1.5 bg-paper/80"
-                }`}
-            />
-          ))}
-        </div>
+              aria-label="Previous image"
+              onClick={() => swiperRef.current?.slidePrev()}
+              className="absolute left-3 top-1/2 z-10 flex size-9 -translate-y-1/2 items-center justify-center rounded-full border border-hairline bg-paper/90 text-lg text-ink disabled:opacity-40"
+            >
+              ‹
+            </button>
+            <button
+              type="button"
+              aria-label="Next image"
+              onClick={() => swiperRef.current?.slideNext()}
+              className="absolute right-3 top-1/2 z-10 flex size-9 -translate-y-1/2 items-center rounded-full justify-center bg-navy text-lg text-white disabled:opacity-40"
+            >
+              ›
+            </button>
+            <div className="pointer-events-none absolute inset-x-0 bottom-3 z-10 flex items-center justify-center gap-1.5">
+              {slides.map((slide, i) => (
+                <button
+                  key={slide.src}
+                  type="button"
+                  aria-label={`Show image ${i + 1}`}
+                  onClick={() => swiperRef.current?.slideTo(i)}
+                  className={`pointer-events-auto rounded-full ${i === index
+                      ? "size-2 bg-accent"
+                      : "size-1.5 bg-paper/80"
+                    }`}
+                />
+              ))}
+            </div>
+          </>
+        ) : null}
       </div>
-      {current ? (
+      {multiple ? (
         <p className="mt-3.5 text-[11px] tracking-[0.22px] text-muted">
           {index + 1} / {slides.length} · {current.caption}
         </p>
+      ) : current?.caption ? (
+        <p className="mt-3.5 text-[11px] tracking-[0.22px] text-muted">{current.caption}</p>
       ) : null}
     </div>
   );
