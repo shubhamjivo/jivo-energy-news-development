@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { getNextFeedArticles } from "@/lib/articles";
 import { parseIdList } from "@/lib/ids";
 
-// TEMPORARY: caching is off so CMS edits show instantly. Delete this line to
-// restore the 5-minute cache.
+// TEMPORARY: caching is off so CMS edits show instantly. Delete these two
+// lines to restore the 5-minute cache. `fetchCache` is the one that matters:
+// `force-dynamic` alone leaves fetches with their own `revalidate` cached.
 export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;

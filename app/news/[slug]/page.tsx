@@ -12,9 +12,11 @@ import {
 import { buildMetadata } from "@/lib/seo";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 
-// TEMPORARY: caching is off so CMS edits show instantly. Delete this line to
-// restore the 5-minute cache.
+// TEMPORARY: caching is off so CMS edits show instantly. Delete these two
+// lines to restore the 5-minute cache. `fetchCache` is the one that matters:
+// `force-dynamic` alone leaves fetches with their own `revalidate` cached.
 export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
