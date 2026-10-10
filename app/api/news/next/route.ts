@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { getNextFeedArticles } from "@/lib/articles";
 import { parseIdList } from "@/lib/ids";
 
+// TEMPORARY: caching is off so CMS edits show instantly. Delete this line to
+// restore the 5-minute cache.
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const excludeIds = parseIdList(searchParams.get("exclude"));

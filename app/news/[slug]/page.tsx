@@ -12,6 +12,10 @@ import {
 import { buildMetadata } from "@/lib/seo";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 
+// TEMPORARY: caching is off so CMS edits show instantly. Delete this line to
+// restore the 5-minute cache.
+export const dynamic = "force-dynamic";
+
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
