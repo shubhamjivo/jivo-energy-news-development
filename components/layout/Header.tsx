@@ -99,43 +99,21 @@ export function Header({ insightsFeature = null }: { insightsFeature?: InsightCa
           </div>
         </div>
 
-        <div className={`bg-paper desk:hidden ${compact ? "border-b border-accent" : ""}`}>
-          <Container className={`flex items-center justify-between gap-3 transition-[padding] duration-300 ease-out ${compact ? "py-1" : "py-3"}`}>
-            <Link href="/" className="block shrink-0">
+        <div className="border-b border-accent bg-paper desk:hidden">
+          <Container className={`grid grid-cols-[1.5rem_minmax(0,1fr)_1.5rem] items-center gap-3 transition-[padding] duration-300 ease-out ${compact ? "py-1" : "py-3"}`}>
+            <span aria-hidden />
+            <Link href="/" className="block justify-self-center">
               <Logo
                 preload
                 sizes="230px"
-                className="object-contain object-left transition-[width,height] duration-300 ease-out"
+                className="object-contain object-center transition-[width,height] duration-300 ease-out"
                 style={compact ? { width: 48, height: 32 } : { width: 230, height: 110 }}
               />
             </Link>
-            {compact ? (
-              <nav
-                aria-label="Primary"
-                className="flex min-w-0 flex-1 items-center gap-3 overflow-x-auto text-[12px] font-semibold tracking-[0.12em] text-muted uppercase no-scrollbar"
-              >
-                {NAV_LINKS.map((link) => {
-                  const active = isActive(pathname, link.href);
-                  return (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      aria-current={active ? "page" : undefined}
-                      className={
-                        active
-                          ? "whitespace-nowrap text-accent"
-                          : "whitespace-nowrap"
-                      }
-                    >
-                      {link.label}
-                    </Link>
-                  );
-                })}
-              </nav>
-            ) : null}
             <button
               type="button"
               aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
               className="flex h-6 w-6 flex-col items-end justify-center gap-1.5"
               onClick={() => setOpen((v) => !v)}
             >
@@ -143,35 +121,6 @@ export function Header({ insightsFeature = null }: { insightsFeature?: InsightCa
               <span className="h-0.5 w-4 bg-ink" />
             </button>
           </Container>
-        </div>
-
-        <div
-          className={`grid transition-[grid-template-rows] duration-300 ease-out desk:hidden ${
-            compact ? "grid-rows-[0fr]" : "grid-rows-[1fr]"
-          }`}
-        >
-          <div className="overflow-hidden">
-          <Container className="flex items-center gap-4 overflow-x-auto py-2.5 text-[12px] font-semibold tracking-[0.14em] uppercase no-scrollbar">
-            {NAV_LINKS.map((link) => {
-              const active = isActive(pathname, link.href);
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  aria-current={active ? "page" : undefined}
-                  className={
-                    active
-                      ? "whitespace-nowrap text-accent"
-                      : "whitespace-nowrap text-muted"
-                  }
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </Container>
-          <div className="h-px bg-accent" />
-          </div>
         </div>
 
         <div className="hidden bg-paper desk:block">
@@ -338,16 +287,6 @@ export function Header({ insightsFeature = null }: { insightsFeature?: InsightCa
                   </Link>
                 );
               })}
-              {UTILITY_LINKS.map((link) => (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  className="text-sm text-ink"
-                  onClick={() => setOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
               <Link
                 href="/#newsletter"
                 className="mt-2 flex h-10 items-center justify-center bg-accent text-sm font-semibold text-white"
