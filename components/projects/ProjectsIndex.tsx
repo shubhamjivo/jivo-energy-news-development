@@ -71,7 +71,7 @@ export function ProjectsIndex({
           ) : (
             <ul className="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-2 desk:grid-cols-4">
               {projects.map((project) => (
-                <li key={project.slug}>
+                <li key={project.slug} className="flex flex-col border border-hairline">
                   {project.image ? (
                     <CoverImage
                       src={project.image}
@@ -80,20 +80,23 @@ export function ProjectsIndex({
                       sizes="(max-width: 1439px) 50vw, 280px"
                     />
                   ) : null}
-                  <p className="mt-2.5 text-[10px] font-semibold tracking-[0.8px] text-accent">
-                    {project.kicker}
-                  </p>
-                  <h3 className="mt-1 text-xl font-bold leading-6 text-ink">
-                    {project.name}
-                  </h3>
-                  <p className="mt-1 text-xs leading-4 text-muted">
-                    {project.meta}
-                  </p>
-                  <EntryNews
-                    articles={articles[project.slug] ?? []}
-                    href={newsHref({ project: project.slug })}
-                    className="mt-3"
-                  />
+                  <div className="flex flex-1 flex-col p-4">
+                    <p className="text-[10px] font-semibold tracking-[0.8px] text-accent uppercase">
+                      {project.kicker}
+                    </p>
+                    <h3 className="mt-1 text-xl font-bold leading-6 text-ink">
+                      {project.name}
+                    </h3>
+                    <p className="mt-1 text-xs leading-4 text-neutral-900/60">
+                      {project.meta}
+                    </p>
+                    <EntryNews
+                      articles={articles[project.slug] ?? []}
+                      href={newsHref({ project: project.slug })}
+                      limit={2}
+                      className="mt-4 flex-1"
+                    />
+                  </div>
                 </li>
               ))}
             </ul>

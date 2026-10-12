@@ -135,7 +135,7 @@ export function CompaniesIndex({
           ) : (
             <ul className="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-2 desk:grid-cols-4">
               {companies.map((company) => (
-                <li key={company.slug}>
+                <li key={company.slug} className="flex flex-col border border-hairline">
                   {company.image ? (
                     <CoverImage
                       src={company.image}
@@ -144,18 +144,23 @@ export function CompaniesIndex({
                       sizes="(max-width: 1439px) 50vw, 280px"
                     />
                   ) : null}
-                  <p className="mt-2.5 text-[10px] font-semibold tracking-[0.8px] text-accent">
-                    {company.type}
-                  </p>
-                  <h3 className="mt-1 text-xl font-bold leading-6 text-ink">
-                    {company.name}
-                  </h3>
-                  <p className="mt-1 text-xs text-muted">{company.meta}</p>
-                  <EntryNews
-                    articles={articles[company.slug] ?? []}
-                    href={newsHref({ company: company.slug })}
-                    className="mt-3"
-                  />
+                  <div className="flex flex-1 flex-col p-4">
+                    <p className="text-[10px] font-semibold tracking-[0.8px] text-accent uppercase">
+                      {company.type}
+                    </p>
+                    <h3 className="mt-1 text-xl font-bold leading-6 text-ink">
+                      {company.name}
+                    </h3>
+                    <p className="mt-1 text-xs leading-4 text-neutral-900/60">
+                      {company.meta}
+                    </p>
+                    <EntryNews
+                      articles={articles[company.slug] ?? []}
+                      href={newsHref({ company: company.slug })}
+                      limit={2}
+                      className="mt-4 flex-1"
+                    />
+                  </div>
                 </li>
               ))}
             </ul>
