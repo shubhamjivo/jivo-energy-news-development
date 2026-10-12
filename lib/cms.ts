@@ -352,14 +352,15 @@ export async function getBriefItems() {
 
 export type LinkedArticles = Record<string, ArticleCard[]>;
 
-// Newest articles whose Country (or Project) field is set, grouped by that
+// Newest articles whose Country, Project or Company field is set, grouped by that
 // entry's slug. One request covers the whole page.
-export async function getLinkedArticles(relation: "country" | "project", perEntry = 4) {
+export async function getLinkedArticles(relation: "country" | "project" | "company", perEntry = 4) {
   return safe(`${relation} articles`, {} as LinkedArticles, async () => {
     const payload = await strapiList<
       StrapiArticleSummary & {
         country?: { slug: string | null } | null;
         project?: { slug: string | null } | null;
+        company?: { slug: string | null } | null;
       }
     >("articles", {
       populate: [...ARTICLE_POPULATE, relation],

@@ -3,28 +3,31 @@ import type { ArticleCard } from "@/lib/article-types";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { Kicker } from "@/components/ui/Kicker";
+import { NewsFilterBar } from "@/components/news/NewsFilterBar";
+import {
+  NEWS_FILTER_KEYS,
+  newsHref,
+  type NewsFilterOptions,
+  type NewsFilters,
+} from "@/lib/news-url";
 
-function pageHref(page: number, topic: string) {
-  const params = new URLSearchParams();
-  if (topic) params.set("topic", topic);
-  if (page > 1) params.set("page", String(page));
-  const query = params.toString();
-  return query ? `/news?${query}` : "/news";
-}
 
 export function NewsLatest({
   stories,
   page,
   pageCount,
-  topic,
+  filters,
+  options,
 }: {
   stories: ArticleCard[];
   page: number;
   pageCount: number;
-  topic: string;
+  filters: NewsFilters;
+  options: NewsFilterOptions;
 }) {
+  const filtered = NEWS_FILTER_KEYS.some((key) => filters[key]);
   return (
-    <section className="py-5 desk:py-6">
+    <section id="latest" className="scroll-mt-36 py-5 desk:py-6">
       <Container>
         <div className="flex items-end justify-between">
           <h2 className="text-[22px] font-bold text-ink desk:text-[28px]">
@@ -33,8 +36,9 @@ export function NewsLatest({
           <p className="hidden text-xs text-muted desk:block">Sorted by newest</p>
         </div>
         <div className="mt-3 h-px bg-hairline" />
+        <NewsFilterBar filters={filters} options={options} />
 
-        <div className="mt-6 hidden grid-cols-3 gap-x-6 gap-y-6 desk:grid">
+        <div className="mt-2 hidden grid-cols-3 gap-x-6 gap-y-6 desk:grid">
           {stories.map((story) => (
             <Link key={story.id} href={story.href} className="flex flex-col gap-3">
               {story.image ? (
@@ -90,13 +94,15 @@ export function NewsLatest({
         </div>
 
         {stories.length === 0 ? (
-          <p className="py-8 text-sm text-muted">No stories in this desk yet.</p>
+          <p className="py-8 text-sm text-muted">
+            {filtered ? "No stories match these filters." : "No stories yet."}
+          </p>
         ) : pageCount > 1 ? (
           <nav aria-label="News pages" className="mt-6 flex items-center gap-2">
             {Array.from({ length: pageCount }, (_, i) => i + 1).map((n) => (
               <Link
                 key={n}
-                href={pageHref(n, topic)}
+                href={newsHref(filters, n)}
                 scroll={false}
                 aria-current={n === page ? "page" : undefined}
                 className={`flex h-9 w-9 items-center justify-center text-[13px] ${
@@ -111,7 +117,7 @@ export function NewsLatest({
             {page < pageCount ? (
               <Link
                 aria-label="Next page"
-                href={pageHref(page + 1, topic)}
+                href={newsHref(filters, page + 1)}
                 scroll={false}
                 className="flex h-9 w-9 items-center justify-center border border-hairline text-[13px] text-ink"
               >

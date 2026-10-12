@@ -1,9 +1,11 @@
 import Link from "next/link";
 import {
   getLatestArticleCards,
+  getNewsFilterOptions,
   getNewsPage,
   leadByline,
 } from "@/lib/articles";
+import { NEWS_FILTER_KEYS, type NewsFilters } from "@/lib/news-url";
 import { getLeadArticle, getPage, type PageContent } from "@/lib/pages";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
@@ -14,23 +16,29 @@ const PAGE_SIZE = 6;
 
 export async function NewsIndex({
   page,
-  topic,
+  filters,
   intro,
 }: {
   page: number;
-  topic: string;
+  filters: NewsFilters;
   intro: PageContent;
 }) {
   // The lead story is the one picked for the home page.
   const lead = await getLeadArticle(await getPage("home"));
-  const excludeIds = lead && !topic ? [lead.id] : [];
-  const [latest, fallbackRelated] = await Promise.all([
+  // A filtered list is complete; the unfiltered one skips the lead above it.
+  const filtered = NEWS_FILTER_KEYS.some((key) => filters[key]);
+  const excludeIds = lead && !filtered ? [lead.id] : [];
+  const [latest, options, fallbackRelated] = await Promise.all([
     getNewsPage({
       page,
       pageSize: PAGE_SIZE,
-      category: topic || undefined,
+      category: filters.topic || undefined,
+      country: filters.country || undefined,
+      project: filters.project || undefined,
+      company: filters.company || undefined,
       excludeIds,
     }),
+    getNewsFilterOptions(),
     lead && lead.related.length === 0
       ? getLatestArticleCards(4, [lead.id])
       : Promise.resolve([]),
@@ -136,7 +144,8 @@ export async function NewsIndex({
         stories={latest.articles}
         page={Math.min(page, latest.pageCount)}
         pageCount={latest.pageCount}
-        topic={topic}
+        filters={filters}
+        options={options}
       />
     </main>
   );

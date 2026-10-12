@@ -3,11 +3,17 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { PageIntro } from "@/components/layout/PageIntro";
+import { EntryNews } from "@/components/news/EntryNews";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { FilterBar } from "@/components/ui/FilterBar";
-import type { CompanyEntry, DealEntry } from "@/lib/cms";
+import type {
+  CompanyEntry,
+  DealEntry,
+  LinkedArticles as ArticlesBySlug,
+} from "@/lib/cms";
 import { COMPANY_FILTERS } from "@/lib/filters";
+import { newsHref } from "@/lib/news-url";
 import type { PageContent } from "@/lib/pages";
 
 const COMPANY_TYPE_NAMES: Record<string, string> = {
@@ -20,10 +26,12 @@ export function CompaniesIndex({
   intro,
   companies: allCompanies,
   deals,
+  articles,
 }: {
   intro: PageContent;
   companies: CompanyEntry[];
   deals: DealEntry[];
+  articles: ArticlesBySlug;
 }) {
   const filters = ["All", ...COMPANY_FILTERS];
   const [filter, setFilter] = useState("All");
@@ -99,6 +107,11 @@ export function CompaniesIndex({
                 >
                   Read the full profile →
                 </a>
+                <EntryNews
+                  articles={articles[spotlight.slug] ?? []}
+                  href={newsHref({ company: spotlight.slug })}
+                  className="mt-5 max-w-[520px]"
+                />
               </div>
             </div>
           </Container>
@@ -134,10 +147,15 @@ export function CompaniesIndex({
                   <p className="mt-2.5 text-[10px] font-semibold tracking-[0.8px] text-accent">
                     {company.type}
                   </p>
-                  <h3 className="mt-1 text-lg font-semibold leading-6 text-ink">
+                  <h3 className="mt-1 text-xl font-bold leading-6 text-ink">
                     {company.name}
                   </h3>
                   <p className="mt-1 text-xs text-muted">{company.meta}</p>
+                  <EntryNews
+                    articles={articles[company.slug] ?? []}
+                    href={newsHref({ company: company.slug })}
+                    className="mt-3"
+                  />
                 </li>
               ))}
             </ul>

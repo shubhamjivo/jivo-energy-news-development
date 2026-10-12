@@ -46,6 +46,8 @@ export type CmsArticle = {
   contentHtml: string;
   headings: string[];
   faqs: FaqItem[];
+  /** Country, project and company the story is filed under, as /news filters. */
+  links: { label: string; href: string }[];
   relatedNewsIds: number[];
   related: ArticleCard[];
 };

@@ -2,12 +2,13 @@
 
 import { useMemo, useState } from "react";
 import { PageIntro } from "@/components/layout/PageIntro";
-import { LinkedArticles } from "@/components/news/LinkedArticles";
+import { EntryNews } from "@/components/news/EntryNews";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { FilterBar } from "@/components/ui/FilterBar";
 import type { LinkedArticles as ArticlesBySlug, ProjectEntry } from "@/lib/cms";
 import { technologyFilters } from "@/lib/filters";
+import { newsHref } from "@/lib/news-url";
 import type { PageContent } from "@/lib/pages";
 
 export function ProjectsIndex({
@@ -27,20 +28,6 @@ export function ProjectsIndex({
         ? allProjects
         : allProjects.filter((project) => project.technology === filter),
     [allProjects, filter],
-  );
-  // Stories for the projects on screen, newest first, labelled by project.
-  const projectNews = useMemo(
-    () =>
-      projects
-        .flatMap((project) =>
-          (articles[project.slug] ?? []).map((article) => ({
-            ...article,
-            label: project.name,
-          })),
-        )
-        .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
-        .slice(0, 8),
-    [articles, projects],
   );
 
   return (
@@ -96,20 +83,23 @@ export function ProjectsIndex({
                   <p className="mt-2.5 text-[10px] font-semibold tracking-[0.8px] text-accent">
                     {project.kicker}
                   </p>
-                  <h3 className="mt-1 text-lg font-semibold leading-6 text-ink">
+                  <h3 className="mt-1 text-xl font-bold leading-6 text-ink">
                     {project.name}
                   </h3>
                   <p className="mt-1 text-xs leading-4 text-muted">
                     {project.meta}
                   </p>
+                  <EntryNews
+                    articles={articles[project.slug] ?? []}
+                    href={newsHref({ project: project.slug })}
+                    className="mt-3"
+                  />
                 </li>
               ))}
             </ul>
           )}
         </Container>
       </section>
-
-      <LinkedArticles title="Project news" articles={projectNews} />
 
       <section className="py-5 desk:py-6">
         <Container>

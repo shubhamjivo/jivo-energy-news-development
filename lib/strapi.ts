@@ -65,6 +65,14 @@ export type StrapiArticleSummary = {
   category?: StrapiCategory | null;
 };
 
+// Single-choice fields that file an article under a country, project, company.
+export const ARTICLE_LINKS = ["country", "project", "company"] as const;
+
+export type StrapiLinkedEntry = { name: string | null; slug: string | null };
+export type StrapiArticleLinks = {
+  [K in (typeof ARTICLE_LINKS)[number]]?: StrapiLinkedEntry | null;
+};
+
 export type StrapiArticle = StrapiArticleSummary & {
   content?: string | null;
   gallery?: StrapiMedia[] | null;
@@ -222,10 +230,17 @@ export async function fetchArticleSummaries(options: {
   pageSize?: number;
   category?: string;
   tag?: string;
+  country?: string;
+  project?: string;
+  company?: string;
   excludeIds?: number[];
 }) {
   const filters: Query = {};
   if (options.category) filters.category = { slug: { $eq: options.category } };
+  for (const relation of ARTICLE_LINKS) {
+    const slug = options[relation];
+    if (slug) filters[relation] = { slug: { $eq: slug } };
+  }
   if (options.tag) filters.tags = { slug: { $eq: options.tag } };
   if (options.excludeIds && options.excludeIds.length > 0) {
     filters.id = { $notIn: options.excludeIds };
@@ -239,6 +254,28 @@ export async function fetchArticleSummaries(options: {
       pageSize: options.pageSize ?? 10,
     },
   });
+}
+
+// The country, project and company each of these articles is filed under.
+export async function fetchArticleLinks(ids: number[]) {
+  const payload = await strapiList<{ id: number } & StrapiArticleLinks>("articles", {
+    populate: [...ARTICLE_LINKS],
+    filters: { id: { $in: ids } },
+    pagination: { pageSize: ids.length },
+  });
+  return payload.data;
+}
+
+// Countries, projects or companies that have at least one article.
+export async function fetchEntriesWithArticles(
+  collection: "countries" | "projects" | "companies",
+) {
+  const payload = await strapiList<StrapiLinkedEntry>(collection, {
+    filters: { articles: { id: { $notNull: true } } },
+    sort: "name:asc",
+    pagination: { pageSize: 100 },
+  });
+  return payload.data;
 }
 
 export async function fetchCategories() {

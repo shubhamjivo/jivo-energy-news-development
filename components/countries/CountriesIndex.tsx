@@ -8,10 +8,11 @@ import {
   AFRICA_WIDTH,
 } from "@/components/countries/africa-map";
 import { PageIntro } from "@/components/layout/PageIntro";
-import { LinkedArticles } from "@/components/news/LinkedArticles";
+import { EntryNews } from "@/components/news/EntryNews";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
 import type { CountryEntry, LinkedArticles as ArticlesBySlug } from "@/lib/cms";
+import { newsHref } from "@/lib/news-url";
 import type { PageContent } from "@/lib/pages";
 
 const LABEL_PLACE: Record<string, string> = {
@@ -220,15 +221,17 @@ export function CountriesIndex({
                 </li>
                 ) : null}
               </ul>
+              <EntryNews
+                label="ARTICLES"
+                articles={articles[selected.slug] ?? []}
+                href={newsHref({ country: selected.slug })}
+                limit={4}
+                className="mt-6"
+              />
             </div>
           </div>
         </Container>
       </section>
-
-      <LinkedArticles
-        title={`Latest from ${selected.name}`}
-        articles={articles[selected.slug] ?? []}
-      />
 
       <section id="markets" className="py-5 desk:py-6">
         <Container>

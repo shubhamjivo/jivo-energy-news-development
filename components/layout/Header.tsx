@@ -106,9 +106,9 @@ export function Header({ insightsFeature = null }: { insightsFeature?: InsightCa
             <Link href="/" className="block justify-self-center">
               <Logo
                 preload
-                sizes="230px"
+                sizes="115px"
                 className="object-contain object-center transition-[width,height] duration-300 ease-out"
-                style={compact ? { width: 48, height: 32 } : { width: 230, height: 110 }}
+                style={compact ? { width: 48, height: 32 } : { width: 115, height: 55 }}
               />
             </Link>
             <button

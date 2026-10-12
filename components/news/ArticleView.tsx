@@ -53,7 +53,7 @@ export function ArticleView({
             ) : null}
 
             <div className="mt-3.5 flex flex-col gap-2">
-              {article.kicker || article.markets ? (
+              {article.kicker || article.markets || article.links.length > 0 ? (
                 <div className="flex flex-wrap items-center gap-3 text-[11px]">
                   {article.kicker ? (
                     <span className="font-semibold tracking-[0.88px] text-accent">
@@ -65,6 +65,15 @@ export function ArticleView({
                       {article.markets}
                     </span>
                   ) : null}
+                  {article.links.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="border border-hairline px-2 py-0.5 text-ink hover:border-ink"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
                 </div>
               ) : null}
               <h1 className="text-[28px] font-bold leading-[34px] text-ink desk:text-[32px] desk:leading-[38px]">

@@ -2,10 +2,13 @@ import "server-only";
 import type { ArticleCard, CmsArticle, FaqItem } from "@/lib/article-types";
 import { prepareArticleHtml } from "@/lib/article-html";
 import {
+  ARTICLE_LINKS,
   fetchArticleBySlug,
+  fetchArticleLinks,
   fetchArticleSlugs,
   fetchArticleSummaries,
   fetchCategories,
+  fetchEntriesWithArticles,
   fetchLatestFullArticles,
   getStrapiOrigin,
   type StrapiArticle,
@@ -13,6 +16,7 @@ import {
   type StrapiArticleSummary,
 } from "@/lib/strapi";
 import { mediaSrc } from "@/lib/media";
+import { newsHref, type NewsFilterOption, type NewsFilterOptions } from "@/lib/news-url";
 import { mapSeo } from "@/lib/seo-data";
 
 export function formatDate(value: string) {
@@ -187,14 +191,39 @@ export function mapStrapiArticle(article: StrapiArticle): CmsArticle {
     contentHtml: html,
     headings,
     faqs: mapFaqs(article.faqs),
+    links: [],
     relatedNewsIds: related.map((item) => item.id),
     related,
   };
 }
 
+// Adds each article's country, project and company. Loaded separately so an
+// article still renders if this lookup fails.
+async function withLinks(articles: CmsArticle[]) {
+  if (articles.length === 0) return articles;
+  try {
+    const rows = await fetchArticleLinks(articles.map((article) => article.id));
+    for (const article of articles) {
+      const row = rows.find((item) => item.id === article.id);
+      if (!row) continue;
+      article.links = ARTICLE_LINKS.flatMap((relation) => {
+        const entry = row[relation];
+        return entry?.slug && entry.name
+          ? [{ label: entry.name.trim(), href: newsHref({ [relation]: entry.slug }) }]
+          : [];
+      });
+    }
+  } catch (error) {
+    console.error("Could not load article links from Strapi", error);
+  }
+  return articles;
+}
+
 export async function getArticleBySlug(slug: string) {
   const article = await fetchArticleBySlug(slug);
-  return article ? mapStrapiArticle(article) : null;
+  if (!article) return null;
+  const [mapped] = await withLinks([mapStrapiArticle(article)]);
+  return mapped;
 }
 
 export async function getArticleSlugs() {
@@ -238,6 +267,9 @@ export async function getNewsPage(options: {
   page: number;
   pageSize: number;
   category?: string;
+  country?: string;
+  project?: string;
+  company?: string;
   excludeIds?: number[];
 }) {
   try {
@@ -265,6 +297,29 @@ export async function getNewsTopics() {
     console.error("Could not load categories from Strapi", error);
     return [];
   }
+}
+
+// Choices for the /news dropdowns. Each list loads on its own, so one failing
+// only hides that dropdown.
+export async function getNewsFilterOptions(): Promise<NewsFilterOptions> {
+  const entries = async (collection: "countries" | "projects" | "companies") => {
+    try {
+      return (await fetchEntriesWithArticles(collection)).flatMap(
+        (item): NewsFilterOption[] =>
+          item.slug && item.name ? [{ slug: item.slug, title: item.name.trim() }] : [],
+      );
+    } catch (error) {
+      console.error(`Could not load ${collection} with articles from Strapi`, error);
+      return [];
+    }
+  };
+  const [topic, country, project, company] = await Promise.all([
+    getNewsTopics(),
+    entries("countries"),
+    entries("projects"),
+    entries("companies"),
+  ]);
+  return { topic, country, project, company };
 }
 
 // The scroll feed under an article: first the newest article, then every
@@ -308,5 +363,6 @@ export async function getNextFeedArticles(options: {
     hasMore = peek.data.length > 0;
   }
 
+  await withLinks(articles);
   return { articles, hasMore };
 }

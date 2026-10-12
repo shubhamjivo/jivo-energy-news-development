@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { NewsletterCta } from "@/components/layout/NewsletterCta";
 import { NewsIndex } from "@/components/news/NewsIndex";
+import { NEWS_FILTER_KEYS, type NewsFilters } from "@/lib/news-url";
 import { pageContent, pageMetadata } from "@/lib/page-meta";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -10,6 +11,9 @@ export async function generateMetadata(): Promise<Metadata> {
 type PageProps = {
   searchParams: Promise<{
     topic?: string | string[];
+    country?: string | string[];
+    project?: string | string[];
+    company?: string | string[];
     page?: string | string[];
   }>;
 };
@@ -20,7 +24,12 @@ function firstParam(value: string | string[] | undefined) {
 
 export default async function NewsPage({ searchParams }: PageProps) {
   const params = await searchParams;
-  const topic = firstParam(params.topic)?.trim() ?? "";
+  const filters = Object.fromEntries(
+    NEWS_FILTER_KEYS.map((key) => {
+      const value = firstParam(params[key])?.trim() ?? "";
+      return [key, /^[a-z0-9-]{1,100}$/.test(value) ? value : ""];
+    }),
+  ) as NewsFilters;
   const page = Math.max(
     1,
     Math.trunc(Number(firstParam(params.page) ?? "1")) || 1,
@@ -30,7 +39,7 @@ export default async function NewsPage({ searchParams }: PageProps) {
 
   return (
     <>
-      <NewsIndex page={page} topic={topic} intro={intro} />
+      <NewsIndex page={page} filters={filters} intro={intro} />
       <NewsletterCta />
     </>
   );
