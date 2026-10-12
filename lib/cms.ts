@@ -6,6 +6,7 @@ import { mediaSrc } from "@/lib/media";
 import { mapSeo, type SeoData } from "@/lib/seo-data";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from "@/lib/site";
 import {
+  ARTICLE_POPULATE,
   fetchArticleSummaries,
   fetchTags,
   getStrapiOrigin,
@@ -344,6 +345,36 @@ export async function getBriefItems() {
         href: item.article?.slug ? `/news/${item.article.slug}` : "",
       }))
       .filter((item) => item.text);
+  });
+}
+
+// ------------------------------------------------------------ linked articles
+
+export type LinkedArticles = Record<string, ArticleCard[]>;
+
+// Newest articles whose Country (or Project) field is set, grouped by that
+// entry's slug. One request covers the whole page.
+export async function getLinkedArticles(relation: "country" | "project", perEntry = 4) {
+  return safe(`${relation} articles`, {} as LinkedArticles, async () => {
+    const payload = await strapiList<
+      StrapiArticleSummary & {
+        country?: { slug: string | null } | null;
+        project?: { slug: string | null } | null;
+      }
+    >("articles", {
+      populate: [...ARTICLE_POPULATE, relation],
+      filters: { [relation]: { slug: { $notNull: true } } },
+      sort: "publishedAt:desc",
+      pagination: { pageSize: 100 },
+    });
+    const grouped: LinkedArticles = {};
+    for (const item of payload.data) {
+      const slug = item[relation]?.slug;
+      if (!slug || !item.slug) continue;
+      const list = (grouped[slug] ??= []);
+      if (list.length < perEntry) list.push(mapArticleCard(item));
+    }
+    return grouped;
   });
 }
 

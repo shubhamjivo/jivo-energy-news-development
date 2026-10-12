@@ -2,19 +2,22 @@
 
 import { useMemo, useState } from "react";
 import { PageIntro } from "@/components/layout/PageIntro";
+import { LinkedArticles } from "@/components/news/LinkedArticles";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { FilterBar } from "@/components/ui/FilterBar";
-import type { ProjectEntry } from "@/lib/cms";
+import type { LinkedArticles as ArticlesBySlug, ProjectEntry } from "@/lib/cms";
 import { technologyFilters } from "@/lib/filters";
 import type { PageContent } from "@/lib/pages";
 
 export function ProjectsIndex({
   intro,
   projects: allProjects,
+  articles,
 }: {
   intro: PageContent;
   projects: ProjectEntry[];
+  articles: ArticlesBySlug;
 }) {
   const filters = ["All", ...technologyFilters("page")];
   const [filter, setFilter] = useState("All");
@@ -24,6 +27,20 @@ export function ProjectsIndex({
         ? allProjects
         : allProjects.filter((project) => project.technology === filter),
     [allProjects, filter],
+  );
+  // Stories for the projects on screen, newest first, labelled by project.
+  const projectNews = useMemo(
+    () =>
+      projects
+        .flatMap((project) =>
+          (articles[project.slug] ?? []).map((article) => ({
+            ...article,
+            label: project.name,
+          })),
+        )
+        .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
+        .slice(0, 8),
+    [articles, projects],
   );
 
   return (
@@ -91,6 +108,8 @@ export function ProjectsIndex({
           )}
         </Container>
       </section>
+
+      <LinkedArticles title="Project news" articles={projectNews} />
 
       <section className="py-5 desk:py-6">
         <Container>

@@ -8,9 +8,10 @@ import {
   AFRICA_WIDTH,
 } from "@/components/countries/africa-map";
 import { PageIntro } from "@/components/layout/PageIntro";
+import { LinkedArticles } from "@/components/news/LinkedArticles";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
-import type { CountryEntry } from "@/lib/cms";
+import type { CountryEntry, LinkedArticles as ArticlesBySlug } from "@/lib/cms";
 import type { PageContent } from "@/lib/pages";
 
 const LABEL_PLACE: Record<string, string> = {
@@ -29,9 +30,11 @@ const DEFAULT_LABEL_PLACE = "top-full left-1/2 mt-1 -translate-x-1/2";
 export function CountriesIndex({
   intro,
   countries,
+  articles,
 }: {
   intro: PageContent;
   countries: CountryEntry[];
+  articles: ArticlesBySlug;
 }) {
   const onMap = countries.filter((country) => AFRICA_MARKETS[country.slug]);
   const [selectedId, setSelectedId] = useState(
@@ -221,6 +224,11 @@ export function CountriesIndex({
           </div>
         </Container>
       </section>
+
+      <LinkedArticles
+        title={`Latest from ${selected.name}`}
+        articles={articles[selected.slug] ?? []}
+      />
 
       <section id="markets" className="py-5 desk:py-6">
         <Container>
