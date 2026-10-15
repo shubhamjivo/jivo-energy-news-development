@@ -30,21 +30,12 @@ export type StrapiSeo = {
   metaDescription?: string | null;
   metaImage?: StrapiMedia | null;
   keywords?: string | null;
-  metaRobots?: string | null;
+  noIndex?: boolean | null;
   canonicalURL?: string | null;
-  metaSocial?:
-    | {
-        socialNetwork: "Facebook" | "Twitter";
-        title: string | null;
-        description: string | null;
-        image?: StrapiMedia | null;
-      }[]
-    | null;
-  structuredData?: unknown;
 };
 
 // Relation paths that load everything in an entry's "SEO & sharing" block.
-export const SEO_POPULATE = ["seo.metaImage", "seo.metaSocial.image"];
+export const SEO_POPULATE = ["seo.metaImage"];
 
 export type StrapiArticleSummary = {
   id: number;

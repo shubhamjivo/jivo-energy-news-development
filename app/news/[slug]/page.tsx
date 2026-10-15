@@ -99,7 +99,6 @@ export default async function ArticlePage({ params }: PageProps) {
   return (
     <main>
       <JsonLdScript data={jsonLd} />
-      <JsonLdScript data={article.seo.structuredData} />
       <FaqJsonLd items={article.faqs} />
       <ContinuousNewsFeed
         key={article.id}

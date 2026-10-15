@@ -70,7 +70,6 @@ export default async function InsightPage({ params }: PageProps) {
   return (
     <main>
       <JsonLdScript data={jsonLd} />
-      <JsonLdScript data={insight.seo.structuredData} />
       <FaqJsonLd items={insight.faqs} />
       <ContinuousInsightFeed key={insight.id} initialInsight={insight} latest={latest} />
       <NewsletterCta />

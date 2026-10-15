@@ -14,7 +14,8 @@ export async function buildMetadata(options: {
   path: string;
   image?: string;
   imageAlt?: string;
-  // Skip the "| Site name" suffix (home page).
+  // Skip the "| Site name" suffix (home page). A search title set in the CMS
+  // is always used as written.
   absoluteTitle?: boolean;
   article?: { publishedTime: string; modifiedTime?: string; authors?: string[] };
 }): Promise<Metadata> {
@@ -27,11 +28,11 @@ export async function buildMetadata(options: {
   const authors = article?.authors?.filter(Boolean) ?? [];
 
   return {
-    title: options.absoluteTitle ? { absolute: title } : title,
+    title: options.absoluteTitle || seo?.title ? { absolute: title } : title,
     description,
     // A key set to undefined would still replace the layout's default.
     ...(seo?.keywords ? { keywords: seo.keywords } : {}),
-    ...(seo?.robots ? { robots: seo.robots } : {}),
+    ...(seo?.noIndex ? { robots: { index: false, follow: true } } : {}),
     ...(authors.length > 0 ? { authors: authors.map((name) => ({ name })) } : {}),
     alternates: { canonical: seo?.canonical || path },
     openGraph: {
@@ -39,9 +40,9 @@ export async function buildMetadata(options: {
       locale: "en_GB",
       siteName: settings.siteName,
       url: path,
-      title: seo?.facebook?.title || title,
-      description: seo?.facebook?.description || description,
-      images: [{ url: seo?.facebook?.image || image, alt }],
+      title,
+      description,
+      images: [{ url: image, alt }],
       ...(article
         ? {
             publishedTime: article.publishedTime,
@@ -53,9 +54,9 @@ export async function buildMetadata(options: {
     twitter: {
       card: "summary_large_image",
       site: settings.twitterHandle || undefined,
-      title: seo?.twitter?.title || title,
-      description: seo?.twitter?.description || description,
-      images: [seo?.twitter?.image || image],
+      title,
+      description,
+      images: [image],
     },
   };
 }
