@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PageIntro } from "@/components/layout/PageIntro";
 import { Container } from "@/components/ui/Container";
 import { CoverImage } from "@/components/ui/CoverImage";
+import { Pagination } from "@/components/ui/Pagination";
 import type { InsightCard } from "@/lib/cms";
 import type { PageContent } from "@/lib/pages";
 
@@ -12,6 +13,7 @@ export function InsightsIndex({
   reports,
   notes,
   notesHeading,
+  pagination,
 }: {
   intro: PageContent;
   featured?: InsightCard | null;
@@ -23,6 +25,8 @@ export function InsightsIndex({
   notes?: InsightCard[];
   /** Title above the notes; leave out where the page intro already names them. */
   notesHeading?: string;
+  /** Pager under the list on an Insights section page. */
+  pagination?: { basePath: string; page: number; pageCount: number };
 }) {
   const empty = !featured && !sections?.length && !reports?.length && !notes?.length;
 
@@ -186,6 +190,14 @@ export function InsightsIndex({
                 </li>
               ))}
             </ul>
+          </Container>
+        </section>
+      ) : null}
+
+      {pagination && pagination.pageCount > 1 ? (
+        <section className="pb-5 desk:pb-6">
+          <Container>
+            <Pagination {...pagination} label="Insights pages" />
           </Container>
         </section>
       ) : null}

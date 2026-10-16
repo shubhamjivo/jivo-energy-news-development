@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import { InsightsIndex } from "@/components/insights/InsightsIndex";
 import { NewsletterCta } from "@/components/layout/NewsletterCta";
-import { getInsights } from "@/lib/cms";
+import { getInsightPage } from "@/lib/cms";
 import { pageContent, pageMetadata } from "@/lib/page-meta";
+
+type PageProps = {
+  searchParams: Promise<{ page?: string | string[] }>;
+};
 
 const href = "/insights/reports";
 
@@ -10,15 +14,21 @@ export async function generateMetadata(): Promise<Metadata> {
   return pageMetadata(href);
 }
 
-export default async function ReportsPage() {
-  const [intro, items] = await Promise.all([
+export default async function ReportsPage({ searchParams }: PageProps) {
+  const raw = (await searchParams).page;
+  const page = Math.max(1, Math.trunc(Number(Array.isArray(raw) ? raw[0] : raw)) || 1);
+  const [intro, result] = await Promise.all([
     pageContent(href),
-    getInsights({ tags: ["reports"] }),
+    getInsightPage("reports", page),
   ]);
 
   return (
     <>
-      <InsightsIndex intro={intro} reports={items} />
+      <InsightsIndex
+        intro={intro}
+        reports={result.items}
+        pagination={{ basePath: href, page: result.page, pageCount: result.pageCount }}
+      />
       <NewsletterCta />
     </>
   );

@@ -144,6 +144,26 @@ export async function getInsights(options: { tags?: InsightSection[]; limit?: nu
   return limit ? picked.slice(0, limit) : picked;
 }
 
+export const INSIGHTS_PAGE_SIZE = 12;
+
+// One page of an Insights section (/insights/opinion?page=2), paged by
+// Strapi so sections of any length stay reachable.
+export async function getInsightPage(tag: InsightSection, page: number) {
+  return safe("insights page", { items: [] as InsightCard[], page, pageCount: 1 }, async () => {
+    const payload = await strapiList<StrapiInsight>("insights", {
+      filters: { tags: { slug: { $eq: tag } } },
+      populate: "*",
+      sort: "publishedAt:desc",
+      pagination: { page, pageSize: INSIGHTS_PAGE_SIZE },
+    });
+    return {
+      items: payload.data.filter((item) => item.slug).map(mapInsight),
+      page,
+      pageCount: Math.max(1, payload.meta?.pagination?.pageCount ?? 1),
+    };
+  });
+}
+
 export type InsightDetail = InsightCard & {
   contentHtml: string;
   faqs: FaqItem[];
