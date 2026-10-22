@@ -372,15 +372,14 @@ export async function getBriefItems() {
 
 export type LinkedArticles = Record<string, ArticleCard[]>;
 
-// Newest articles whose Country, Project or Company field is set, grouped by that
+// Newest articles whose Country or Project field is set, grouped by that
 // entry's slug. One request covers the whole page.
-export async function getLinkedArticles(relation: "country" | "project" | "company", perEntry = 4) {
+export async function getLinkedArticles(relation: "country" | "project", perEntry = 4) {
   return safe(`${relation} articles`, {} as LinkedArticles, async () => {
     const payload = await strapiList<
       StrapiArticleSummary & {
         country?: { slug: string | null } | null;
         project?: { slug: string | null } | null;
-        company?: { slug: string | null } | null;
       }
     >("articles", {
       populate: [...ARTICLE_POPULATE, relation],
@@ -410,7 +409,6 @@ export type CountryEntry = {
   image: string;
   capacity: string;
   projects: string;
-  companies: string;
   pipeline: string;
   mix: { name: string; count: number }[];
   news: string;
@@ -428,7 +426,6 @@ export async function getCountries() {
       summary: string | null;
       installed_capacity: string | null;
       tracked_projects: number | null;
-      active_companies: number | null;
       pipeline_projects: number | null;
       latest_news: string | null;
       latest_investment: string | null;
@@ -452,60 +449,11 @@ export async function getCountries() {
       image: mediaSrc(item.image),
       capacity: text(item.installed_capacity) || "—",
       projects: count(item.tracked_projects),
-      companies: count(item.active_companies),
       pipeline: count(item.pipeline_projects),
       mix: (item.energy_mix ?? []).map((mix) => ({ name: mix.technology, count: mix.projects })),
       news: text(item.latest_news),
       investment: text(item.latest_investment),
       policy: text(item.latest_policy),
-    }));
-  });
-}
-
-// ------------------------------------------------------------------ companies
-
-export type CompanyEntry = {
-  slug: string;
-  name: string;
-  type: string;
-  headquarters: string;
-  meta: string;
-  description: string;
-  image: string;
-  website: string;
-  spotlight: boolean;
-  stats: Stat[];
-};
-
-export async function getCompanies() {
-  return safe("companies", [] as CompanyEntry[], async () => {
-    const payload = await strapiList<{
-      name: string;
-      slug: string;
-      company_type: string;
-      headquarters: string | null;
-      highlight: string | null;
-      description: string | null;
-      website: string | null;
-      is_spotlight: boolean | null;
-      image?: StrapiMedia | null;
-      spotlight_stats?: StrapiStat[];
-    }>("companies", {
-      populate: "*",
-      sort: "publishedAt:desc",
-      pagination: { pageSize: 100 },
-    });
-    return payload.data.map((item) => ({
-      slug: item.slug,
-      name: item.name,
-      type: item.company_type,
-      headquarters: text(item.headquarters),
-      meta: [text(item.headquarters), text(item.highlight)].filter(Boolean).join(" · "),
-      description: text(item.description),
-      image: mediaSrc(item.image),
-      website: text(item.website),
-      spotlight: Boolean(item.is_spotlight),
-      stats: stats(item.spotlight_stats),
     }));
   });
 }
@@ -585,16 +533,9 @@ export async function getProjects(limit?: number) {
 
 // ---------------------------------------------------------------------- deals
 
-// Short labels for the narrow label column on the Companies page.
-const DEAL_SHORT_TYPES: Record<string, string> = {
-  "Financial close": "FINANCE",
-  "Development finance": "DFI",
-};
-
 export type DealEntry = {
   title: string;
   type: string;
-  shortType: string;
   value: string;
   markets: string;
   href: string;
@@ -616,7 +557,6 @@ export async function getDeals(limit = 8) {
     return payload.data.map((item) => ({
       title: item.title,
       type: item.deal_type.toUpperCase(),
-      shortType: DEAL_SHORT_TYPES[item.deal_type] ?? item.deal_type.toUpperCase(),
       value: text(item.value),
       markets: text(item.markets),
       href: item.article?.slug ? `/news/${item.article.slug}` : "",

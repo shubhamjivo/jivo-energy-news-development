@@ -197,7 +197,7 @@ export function mapStrapiArticle(article: StrapiArticle): CmsArticle {
   };
 }
 
-// Adds each article's country, project and company. Loaded separately so an
+// Adds each article's country and project. Loaded separately so an
 // article still renders if this lookup fails.
 async function withLinks(articles: CmsArticle[]) {
   if (articles.length === 0) return articles;
@@ -269,7 +269,6 @@ export async function getNewsPage(options: {
   category?: string;
   country?: string;
   project?: string;
-  company?: string;
   excludeIds?: number[];
 }) {
   try {
@@ -302,7 +301,7 @@ export async function getNewsTopics() {
 // Choices for the /news dropdowns. Each list loads on its own, so one failing
 // only hides that dropdown.
 export async function getNewsFilterOptions(): Promise<NewsFilterOptions> {
-  const entries = async (collection: "countries" | "projects" | "companies") => {
+  const entries = async (collection: "countries" | "projects") => {
     try {
       return (await fetchEntriesWithArticles(collection)).flatMap(
         (item): NewsFilterOption[] =>
@@ -313,13 +312,12 @@ export async function getNewsFilterOptions(): Promise<NewsFilterOptions> {
       return [];
     }
   };
-  const [topic, country, project, company] = await Promise.all([
+  const [topic, country, project] = await Promise.all([
     getNewsTopics(),
     entries("countries"),
     entries("projects"),
-    entries("companies"),
   ]);
-  return { topic, country, project, company };
+  return { topic, country, project };
 }
 
 // The scroll feed under an article: first the newest article, then every

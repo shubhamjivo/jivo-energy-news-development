@@ -170,12 +170,6 @@ export function CountriesIndex({
                 </div>
                 <div>
                   <dt className="text-[28px] font-bold leading-none text-ink">
-                    {selected.companies}
-                  </dt>
-                  <dd className="mt-1 text-[11px] text-muted">Active companies</dd>
-                </div>
-                <div>
-                  <dt className="text-[28px] font-bold leading-none text-ink">
                     {selected.pipeline}
                   </dt>
                   <dd className="mt-1 text-[11px] text-muted">In the pipeline</dd>

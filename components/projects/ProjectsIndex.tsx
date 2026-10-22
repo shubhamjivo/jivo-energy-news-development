@@ -36,20 +36,6 @@ export function ProjectsIndex({
 
       <section className="pt-5 desk:pt-6">
         <Container>
-          {intro.stats.length > 0 ? (
-            <dl className="mb-5 grid grid-cols-2 gap-x-6 gap-y-5 desk:grid-cols-4">
-              {intro.stats.map((stat) => (
-                <div key={stat.label}>
-                  <dt className="text-[32px] font-bold leading-none text-ink">
-                    {stat.value}
-                  </dt>
-                  <dd className="mt-1.5 text-[11px] tracking-[0.44px] text-muted">
-                    {stat.label}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          ) : null}
           <div>
             <FilterBar options={filters} value={filter} onChange={setFilter} />
           </div>

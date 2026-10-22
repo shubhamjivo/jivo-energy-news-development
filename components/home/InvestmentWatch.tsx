@@ -17,23 +17,32 @@ export function InvestmentWatch({ deals, heading }: { deals: DealEntry[]; headin
         action={heading.linkLabel}
       />
       <div className="mt-3.5 h-px bg-ink" />
-      {deals.map((item) => (
-        <Link
-          key={item.title}
-          href={item.href || "/companies"}
-          className="flex flex-col gap-2 border-b border-hairline py-4 desk:flex-row desk:items-center desk:justify-between desk:py-3"
-        >
-          <div className="flex min-w-0 flex-col gap-1">
-            <p className="text-[10px] font-semibold tracking-[0.8px] text-accent">
-              {item.type}
-            </p>
-            <p className="text-base font-semibold leading-[21px] text-ink">
-              {item.title}
-            </p>
+      {deals.map((item) => {
+        const className =
+          "flex flex-col gap-2 border-b border-hairline py-4 desk:flex-row desk:items-center desk:justify-between desk:py-3";
+        const body = (
+          <>
+            <div className="flex min-w-0 flex-col gap-1">
+              <p className="text-[10px] font-semibold tracking-[0.8px] text-accent">
+                {item.type}
+              </p>
+              <p className="text-base font-semibold leading-[21px] text-ink">
+                {item.title}
+              </p>
+            </div>
+            <p className="text-[22px] font-bold text-ink desk:shrink-0">{item.value}</p>
+          </>
+        );
+        return item.href ? (
+          <Link key={item.title} href={item.href} className={className}>
+            {body}
+          </Link>
+        ) : (
+          <div key={item.title} className={className}>
+            {body}
           </div>
-          <p className="text-[22px] font-bold text-ink desk:shrink-0">{item.value}</p>
-        </Link>
-      ))}
+        );
+      })}
       </Container>
     </section>
   );

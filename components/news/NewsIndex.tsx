@@ -35,7 +35,6 @@ export async function NewsIndex({
       category: filters.topic || undefined,
       country: filters.country || undefined,
       project: filters.project || undefined,
-      company: filters.company || undefined,
       excludeIds,
     }),
     getNewsFilterOptions(),

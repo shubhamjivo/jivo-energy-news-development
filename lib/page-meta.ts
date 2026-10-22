@@ -3,11 +3,9 @@ import { getPage, pageIntro } from "@/lib/pages";
 import { buildMetadata } from "@/lib/seo";
 import { routeByHref } from "@/lib/site";
 
-import type { Stat } from "@/lib/cms";
-
 // Page slug in the CMS (for SEO) and the design's intro text per route; the
 // title, and the intro where none is set here, come from the route list.
-const PAGES: Record<string, { slug: string; kicker: string; intro?: string; stats?: Stat[] }> = {
+const PAGES: Record<string, { slug: string; kicker: string; intro?: string }> = {
   "/news": {
     slug: "news",
     kicker: "THE NEWSROOM",
@@ -17,17 +15,6 @@ const PAGES: Record<string, { slug: string; kicker: string; intro?: string; stat
     slug: "projects",
     kicker: "THE PROJECT FILE",
     intro: "Utility-scale assets moving from announcement to financial close and execution.",
-    stats: [
-      { value: "186 GW", label: "Tracked pipeline" },
-      { value: "42", label: "FIDs year to date" },
-      { value: "14", label: "Priority markets" },
-      { value: "$12.4bn", label: "Capital closed YTD" },
-    ],
-  },
-  "/companies": {
-    slug: "companies",
-    kicker: "THE DIRECTORY",
-    intro: "IPPs, DFIs, utilities and offtakers shaping Africa’s energy markets.",
   },
   "/countries": {
     slug: "countries",
@@ -53,12 +40,11 @@ const PAGES: Record<string, { slug: string; kicker: string; intro?: string; stat
 
 export async function pageContent(href: string) {
   const route = routeByHref(href);
-  const { slug, kicker, intro, stats } = PAGES[href];
+  const { slug, kicker, intro } = PAGES[href];
   return pageIntro(await getPage(slug), {
     kicker,
     title: route.title,
     intro: intro ?? route.description,
-    stats,
   });
 }
 

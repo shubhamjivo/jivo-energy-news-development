@@ -13,7 +13,6 @@ type PageProps = {
     topic?: string | string[];
     country?: string | string[];
     project?: string | string[];
-    company?: string | string[];
     page?: string | string[];
   }>;
 };

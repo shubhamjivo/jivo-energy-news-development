@@ -9,5 +9,3 @@ const PROJECT_WATCH_CHIPS = ["Solar", "Wind", "Battery", "Hydrogen", "Hydro", "G
 export function technologyFilters(variant: "page" | "home" = "page") {
   return variant === "home" ? PROJECT_WATCH_CHIPS : PROJECT_PAGE_CHIPS;
 }
-
-export const COMPANY_FILTERS = ["IPP", "DFI", "Utility", "OEM", "Offtaker", "Developer"];

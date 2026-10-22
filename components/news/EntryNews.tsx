@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ArticleCard } from "@/lib/article-types";
 
-// The newest stories filed under one company, project or country, listed
+// The newest stories filed under one project or country, listed
 // under its card with a link to the full filtered news list.
 export function EntryNews({
   articles,

@@ -56,8 +56,8 @@ export type StrapiArticleSummary = {
   category?: StrapiCategory | null;
 };
 
-// Single-choice fields that file an article under a country, project, company.
-export const ARTICLE_LINKS = ["country", "project", "company"] as const;
+// Single-choice fields that file an article under a country or project.
+export const ARTICLE_LINKS = ["country", "project"] as const;
 
 export type StrapiLinkedEntry = { name: string | null; slug: string | null };
 export type StrapiArticleLinks = {
@@ -223,7 +223,6 @@ export async function fetchArticleSummaries(options: {
   tag?: string;
   country?: string;
   project?: string;
-  company?: string;
   excludeIds?: number[];
 }) {
   const filters: Query = {};
@@ -247,7 +246,7 @@ export async function fetchArticleSummaries(options: {
   });
 }
 
-// The country, project and company each of these articles is filed under.
+// The country and project each of these articles is filed under.
 export async function fetchArticleLinks(ids: number[]) {
   const payload = await strapiList<{ id: number } & StrapiArticleLinks>("articles", {
     populate: [...ARTICLE_LINKS],
@@ -257,10 +256,8 @@ export async function fetchArticleLinks(ids: number[]) {
   return payload.data;
 }
 
-// Countries, projects or companies that have at least one article.
-export async function fetchEntriesWithArticles(
-  collection: "countries" | "projects" | "companies",
-) {
+// Countries or projects that have at least one article.
+export async function fetchEntriesWithArticles(collection: "countries" | "projects") {
   const payload = await strapiList<StrapiLinkedEntry>(collection, {
     filters: { articles: { id: { $notNull: true } } },
     sort: "name:asc",

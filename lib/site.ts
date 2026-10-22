@@ -35,15 +35,6 @@ export const ROUTES = [
     priority: 0.8,
   },
   {
-    href: "/companies",
-    label: "Companies",
-    title: "Companies",
-    description:
-      "Company coverage of IPPs, developers, offtakers, and financiers shaping Africa's energy transition.",
-    changeFrequency: "daily" as const,
-    priority: 0.8,
-  },
-  {
     href: "/countries",
     label: "Countries",
     title: "Countries",
@@ -158,7 +149,7 @@ const FOOTER_COLUMNS: FooterColumn[] = [
   { heading: "NEWS", links: [...routeLinks("/news"), ...UTILITY_LINKS] },
   {
     heading: "INTELLIGENCE",
-    links: routeLinks("/projects", "/companies", "/countries"),
+    links: routeLinks("/projects", "/countries"),
   },
   {
     heading: "INSIGHTS",
@@ -176,10 +167,13 @@ const FOOTER_COLUMNS: FooterColumn[] = [
   },
 ];
 
+// Pages the site no longer has; links to them saved in the CMS are dropped.
+const REMOVED_HREFS = new Set(["/companies"]);
+
 export function withAllFooterLinks(cmsColumns: FooterColumn[]): FooterColumn[] {
   const columns = cmsColumns.map((column) => ({
     heading: column.heading,
-    links: [...column.links],
+    links: column.links.filter((link) => !REMOVED_HREFS.has(link.href.replace(/\/+$/, ""))),
   }));
   const hrefs = new Set(columns.flatMap((c) => c.links.map((l) => l.href)));
 

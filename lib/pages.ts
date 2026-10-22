@@ -7,7 +7,6 @@ import {
   safe,
   text,
   type InsightCard,
-  type Stat,
   type StrapiInsight,
 } from "@/lib/cms";
 import { mapSeo, type SeoData } from "@/lib/seo-data";
@@ -70,18 +69,16 @@ export type PageContent = {
   kicker: string;
   title: string;
   intro: string;
-  stats: Stat[];
   seo: SeoData;
 };
 
 // The intro text is part of the design; only SEO comes from the Page entry.
 export function pageIntro(
   page: CmsPage | null,
-  intro: { kicker: string; title: string; intro: string; stats?: Stat[] },
+  intro: { kicker: string; title: string; intro: string },
 ): PageContent {
   return {
     ...intro,
-    stats: intro.stats ?? [],
     seo: mapSeo(page?.seo),
   };
 }
@@ -150,7 +147,7 @@ const DEFAULT_ABOUT: AboutContent = {
     "We report from Johannesburg, Lagos and Nairobi, and we write for the people who close deals: developers, DFIs, utilities, ministers and offtakers.",
   ],
   introRight: [
-    "We do not treat Africa as a single market. Each dispatch is tagged to the country, the technology and the money. The project file, the company directory and the country pages are how readers navigate that complexity.",
+    "We do not treat Africa as a single market. Each dispatch is tagged to the country, the technology and the money. The project file and the country pages are how readers navigate that complexity.",
   ],
   tagline: "Founded 2024 · Independent · Subscriber-supported",
   coverageHeading: "What we cover",

@@ -14,7 +14,6 @@ const LABELS: Record<NewsFilterKey, string> = {
   topic: "All topics",
   country: "All countries",
   project: "All projects",
-  company: "All companies",
 };
 
 export function NewsFilterBar({

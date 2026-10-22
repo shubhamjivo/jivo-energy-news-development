@@ -1,6 +1,6 @@
 // The filters /news understands, each a slug in the query string:
-// /news?topic=solar&country=kenya&project=…&company=…
-export const NEWS_FILTER_KEYS = ["topic", "country", "project", "company"] as const;
+// /news?topic=solar&country=kenya&project=…
+export const NEWS_FILTER_KEYS = ["topic", "country", "project"] as const;
 
 export type NewsFilterKey = (typeof NEWS_FILTER_KEYS)[number];
 export type NewsFilters = Record<NewsFilterKey, string>;
