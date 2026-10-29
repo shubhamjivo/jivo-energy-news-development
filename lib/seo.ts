@@ -2,6 +2,7 @@ import "server-only";
 import type { Metadata } from "next";
 import { getSiteSettings } from "@/lib/cms";
 import type { SeoData } from "@/lib/seo-data";
+import { SITE_INDEXABLE } from "@/lib/site";
 
 export const DEFAULT_SHARE_IMAGE = "/images/lead-featured.png";
 
@@ -32,7 +33,7 @@ export async function buildMetadata(options: {
     description,
     // A key set to undefined would still replace the layout's default.
     ...(seo?.keywords ? { keywords: seo.keywords } : {}),
-    ...(seo?.noIndex ? { robots: { index: false, follow: true } } : {}),
+    ...(seo?.noIndex && SITE_INDEXABLE ? { robots: { index: false, follow: true } } : {}),
     ...(authors.length > 0 ? { authors: authors.map((name) => ({ name })) } : {}),
     alternates: { canonical: seo?.canonical || path },
     openGraph: {

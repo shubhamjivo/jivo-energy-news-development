@@ -12,6 +12,7 @@ import {
   getStrapiOrigin,
   SEO_POPULATE,
   strapiList,
+  strapiListAll,
   strapiSingle,
   type Query,
   type StrapiArticleSummary,
@@ -227,11 +228,10 @@ export async function getNextInsights(options: { excludeIds: number[]; limit: nu
 
 export async function getInsightSlugs() {
   return safe("insight slugs", [] as { slug: string; updatedAt: string }[], async () => {
-    const payload = await strapiList<{ slug: string | null; updatedAt: string }>("insights", {
+    const rows = await strapiListAll<{ slug: string | null; updatedAt: string }>("insights", {
       fields: ["slug", "updatedAt"],
-      pagination: { pageSize: 100 },
     });
-    return payload.data
+    return rows
       .filter((item) => item.slug)
       .map((item) => ({ slug: item.slug as string, updatedAt: item.updatedAt }));
   });

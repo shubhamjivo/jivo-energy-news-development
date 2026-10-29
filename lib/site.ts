@@ -7,6 +7,12 @@ export const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.africaenergynews.com"
 ).replace(/\/$/, "");
 
+// Only the live site is open to search engines. Any other value of
+// NEXT_PUBLIC_SITE_ENV (demo, staging, local) keeps every page out of search:
+// robots.txt blocks crawling, pages carry "noindex" and the sitemap is empty.
+// Read at build time, so set it before `npm run build`.
+export const SITE_INDEXABLE = process.env.NEXT_PUBLIC_SITE_ENV === "production";
+
 export const ROUTES = [
   {
     href: "/",

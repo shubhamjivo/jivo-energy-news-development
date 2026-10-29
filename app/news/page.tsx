@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import { NewsletterCta } from "@/components/layout/NewsletterCta";
 import { NewsIndex } from "@/components/news/NewsIndex";
 import { NEWS_FILTER_KEYS, type NewsFilters } from "@/lib/news-url";
-import { pageContent, pageMetadata } from "@/lib/page-meta";
+import { pageContent, pageMetadata, pageNumber } from "@/lib/page-meta";
 
-export async function generateMetadata(): Promise<Metadata> {
-  return pageMetadata("/news");
+// Topic, country and project filters point search engines back to /news;
+// only the page number gets its own canonical URL.
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  return pageMetadata("/news", pageNumber((await searchParams).page));
 }
 
 type PageProps = {
@@ -29,10 +31,7 @@ export default async function NewsPage({ searchParams }: PageProps) {
       return [key, /^[a-z0-9-]{1,100}$/.test(value) ? value : ""];
     }),
   ) as NewsFilters;
-  const page = Math.max(
-    1,
-    Math.trunc(Number(firstParam(params.page) ?? "1")) || 1,
-  );
+  const page = pageNumber(params.page);
 
   const intro = await pageContent("/news");
 

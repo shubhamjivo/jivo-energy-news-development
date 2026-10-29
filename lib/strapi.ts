@@ -282,15 +282,26 @@ export async function fetchTags() {
   return payload.data;
 }
 
+// Every page of a collection's rows; Strapi returns at most 100 per request.
+export async function strapiListAll<T>(collection: string, query: Query) {
+  const rows: T[] = [];
+  for (let page = 1; ; page++) {
+    const payload = await strapiList<T>(collection, {
+      ...query,
+      pagination: { page, pageSize: 100 },
+    });
+    rows.push(...payload.data);
+    if (page >= (payload.meta?.pagination?.pageCount ?? 1)) return rows;
+  }
+}
+
 export async function fetchArticleSlugs() {
-  const payload = await strapiList<{
+  return strapiListAll<{
     slug: string | null;
     publishedAt: string;
     updatedAt: string | null;
   }>("articles", {
     fields: ["slug", "publishedAt", "updatedAt"],
     sort: "publishedAt:desc",
-    pagination: { pageSize: 100 },
   });
-  return payload.data;
 }
