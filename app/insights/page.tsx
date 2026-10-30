@@ -22,7 +22,7 @@ export default async function InsightsPage() {
     ) ?? null;
 
   // One block per Insights sub-page, newest four stories each, linking through
-  // to the page. Analysis has no page of its own, so it stays a list below.
+  // to the page.
   const sections = INSIGHTS_LINKS.map(({ label, href }) => ({
     label,
     href,
@@ -30,9 +30,6 @@ export default async function InsightsPage() {
       .filter((item) => item !== featured)
       .slice(0, 4),
   }));
-  const notes = tagged("analysis")
-    .filter((item) => item !== featured)
-    .slice(0, 6);
 
   return (
     <>
@@ -40,8 +37,6 @@ export default async function InsightsPage() {
         intro={intro}
         featured={featured}
         sections={sections}
-        notes={notes}
-        notesHeading="Analysis & briefing notes"
       />
       <NewsletterCta />
     </>

@@ -30,6 +30,7 @@ const PAGES: Record<string, { slug: string; kicker: string; intro?: string }> = 
   "/insights/technology": { slug: "technology", kicker: "ANALYSIS" },
   "/insights/reports": { slug: "reports", kicker: "ANALYSIS" },
   "/insights/opinion": { slug: "opinion", kicker: "ANALYSIS" },
+  "/insights/analysis": { slug: "analysis", kicker: "ANALYSIS" },
   "/insights/interviews": { slug: "interviews", kicker: "ANALYSIS" },
   "/events": {
     slug: "events",

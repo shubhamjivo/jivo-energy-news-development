@@ -95,6 +95,15 @@ export const ROUTES = [
     priority: 0.6,
   },
   {
+    href: "/insights/analysis",
+    label: "Analysis",
+    title: "Analysis",
+    description:
+      "Data-led analysis of Africa's energy markets: what is being built, what is holding it back, and where the capital is going.",
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+  },
+  {
     href: "/insights/interviews",
     label: "Interviews",
     title: "Interviews",
@@ -135,8 +144,11 @@ export const UTILITY_LINKS = [
   { href: "/#newsletter", label: "Newsletter" },
 ] as const;
 
-export const INSIGHTS_LINKS = ROUTES.filter((route) =>
-  route.href.startsWith("/insights/"),
+// Insights pages kept out of the menus and footer (the page still exists).
+const HIDDEN_INSIGHTS = new Set<string>(["/insights/interviews"]);
+
+export const INSIGHTS_LINKS = ROUTES.filter(
+  (route) => route.href.startsWith("/insights/") && !HIDDEN_INSIGHTS.has(route.href),
 );
 
 const routeLinks = (...hrefs: string[]) =>
@@ -174,7 +186,7 @@ const FOOTER_COLUMNS: FooterColumn[] = [
 ];
 
 // Pages the site no longer has; links to them saved in the CMS are dropped.
-const REMOVED_HREFS = new Set(["/companies"]);
+const REMOVED_HREFS = new Set(["/companies", ...HIDDEN_INSIGHTS]);
 
 export function withAllFooterLinks(cmsColumns: FooterColumn[]): FooterColumn[] {
   const columns = cmsColumns.map((column) => ({

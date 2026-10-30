@@ -157,9 +157,7 @@ export function InsightsIndex({
                 <li key={note.id}>
                   <Link
                     href={note.href}
-                    className={`grid gap-4 sm:items-center ${
-                      note.image ? "sm:grid-cols-[180px_minmax(0,1fr)]" : ""
-                    }`}
+                    className="grid gap-4 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center"
                   >
                     <CoverImage
                       src={note.image}

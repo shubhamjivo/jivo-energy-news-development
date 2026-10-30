@@ -11,7 +11,7 @@ const SECTION_HREF: Record<string, { href: string; label: string }> = {
   reports: { href: "/insights/reports", label: "Reports" },
   opinion: { href: "/insights/opinion", label: "Opinion" },
   interviews: { href: "/insights/interviews", label: "Interviews" },
-  analysis: { href: "/insights", label: "Analysis" },
+  analysis: { href: "/insights/analysis", label: "Analysis" },
 };
 
 // Sidebar lists, styled like Related News and Latest beside a news article.

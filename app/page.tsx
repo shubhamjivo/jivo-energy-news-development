@@ -103,7 +103,7 @@ export default async function Home() {
   // slide in the mobile carousel.
   const insightLead = insightSlot("learning-center", 3);
   const insightCards = insightSlot("technology", 3);
-  const insightSide = [insightSlot("opinion", 2), insightSlot("reports", 3)];
+  const insightSide = [insightSlot("opinion", 2), insightSlot("analysis", 3)];
 
   const render = (slug: HomeSectionSlug): ReactNode => {
     const heading = DEFAULT_HEADINGS[slug];
