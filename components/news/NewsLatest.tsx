@@ -56,7 +56,7 @@ export function NewsLatest({
                 {story.title}
               </p>
               {story.dek ? (
-                <p className="text-sm leading-[21px] text-muted">
+                <p className="line-clamp-3 text-sm leading-[21px] text-muted">
                   {story.dek}
                 </p>
               ) : null}

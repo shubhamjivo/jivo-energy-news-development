@@ -48,6 +48,8 @@ export type StrapiArticleSummary = {
   read_time?: number | null;
   short_content?: string | null;
   markets?: string | null;
+  investment_amount?: number | string | null;
+  investment_currency?: string | null;
   publishedAt: string;
   createdAt: string;
   updatedAt: string | null;
@@ -220,6 +222,7 @@ export async function fetchArticleSummaries(options: {
   page?: number;
   pageSize?: number;
   category?: string;
+  investment?: boolean;
   tag?: string;
   country?: string;
   project?: string;
@@ -232,6 +235,13 @@ export async function fetchArticleSummaries(options: {
     if (slug) filters[relation] = { slug: { $eq: slug } };
   }
   if (options.tag) filters.tags = { slug: { $eq: options.tag } };
+  // Investment news: the Investment topic or any story with an amount.
+  if (options.investment) {
+    filters.$or = [
+      { category: { slug: { $eq: "investment" } } },
+      { investment_amount: { $notNull: true } },
+    ];
+  }
   if (options.excludeIds && options.excludeIds.length > 0) {
     filters.id = { $notIn: options.excludeIds };
   }

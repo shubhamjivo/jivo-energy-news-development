@@ -127,7 +127,7 @@ export function Insights({
                     <h4 className="text-[30px] font-bold leading-[1.1] text-ink">
                       {featured.title}
                     </h4>
-                    <p className="text-[13px] leading-[19px] text-ink/70">
+                    <p className="line-clamp-3 text-[13px] leading-[19px] text-ink/70">
                       {featured.summary}
                     </p>
                     <p className="flex items-center gap-2.5 text-xs">
@@ -168,7 +168,7 @@ export function Insights({
                       />
                       <Kicker className="text-[10px] tracking-[0.8px]">{card.label}</Kicker>
                       <p className="text-lg font-semibold leading-6 text-ink">{card.title}</p>
-                      <p className="text-[13px] leading-[19px] text-muted">{card.summary}</p>
+                      <p className="line-clamp-3 text-[13px] leading-[19px] text-muted">{card.summary}</p>
                     </Link>
                   ))}
                 </div>
@@ -191,7 +191,7 @@ export function Insights({
                         <h4 className="text-base font-semibold leading-snug text-ink">
                           {item.title}
                         </h4>
-                        <p className="text-[12px] leading-[17px] text-ink/70">{item.summary}</p>
+                        <p className="line-clamp-3 text-[12px] leading-[17px] text-ink/70">{item.summary}</p>
                         {item.readTime ? (
                           <p className="text-[11px] text-accent">{item.readTime}</p>
                         ) : null}

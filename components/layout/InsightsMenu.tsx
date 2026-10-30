@@ -89,7 +89,7 @@ export function InsightsMenu({
           <p className="mt-2 text-lg font-bold leading-6">
             {feature.title}
           </p>
-          <p className="mt-2 text-[13px] leading-5 text-white/80">
+          <p className="mt-2 line-clamp-3 text-[13px] leading-5 text-white/80">
             {feature.summary}
           </p>
         </div>

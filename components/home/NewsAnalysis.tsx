@@ -57,7 +57,7 @@ function NewsCard({ card, accent }: { card: ArticleCard; accent: boolean }) {
       ) : null}
       <p className="text-lg font-semibold leading-6 text-ink">{card.title}</p>
       {card.dek ? (
-        <p className="text-[13px] leading-[19px] text-muted">{card.dek}</p>
+        <p className="line-clamp-3 text-[13px] leading-[19px] text-muted">{card.dek}</p>
       ) : null}
     </Link>
   );

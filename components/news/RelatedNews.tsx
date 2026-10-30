@@ -62,7 +62,7 @@ function RelatedRow({ item }: { item: ArticleCard }) {
           {item.title}
         </p>
         {item.dek ? (
-          <p className="text-xs leading-4 text-muted">{item.dek}</p>
+          <p className="line-clamp-3 text-xs leading-4 text-muted">{item.dek}</p>
         ) : null}
       </div>
       <CoverImage

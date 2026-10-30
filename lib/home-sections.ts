@@ -40,7 +40,7 @@ export const DEFAULT_HEADINGS: Record<HomeSectionSlug, SectionHeading> = {
   reels: heading("", "Reels", "VIEW ALL →", "/news"),
   "project-watch": heading("THE PROJECT FILE", "Project Watch", "Explore all projects →", "/projects"),
   insights: heading("INSIGHTS", "", "MORE INSIGHTS →", "/insights"),
-  "investment-watch": heading("DEALS & CAPITAL", "Energy Investment Watch", "All investment news →", "/news"),
+  "investment-watch": heading("DEALS & CAPITAL", "Energy Investment Watch", "All investment news →", "/news?topic=investment"),
   "watch-listen": heading("VIDEO", "Watch & Listen", "All videos →", "/news"),
   "latest-reports": heading("FROM THE DESK", "Latest Reports", "Browse the library →", "/insights"),
   newsletter: heading("", ""),

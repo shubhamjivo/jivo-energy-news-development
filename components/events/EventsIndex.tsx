@@ -41,7 +41,7 @@ export function EventsIndex({
                   <p className="mt-2 text-sm text-muted">{featured.venue}</p>
                 ) : null}
                 {featured.description ? (
-                  <p className="mt-3 max-w-[520px] text-sm leading-6 text-ink">
+                  <p className="mt-3 line-clamp-3 max-w-[520px] text-sm leading-6 text-ink">
                     {featured.description}
                   </p>
                 ) : null}

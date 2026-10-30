@@ -92,7 +92,7 @@ export async function NewsIndex({
                     {lead.title}
                   </Link>
                 </h2>
-                <p className="mt-2 text-sm leading-[21px] text-muted desk:max-w-[760px] desk:text-[15px] desk:leading-[22px]">
+                <p className="mt-2 line-clamp-3 text-sm leading-[21px] text-muted desk:max-w-[760px] desk:text-[15px] desk:leading-[22px]">
                   {lead.dek}
                 </p>
                 <p className="mt-2 text-[11px] text-muted desk:text-xs">

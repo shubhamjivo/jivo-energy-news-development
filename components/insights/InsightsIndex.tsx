@@ -102,7 +102,7 @@ export function InsightsIndex({
                         {item.title}
                       </h3>
                       {item.summary ? (
-                        <p className="mt-1 line-clamp-2 text-[13px] leading-[19px] text-muted">
+                        <p className="mt-1 line-clamp-3 text-[13px] leading-[19px] text-muted">
                           {item.summary}
                         </p>
                       ) : null}
@@ -174,7 +174,7 @@ export function InsightsIndex({
                       <h3 className="mt-1 text-lg font-bold leading-6 text-ink">
                         {note.title}
                       </h3>
-                      <p className="mt-1 max-w-[720px] text-sm leading-6 text-muted">
+                      <p className="mt-1 line-clamp-3 max-w-[720px] text-sm leading-6 text-muted">
                         {note.summary}
                       </p>
                     </div>

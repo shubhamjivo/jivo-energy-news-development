@@ -231,7 +231,7 @@ export function Header({ insightsFeature = null }: { insightsFeature?: InsightCa
         </div>
 
         {searchOpen ? (
-          <form className="border-b border-hairline bg-paper py-3" action="/news" method="get">
+          <form className="border-b border-hairline bg-paper py-3" action="/search" method="get">
             <Container>
               <label className="sr-only" htmlFor="site-search">
                 Search Africa Energy News

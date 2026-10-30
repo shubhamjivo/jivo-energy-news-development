@@ -43,7 +43,7 @@ export function WhatMatters({ items, heading }: { items: ArticleCard[]; heading:
                 {item.title}
               </p>
               {item.dek ? (
-                <p className="mt-1.5 text-[13px] leading-[19px] text-muted">
+                <p className="mt-1.5 line-clamp-3 text-[13px] leading-[19px] text-muted">
                   {item.dek}
                 </p>
               ) : null}

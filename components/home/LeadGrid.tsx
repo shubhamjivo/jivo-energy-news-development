@@ -58,7 +58,7 @@ export async function LeadGrid({ home }: { home: CmsPage | null }) {
                 </Link>
               </h1>
               {lead.dek ? (
-                <p className="text-sm leading-[21px] text-muted">{lead.dek}</p>
+                <p className="line-clamp-3 text-sm leading-[21px] text-muted">{lead.dek}</p>
               ) : null}
               <p className="text-xs text-muted">{leadByline(lead)}</p>
             </div>

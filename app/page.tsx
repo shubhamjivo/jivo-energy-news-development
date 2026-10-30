@@ -12,10 +12,9 @@ import { Reels } from "@/components/home/Reels";
 import { WatchListen } from "@/components/home/WatchListen";
 import { WhatMatters } from "@/components/home/WhatMatters";
 import { NewsletterCta } from "@/components/layout/NewsletterCta";
-import { getLatestArticleCards } from "@/lib/articles";
+import { getInvestmentNews, getLatestArticleCards } from "@/lib/articles";
 import {
   getBriefItems,
-  getDeals,
   getInsights,
   getProjects,
   getSiteSettings,
@@ -50,7 +49,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Home() {
   // All CMS requests run here on the server; components only receive data.
-  const [home, latest, tagDesks, brief, projects, insights, reports, deals, reels, videos] =
+  const [home, latest, tagDesks, brief, projects, insights, reports, investments, reels, videos] =
     await Promise.all([
       getPage("home"),
       getLatestArticleCards(12),
@@ -59,7 +58,7 @@ export default async function Home() {
       getProjects(8),
       getInsights(),
       getInsights({ tags: ["reports"], limit: 4 }),
-      getDeals(4),
+      getInvestmentNews(4),
       getVideos("Reel"),
       getVideos("Video", 3),
     ]);
@@ -143,7 +142,7 @@ export default async function Home() {
           />
         );
       case "investment-watch":
-        return <InvestmentWatch heading={heading} deals={deals} />;
+        return <InvestmentWatch heading={heading} stories={investments} />;
       // case "watch-listen":
       //   return <WatchListen heading={heading} videos={videos} />;
       case "latest-reports":

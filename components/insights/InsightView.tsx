@@ -32,7 +32,7 @@ function RelatedInsights({ items }: { items: InsightCard[] }) {
             {item.label ? <Kicker>{item.label}</Kicker> : null}
             <p className="text-[15px] font-semibold leading-[18px] text-ink">{item.title}</p>
             {item.summary ? (
-              <p className="line-clamp-2 text-xs leading-4 text-muted">{item.summary}</p>
+              <p className="line-clamp-3 text-xs leading-4 text-muted">{item.summary}</p>
             ) : null}
           </div>
           <CoverImage

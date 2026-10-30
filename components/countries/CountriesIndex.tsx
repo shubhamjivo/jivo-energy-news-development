@@ -257,7 +257,7 @@ export function CountriesIndex({
                     <h3 className="mt-1 text-lg font-semibold leading-6 text-ink">
                       {market.name}
                     </h3>
-                    <p className="mt-1 text-xs text-muted">{market.summary}</p>
+                    <p className="mt-1 line-clamp-3 text-xs text-muted">{market.summary}</p>
                   </button>
                 </li>
               );

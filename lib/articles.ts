@@ -93,6 +93,24 @@ function publishedAtOf(article: StrapiArticleSummary) {
   return article.publishedAt ?? article.createdAt;
 }
 
+// 340000000 USD -> "$340M". Unknown currency codes fall back to "340M XYZ".
+export function formatInvestment(amount: number | string | null | undefined, currency: string | null | undefined) {
+  const value = Number(amount);
+  if (amount === null || amount === undefined || amount === "" || !Number.isFinite(value) || value <= 0) return "";
+  const code = currency?.trim().toUpperCase() || "USD";
+  try {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: code,
+      notation: "compact",
+      maximumFractionDigits: 2,
+    }).format(value);
+  } catch {
+    const short = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 2 }).format(value);
+    return `${short} ${code}`;
+  }
+}
+
 export function mapArticleCard(article: StrapiArticleSummary): ArticleCard {
   const title = article.title?.trim() ?? "";
   const slug = article.slug ?? "";
@@ -111,6 +129,7 @@ export function mapArticleCard(article: StrapiArticleSummary): ArticleCard {
     kicker: article.category?.title?.trim() ?? "",
     categorySlug: article.category?.slug ?? "",
     markets,
+    investment: formatInvestment(article.investment_amount, article.investment_currency),
     dek: article.short_content?.trim() ?? "",
     image,
     imageAlt: article.banner?.alternativeText?.trim() || title,
@@ -259,6 +278,17 @@ export async function getLatestArticleCards(
       .slice(0, limit);
   } catch (error) {
     console.error("Could not load latest articles from Strapi", error);
+    return [];
+  }
+}
+
+// Newest investment stories for Energy Investment Watch on the home page.
+export async function getInvestmentNews(limit: number) {
+  try {
+    const payload = await fetchArticleSummaries({ investment: true, pageSize: limit });
+    return payload.data.filter((item) => item.slug).map(mapArticleCard);
+  } catch (error) {
+    console.error("Could not load investment news from Strapi", error);
     return [];
   }
 }

@@ -531,40 +531,6 @@ export async function getProjects(limit?: number) {
   return limit ? all.slice(0, limit) : all;
 }
 
-// ---------------------------------------------------------------------- deals
-
-export type DealEntry = {
-  title: string;
-  type: string;
-  value: string;
-  markets: string;
-  href: string;
-};
-
-// One request for the recent deals; pages show the first few.
-export async function getDeals(limit = 8) {
-  const all = await safe("deals", [] as DealEntry[], async () => {
-    const payload = await strapiList<{
-      title: string;
-      deal_type: string;
-      value: string | null;
-      markets: string | null;
-      article?: { slug: string | null } | null;
-    }>("deals", {
-      populate: "*",
-      sort: ["deal_date:desc", "publishedAt:desc"],
-    });
-    return payload.data.map((item) => ({
-      title: item.title,
-      type: item.deal_type.toUpperCase(),
-      value: text(item.value),
-      markets: text(item.markets),
-      href: item.article?.slug ? `/news/${item.article.slug}` : "",
-    }));
-  });
-  return all.slice(0, limit);
-}
-
 // --------------------------------------------------------------------- events
 
 export type EventEntry = {
