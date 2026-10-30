@@ -129,8 +129,8 @@ export default async function Home() {
             items={newsPicks.length > 0 ? newsPicks : latest.slice(0, 8)}
           />
         );
-      case "reels":
-        return <Reels heading={heading} reels={reels} />;
+      // case "reels":
+      //   return <Reels heading={heading} reels={reels} />;
       case "project-watch":
         return <ProjectWatch heading={heading} projects={projects} />;
       case "insights":
@@ -144,8 +144,8 @@ export default async function Home() {
         );
       case "investment-watch":
         return <InvestmentWatch heading={heading} deals={deals} />;
-      case "watch-listen":
-        return <WatchListen heading={heading} videos={videos} />;
+      // case "watch-listen":
+      //   return <WatchListen heading={heading} videos={videos} />;
       case "latest-reports":
         return <LatestReports heading={heading} reports={reports} />;
       case "newsletter":
