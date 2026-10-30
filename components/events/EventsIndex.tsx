@@ -24,14 +24,12 @@ export function EventsIndex({
         <section className="py-5 desk:py-6">
           <Container>
             <div className="grid items-center gap-6 desk:grid-cols-2 desk:gap-10">
-              {featured.image ? (
-                <CoverImage
-                  src={featured.image}
-                  alt={featured.title}
-                  className="h-[220px] w-full desk:h-[260px]"
-                  sizes="(max-width: 1439px) 100vw, 580px"
-                />
-              ) : null}
+              <CoverImage
+                src={featured.image}
+                alt={featured.title}
+                className="h-[220px] w-full desk:h-[260px]"
+                sizes="(max-width: 1439px) 100vw, 580px"
+              />
               <div>
                 <p className="text-[10px] font-semibold tracking-[1px] text-accent">
                   FEATURED · {featured.dateRange}

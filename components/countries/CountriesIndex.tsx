@@ -245,14 +245,12 @@ export function CountriesIndex({
                     onClick={() => setSelectedId(market.slug)}
                     className={`block w-full text-left ${active ? "outline outline-2 outline-offset-4 outline-navy" : ""}`}
                   >
-                    {market.image ? (
-                      <CoverImage
-                        src={market.image}
-                        alt={market.name}
-                        className="h-[140px] w-full"
-                        sizes="(max-width: 1439px) 50vw, 280px"
-                      />
-                    ) : null}
+                    <CoverImage
+                      src={market.image}
+                      alt={market.name}
+                      className="h-[140px] w-full"
+                      sizes="(max-width: 1439px) 50vw, 280px"
+                    />
                     <p className="mt-2.5 text-[10px] font-semibold tracking-[0.8px] text-accent">
                       {market.region}
                     </p>

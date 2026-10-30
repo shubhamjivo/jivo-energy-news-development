@@ -49,14 +49,12 @@ export function LatestReports({
 function ReportCard({ report }: { report: InsightCard }) {
   return (
     <Link href={report.href} className="flex flex-col gap-2.5">
-      {report.image ? (
-        <CoverImage
-          src={report.image}
-          alt={report.title}
-          className="h-[180px] w-full"
-          sizes="312px"
-        />
-      ) : null}
+      <CoverImage
+        src={report.image}
+        alt={report.title}
+        className="h-[180px] w-full"
+        sizes="312px"
+      />
       <p className="text-sm font-semibold leading-[19px] text-ink">{report.title}</p>
     </Link>
   );

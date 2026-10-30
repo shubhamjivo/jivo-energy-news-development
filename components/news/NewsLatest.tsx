@@ -41,14 +41,12 @@ export function NewsLatest({
         <div className="mt-2 hidden grid-cols-3 gap-x-6 gap-y-6 desk:grid">
           {stories.map((story) => (
             <Link key={story.id} href={story.href} className="flex flex-col gap-3">
-              {story.image ? (
-                <CoverImage
-                  src={story.image}
-                  alt={story.imageAlt}
-                  className="h-[240px] w-full"
-                  sizes="(max-width: 1439px) 100vw, 384px"
-                />
-              ) : null}
+              <CoverImage
+                src={story.image}
+                alt={story.imageAlt}
+                className="h-[240px] w-full"
+                sizes="(max-width: 1439px) 100vw, 384px"
+              />
               {story.kicker ? (
                 <Kicker className="text-[10px] tracking-[0.8px]" tone="ink">
                   {story.kicker}
@@ -74,14 +72,12 @@ export function NewsLatest({
               href={story.href}
               className="flex gap-3 border-b border-hairline py-3"
             >
-              {story.thumbnail ? (
-                <CoverImage
-                  src={story.thumbnail}
-                  alt={story.imageAlt}
-                  className="h-20 w-[110px] shrink-0"
-                  sizes="110px"
-                />
-              ) : null}
+              <CoverImage
+                src={story.thumbnail}
+                alt={story.imageAlt}
+                className="h-20 w-[110px] shrink-0"
+                sizes="110px"
+              />
               <div className="flex min-w-0 flex-col gap-1">
                 {story.kicker ? <Kicker>{story.kicker}</Kicker> : null}
                 <p className="text-sm font-semibold leading-[18px] text-ink">

@@ -28,14 +28,12 @@ export function WhatMatters({ items, heading }: { items: ArticleCard[]; heading:
               href={item.href}
               className="block w-[260px] desk:w-[280px]"
             >
-              {item.image ? (
-                <CoverImage
-                  src={item.image}
-                  alt={item.imageAlt}
-                  className="h-[168px] w-full"
-                  sizes="280px"
-                />
-              ) : null}
+              <CoverImage
+                src={item.image}
+                alt={item.imageAlt}
+                className="h-[168px] w-full"
+                sizes="280px"
+              />
               {item.kicker ? (
                 <Kicker className="mt-2.5 text-[10px] tracking-[0.8px]">
                   {item.kicker}

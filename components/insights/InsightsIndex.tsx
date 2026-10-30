@@ -41,14 +41,12 @@ export function InsightsIndex({
               href={featured.href}
               className="grid items-center gap-6 desk:grid-cols-[minmax(0,280px)_minmax(0,1fr)] desk:gap-10"
             >
-              {featured.image ? (
-                <CoverImage
-                  src={featured.image}
-                  alt=""
-                  className="h-[220px] w-full desk:h-[240px]"
-                  sizes="280px"
-                />
-              ) : null}
+              <CoverImage
+                src={featured.image}
+                alt=""
+                className="h-[220px] w-full desk:h-[240px]"
+                sizes="280px"
+              />
               <div>
                 <p className="text-[10px] font-semibold tracking-[1px] text-accent">
                   THE GREAT READ
@@ -91,14 +89,12 @@ export function InsightsIndex({
                 {section.items.map((item) => (
                   <li key={item.id}>
                     <Link href={item.href} className="block">
-                      {item.image ? (
-                        <CoverImage
-                          src={item.image}
-                          alt={item.title}
-                          className="h-[150px] w-full"
-                          sizes="(max-width: 1439px) 50vw, 280px"
-                        />
-                      ) : null}
+                      <CoverImage
+                        src={item.image}
+                        alt={item.title}
+                        className="h-[150px] w-full"
+                        sizes="(max-width: 1439px) 50vw, 280px"
+                      />
                       <p className="mt-2.5 text-[10px] font-semibold tracking-[0.8px] text-accent">
                         {item.label}
                       </p>
@@ -128,14 +124,12 @@ export function InsightsIndex({
               {reports.map((report) => (
                 <li key={report.id}>
                   <Link href={report.href} className="block">
-                    {report.image ? (
-                      <CoverImage
-                        src={report.image}
-                        alt={report.title}
-                        className="h-[150px] w-full"
-                        sizes="(max-width: 1439px) 50vw, 280px"
-                      />
-                    ) : null}
+                    <CoverImage
+                      src={report.image}
+                      alt={report.title}
+                      className="h-[150px] w-full"
+                      sizes="(max-width: 1439px) 50vw, 280px"
+                    />
                     <p className="mt-2.5 text-[10px] font-semibold tracking-[0.8px] text-accent">
                       REPORT
                     </p>
@@ -167,14 +161,12 @@ export function InsightsIndex({
                       note.image ? "sm:grid-cols-[180px_minmax(0,1fr)]" : ""
                     }`}
                   >
-                    {note.image ? (
-                      <CoverImage
-                        src={note.image}
-                        alt=""
-                        className="h-[110px] w-full"
-                        sizes="180px"
-                      />
-                    ) : null}
+                    <CoverImage
+                      src={note.image}
+                      alt=""
+                      className="h-[110px] w-full"
+                      sizes="180px"
+                    />
                     <div>
                       <p className="text-[10px] font-semibold tracking-[0.8px] text-accent">
                         {note.label}

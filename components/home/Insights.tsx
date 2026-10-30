@@ -35,14 +35,12 @@ function SlotSlide({ slot }: { slot: InsightSlot }) {
     <div className="flex h-full w-[82vw] max-w-[340px] flex-col">
       <SlotHeading slot={slot} />
       <Link href={first.href} className="mt-3 flex flex-col gap-2">
-        {first.image ? (
-          <CoverImage
-            src={first.image}
-            alt={first.title}
-            className="h-[170px] w-full"
-            sizes="340px"
-          />
-        ) : null}
+        <CoverImage
+          src={first.image}
+          alt={first.title}
+          className="h-[170px] w-full"
+          sizes="340px"
+        />
         <h4 className="text-lg font-bold leading-6 text-ink">{first.title}</h4>
         <p className="line-clamp-3 text-[13px] leading-[19px] text-ink/70">
           {first.summary}
@@ -144,14 +142,12 @@ export function Insights({
                       ) : null}
                     </p>
                   </div>
-                  {featured.image ? (
-                    <CoverImage
-                      src={featured.image}
-                      alt={featured.title}
-                      className="h-[250px] w-[380px] shrink-0"
-                      sizes="380px"
-                    />
-                  ) : null}
+                  <CoverImage
+                    src={featured.image}
+                    alt={featured.title}
+                    className="h-[250px] w-[380px] shrink-0"
+                    sizes="380px"
+                  />
                 </Link>
               </>
             ) : null}
@@ -164,14 +160,12 @@ export function Insights({
                 <div className="mt-3 grid grid-cols-3 gap-6">
                   {cards.items.map((card) => (
                     <Link key={card.id} href={card.href} className="flex flex-col gap-2.5">
-                      {card.image ? (
-                        <CoverImage
-                          src={card.image}
-                          alt={card.title}
-                          className="h-[168px] w-full"
-                          sizes="267px"
-                        />
-                      ) : null}
+                      <CoverImage
+                        src={card.image}
+                        alt={card.title}
+                        className="h-[168px] w-full"
+                        sizes="267px"
+                      />
                       <Kicker className="text-[10px] tracking-[0.8px]">{card.label}</Kicker>
                       <p className="text-lg font-semibold leading-6 text-ink">{card.title}</p>
                       <p className="text-[13px] leading-[19px] text-muted">{card.summary}</p>

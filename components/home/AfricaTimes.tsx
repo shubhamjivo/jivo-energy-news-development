@@ -66,14 +66,12 @@ function TimesColumn({ col }: { col: TimesDesk }) {
           <p className="min-w-0 flex-1 text-[13px] leading-[19px] text-muted">
             {story.title}
           </p>
-          {story.thumbnail ? (
-            <CoverImage
-              src={story.thumbnail}
-              alt=""
-              className="h-12 w-16 shrink-0"
-              sizes="64px"
-            />
-          ) : null}
+          <CoverImage
+            src={story.thumbnail}
+            alt=""
+            className="h-12 w-16 shrink-0"
+            sizes="64px"
+          />
         </Link>
       ))}
     </div>

@@ -44,14 +44,12 @@ export function NewsAnalysis({ items, heading }: { items: ArticleCard[]; heading
 function NewsCard({ card, accent }: { card: ArticleCard; accent: boolean }) {
   return (
     <Link href={card.href} className="flex flex-col gap-2.5">
-      {card.image ? (
-        <CoverImage
-          src={card.image}
-          alt={card.imageAlt}
-          className="h-[168px] w-full"
-          sizes="(max-width: 1439px) 80vw, 315px"
-        />
-      ) : null}
+      <CoverImage
+        src={card.image}
+        alt={card.imageAlt}
+        className="h-[168px] w-full"
+        sizes="(max-width: 1439px) 80vw, 315px"
+      />
       {card.kicker ? (
         <Kicker className="text-[10px] tracking-[0.8px]" tone={accent ? "accent" : "ink"}>
           {card.kicker}

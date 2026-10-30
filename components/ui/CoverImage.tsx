@@ -17,17 +17,20 @@ export function CoverImage({
   priority = false,
   unoptimized = false,
 }: CoverImageProps) {
+  // Without an image the box stays a plain gray square.
   return (
-    <div className={`relative overflow-hidden bg-ink/10 ${className}`}>
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        sizes={sizes}
-        priority={priority}
-        unoptimized={unoptimized}
-        className="object-cover"
-      />
+    <div className={`relative overflow-hidden bg-placeholder ${className}`}>
+      {src ? (
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          sizes={sizes}
+          priority={priority}
+          unoptimized={unoptimized}
+          className="object-cover"
+        />
+      ) : null}
     </div>
   );
 }

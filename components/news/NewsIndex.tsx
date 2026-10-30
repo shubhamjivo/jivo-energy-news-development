@@ -70,17 +70,15 @@ export async function NewsIndex({
           <Container>
             <div className="flex flex-col gap-8 desk:flex-row desk:items-start desk:gap-7">
               <article className="min-w-0 flex-1">
-                {lead.image ? (
-                  <Link href={lead.href} className="block">
-                    <CoverImage
-                      src={lead.image}
-                      alt={lead.gallery[0]?.alt ?? lead.title}
-                      className="h-[200px] w-full desk:h-[430px]"
-                      sizes="(max-width: 1439px) 100vw, 820px"
-                      priority
-                    />
-                  </Link>
-                ) : null}
+                <Link href={lead.href} className="block">
+                  <CoverImage
+                    src={lead.image}
+                    alt={lead.gallery[0]?.alt ?? lead.title}
+                    className="h-[200px] w-full desk:h-[430px]"
+                    sizes="(max-width: 1439px) 100vw, 820px"
+                    priority
+                  />
+                </Link>
                 <div className="mt-3 flex flex-wrap items-center gap-3 text-[11px]">
                   <span className="font-semibold tracking-[0.88px] text-accent">
                     {lead.kicker}
@@ -115,14 +113,12 @@ export async function NewsIndex({
                       href={item.href}
                       className="flex gap-3.5 border-b border-hairline py-3 last:border-b-0"
                     >
-                      {item.thumbnail ? (
-                        <CoverImage
-                          src={item.thumbnail}
-                          alt={item.imageAlt}
-                          className="h-[72px] w-[96px] shrink-0 desk:h-[88px] desk:w-[120px]"
-                          sizes="120px"
-                        />
-                      ) : null}
+                      <CoverImage
+                        src={item.thumbnail}
+                        alt={item.imageAlt}
+                        className="h-[72px] w-[96px] shrink-0 desk:h-[88px] desk:w-[120px]"
+                        sizes="120px"
+                      />
                       <div className="flex min-w-0 flex-col gap-1.5">
                         {item.kicker ? <Kicker>{item.kicker}</Kicker> : null}
                         <p className="text-[13px] font-semibold leading-[17px] text-ink desk:text-[15px] desk:leading-5">

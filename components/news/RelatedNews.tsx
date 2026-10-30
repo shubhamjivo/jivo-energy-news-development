@@ -28,14 +28,12 @@ export function RelatedNews({
             <Carousel className="pt-3" spaceBetween={16}>
               {items.map((item) => (
                 <Link key={`${item.id}-m`} href={item.href} className="block w-[220px]">
-                  {item.thumbnail ? (
-                    <CoverImage
-                      src={item.thumbnail}
-                      alt={item.imageAlt}
-                      className="h-[88px] w-full"
-                      sizes="220px"
-                    />
-                  ) : null}
+                  <CoverImage
+                    src={item.thumbnail}
+                    alt={item.imageAlt}
+                    className="h-[88px] w-full"
+                    sizes="220px"
+                  />
                   {item.kicker ? <Kicker className="mt-2">{item.kicker}</Kicker> : null}
                   <p className="mt-1 text-[15px] font-semibold leading-[18px] text-ink">
                     {item.title}
@@ -67,14 +65,12 @@ function RelatedRow({ item }: { item: ArticleCard }) {
           <p className="text-xs leading-4 text-muted">{item.dek}</p>
         ) : null}
       </div>
-      {item.thumbnail ? (
-        <CoverImage
-          src={item.thumbnail}
-          alt={item.imageAlt}
-          className="h-[72px] w-[88px] shrink-0"
-          sizes="88px"
-        />
-      ) : null}
+      <CoverImage
+        src={item.thumbnail}
+        alt={item.imageAlt}
+        className="h-[72px] w-[88px] shrink-0"
+        sizes="88px"
+      />
     </Link>
   );
 }

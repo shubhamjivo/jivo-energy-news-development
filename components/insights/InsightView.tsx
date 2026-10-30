@@ -35,14 +35,12 @@ function RelatedInsights({ items }: { items: InsightCard[] }) {
               <p className="line-clamp-2 text-xs leading-4 text-muted">{item.summary}</p>
             ) : null}
           </div>
-          {item.image ? (
-            <CoverImage
-              src={item.image}
-              alt={item.title}
-              className="h-[72px] w-[88px] shrink-0"
-              sizes="88px"
-            />
-          ) : null}
+          <CoverImage
+            src={item.image}
+            alt={item.title}
+            className="h-[72px] w-[88px] shrink-0"
+            sizes="88px"
+          />
         </Link>
       ))}
     </div>
@@ -62,14 +60,12 @@ function LatestInsights({ items }: { items: InsightCard[] }) {
           href={item.href}
           className="flex gap-3 border-b border-hairline py-2 last:border-b-0"
         >
-          {item.image ? (
-            <CoverImage
-              src={item.image}
-              alt={item.title}
-              className="size-[72px] shrink-0"
-              sizes="72px"
-            />
-          ) : null}
+          <CoverImage
+            src={item.image}
+            alt={item.title}
+            className="size-[72px] shrink-0"
+            sizes="72px"
+          />
           <div className="flex min-w-0 flex-col gap-1.5">
             {item.label ? <Kicker>{item.label}</Kicker> : null}
             <p className="text-sm font-semibold leading-[18px] text-ink">{item.title}</p>
@@ -123,14 +119,23 @@ export function InsightView({
               </Link>
             </p>
 
-            {insight.image ? (
-              <CoverImage
-                src={insight.image}
-                alt={insight.title}
-                className="mt-3 h-[232px] w-full desk:h-[420px]"
-                sizes="(max-width: 1439px) 100vw, 840px"
-                priority={priorityImage}
-              />
+            <CoverImage
+              src={insight.image}
+              alt={insight.title}
+              className="mt-3 h-[232px] w-full desk:h-[420px]"
+              sizes="(max-width: 1439px) 100vw, 840px"
+              priority={priorityImage}
+            />
+
+            {insight.reportFile ? (
+              <a
+                href={insight.reportFile}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 inline-flex h-10 items-center self-start bg-accent px-5 text-sm font-semibold text-white"
+              >
+                Download the report (PDF)
+              </a>
             ) : null}
 
             <div className="mt-3.5 flex flex-col gap-2">
@@ -158,16 +163,6 @@ export function InsightView({
               className="article-body mt-6"
               dangerouslySetInnerHTML={{ __html: insight.contentHtml }}
             />
-            {insight.reportFile ? (
-              <a
-                href={insight.reportFile}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-8 inline-flex h-10 items-center bg-accent px-5 text-sm font-semibold text-white"
-              >
-                Download the report (PDF)
-              </a>
-            ) : null}
             <Faq items={insight.faqs} />
           </article>
 

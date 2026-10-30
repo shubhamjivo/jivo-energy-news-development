@@ -16,14 +16,12 @@ export function LatestNews({ items }: { items: ArticleCard[] }) {
           href={story.href}
           className="flex gap-3 border-b last:border-b-0 border-hairline py-2"
         >
-          {story.thumbnail ? (
-            <CoverImage
-              src={story.thumbnail}
-              alt={story.imageAlt}
-              className="size-[72px] shrink-0"
-              sizes="72px"
-            />
-          ) : null}
+          <CoverImage
+            src={story.thumbnail}
+            alt={story.imageAlt}
+            className="size-[72px] shrink-0"
+            sizes="72px"
+          />
           <div className="flex min-w-0 flex-col gap-1.5">
             {story.kicker ? <Kicker>{story.kicker}</Kicker> : null}
             <p className="text-sm font-semibold leading-[18px] text-ink">

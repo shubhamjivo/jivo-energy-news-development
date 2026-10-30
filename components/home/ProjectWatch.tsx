@@ -69,14 +69,12 @@ export function ProjectWatch({
             href="/projects"
             className="block w-[260px] desk:w-[280px]"
           >
-            {project.image ? (
-              <CoverImage
-                src={project.image}
-                alt={project.name}
-                className="h-[150px] w-full"
-                sizes="280px"
-              />
-            ) : null}
+            <CoverImage
+              src={project.image}
+              alt={project.name}
+              className="h-[150px] w-full"
+              sizes="280px"
+            />
             <Kicker className="mt-2">{project.kicker}</Kicker>
             <p className="mt-1 text-base font-semibold text-ink">{project.name}</p>
             <p className="mt-1 text-[11px] whitespace-pre-wrap text-muted">

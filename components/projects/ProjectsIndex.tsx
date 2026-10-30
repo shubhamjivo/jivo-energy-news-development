@@ -58,14 +58,12 @@ export function ProjectsIndex({
             <ul className="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-2 desk:grid-cols-4">
               {projects.map((project) => (
                 <li key={project.slug} className="flex flex-col border border-hairline">
-                  {project.image ? (
-                    <CoverImage
-                      src={project.image}
-                      alt={project.name}
-                      className="h-[168px] w-full"
-                      sizes="(max-width: 1439px) 50vw, 280px"
-                    />
-                  ) : null}
+                  <CoverImage
+                    src={project.image}
+                    alt={project.name}
+                    className="h-[168px] w-full"
+                    sizes="(max-width: 1439px) 50vw, 280px"
+                  />
                   <div className="flex flex-1 flex-col p-4">
                     <p className="text-[10px] font-semibold tracking-[0.8px] text-accent uppercase">
                       {project.kicker}
