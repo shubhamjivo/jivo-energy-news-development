@@ -48,8 +48,7 @@ export type StrapiArticleSummary = {
   read_time?: number | null;
   short_content?: string | null;
   markets?: string | null;
-  investment_amount?: number | string | null;
-  investment_currency?: string | null;
+  investment_amount?: string | null;
   publishedAt: string;
   createdAt: string;
   updatedAt: string | null;
@@ -239,7 +238,7 @@ export async function fetchArticleSummaries(options: {
   if (options.investment) {
     filters.$or = [
       { category: { slug: { $eq: "investment" } } },
-      { investment_amount: { $notNull: true } },
+      { investment_amount: { $notNull: true, $ne: "" } },
     ];
   }
   if (options.excludeIds && options.excludeIds.length > 0) {

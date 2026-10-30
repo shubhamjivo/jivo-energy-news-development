@@ -8,7 +8,7 @@ export type ArticleCard = {
   kicker: string;
   categorySlug: string;
   markets: string;
-  /** Investment amount, formatted like $340M; empty when not set. */
+  /** Investment amount as the editor wrote it, e.g. $340M; empty when not set. */
   investment: string;
   dek: string;
   image: string;
